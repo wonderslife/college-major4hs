@@ -32,5 +32,6 @@ As a parent of a high school student, my child will face the problem of choosing
 1. Fork this project repository.
 2. Collect and organize major information by consulting university official websites, asking current college students, etc.
 3. Submit a Pull Request to merge your contributions into the main branch.
+4. mailto: neuqik@hotmail.com
 
 Let's work together for the future of our children!
