@@ -20,15 +20,15 @@
 
 # Open Source Project for University Majors Research
 
-## 一、Project Background
+## 1、Project Background
 As a parent of a high school student, my child will face the problem of choosing a major for college entrance examinations in two years. To better understand the situation of university majors and make wiser choices for my child's future, I initiated this open source project to research university majors.
 
-## 二、Project Goals
+## 2、Project Goals
 1. Collect and organize major information of various universities, including major introductions, curriculum settings, employment prospects, etc.
 2. Provide a platform for high school students and parents to comprehensively understand university majors.
 3. Encourage more people to participate in the project and jointly improve the university major information.
 
-## 三、How to Participate
+## 3、How to Participate
 1. Fork this project repository.
 2. Collect and organize major information by consulting university official websites, asking current college students, etc.
 3. Submit a Pull Request to merge your contributions into the main branch.
