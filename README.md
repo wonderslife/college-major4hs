@@ -20,7 +20,7 @@
 
 让我们一起为孩子们的未来努力！
 
-## Open Source Project for University Majors Research
+## University Majors Research for High School
 
 ## 1、Project Background
 
