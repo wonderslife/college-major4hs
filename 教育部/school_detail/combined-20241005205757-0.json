@@ -1,0 +1,135 @@
+[
+    {
+        "SchoolInfo": {
+            "schoolName": "湖南财经工业职业技术学院",
+            "BasicInfo": {
+                "name": "湖南财经工业职业技术学院",
+                "location": "湖南省衡阳市珠晖区狮山路20号",
+                "follow": "13",
+                "official_website": "http://www.hncgzy.com/",
+                "admission_website": "http://zs.hycgy.com/",
+                "phone": "0734-8378042 0734-3174218",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-2046.dhtml",
+                "zsjz_digest": "湖南财经工业职业技术学院的招生章程涵盖了报考、招生、录取、体检、收费、毕业、就业及其他要求等方面。\n\n一、报考和招生\n学校全称是湖南财经工业职业技术学院，主管部门为湖南省教育厅。学校位于湖南省衡阳市珠晖区，办学层次为高职（专科）。\n\n二、录取\n\n1. 学校遵循“公平竞争、公正选拔、公开透明”的原则进行招生。\n2. 招生类别包括普通类和职高对口类。\n3. 学生在规定的学习年限内完成规定的课程，考核合格，将获得湖南财经工业职业技术学院的全日制专科毕业证书。\n\n三、体检和收费\n\n1. 体检要求：部分专业如数控技术、汽车检测与维修技术等对考生的身体健康状况有一定要求，如无色盲、无听力障碍等。\n2. 收费标准：不同专业的学费标准已在招生章程中详细列出，且已经衡阳市发改委批准。如有变动，将按照省、市发改委的最新核定标准执行。\n\n四、其他要求\n\n1. 录取规则：按照“专业志愿优先”的原则进行录取。\n2. 新生入学后，学校会对新生进行复查复核，如发现弄虚作假，将取消其入学资格。\n3. 学校提供多种资助措施，包括绿色通道、助学贷款、助学金等，以确保家庭经济困难的学生能够得到资助。\n4. 联系方式：学校提供了招生咨询电话、QQ、微信公众号、邮箱等多种联系方式，方便考生咨询相关信息。\n\n总之，这是一份关于湖南财经工业职业技术学院招生工作的全面介绍，涵盖了从报考到毕业就业的各个环节。如需了解更多信息，可访问学校的官方网站或学信网。",
+                "wx": "",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {
+                    "vote_num": "1020",
+                    "score": "3.9"
+                },
+                "environment_satisfaction": {
+                    "vote_num": "1242",
+                    "score": "3.9"
+                },
+                "life_satisfaction": {
+                    "vote_num": "949",
+                    "score": "3.8"
+                },
+                "major_satisfaction": {
+                    "市场营销": {
+                        "satisfication_score": "4.5",
+                        "voters": "65"
+                    },
+                    "大数据与会计": {
+                        "satisfication_score": "4.3",
+                        "voters": "532"
+                    },
+                    "大数据与财务管理": {
+                        "satisfication_score": "4.3",
+                        "voters": "84"
+                    },
+                    "电气自动化技术": {
+                        "satisfication_score": "4.3",
+                        "voters": "56"
+                    },
+                    "工商企业管理": {
+                        "satisfication_score": "4.2",
+                        "voters": "51"
+                    },
+                    "工程物流管理": {
+                        "satisfication_score": "4.2",
+                        "voters": "12"
+                    },
+                    "机械设计与制造": {
+                        "satisfication_score": "4.0",
+                        "voters": "30"
+                    },
+                    "数控技术": {
+                        "satisfication_score": "3.9",
+                        "voters": "90"
+                    },
+                    "计算机网络技术": {
+                        "satisfication_score": "3.9",
+                        "voters": "13"
+                    },
+                    "模具设计与制造": {
+                        "satisfication_score": "3.7",
+                        "voters": "45"
+                    }
+                },
+                "major_recommand": {
+                    "大数据与会计": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "390"
+                    },
+                    "大数据与财务管理": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "207"
+                    },
+                    "模具设计与制造": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "97"
+                    },
+                    "数控技术": {
+                        "recommand_score": "4.5",
+                        "recommand_voters": "91"
+                    },
+                    "计算机应用技术": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "90"
+                    },
+                    "市场营销": {
+                        "recommand_score": "4.3",
+                        "recommand_voters": "84"
+                    },
+                    "机械设计与制造": {
+                        "recommand_score": "4.3",
+                        "recommand_voters": "72"
+                    }
+                },
+                "major_prefer": {
+                    "大数据与会计": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "390"
+                    },
+                    "大数据与财务管理": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "207"
+                    },
+                    "模具设计与制造": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "97"
+                    },
+                    "电子商务": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "64"
+                    },
+                    "数控技术": {
+                        "recommand_score": "4.5",
+                        "recommand_voters": "91"
+                    },
+                    "工商企业管理": {
+                        "recommand_score": "4.5",
+                        "recommand_voters": "62"
+                    },
+                    "计算机应用技术": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "90"
+                    }
+                }
+            }
+        }
+    }
+]

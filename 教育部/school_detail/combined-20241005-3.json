@@ -1,0 +1,1367 @@
+[
+    {
+        "SchoolInfo": {
+            "schoolName": "陆军特种作战学院",
+            "BasicInfo": {
+                "name": "陆军特种作战学院",
+                "location": "通信地址： 广西壮族自治区桂林市象山区崇信路33号 邮编：541002",
+                "follow": "84",
+                "official_website": "",
+                "admission_website": "",
+                "phone": "-",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-1980487787.dhtml",
+                "zsjz_digest": "",
+                "wx": "",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {},
+                "environment_satisfaction": {},
+                "life_satisfaction": {},
+                "major_satisfaction": {},
+                "major_recommand": {},
+                "major_prefer": {}
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "海南政法职业学院",
+            "BasicInfo": {
+                "name": "海南政法职业学院",
+                "location": "地址：海南省海口市琼山区新大洲大道280号 邮编：571100",
+                "follow": "36",
+                "official_website": "http://www.hnplc.com/",
+                "admission_website": "http://zs.hnplc.com/",
+                "phone": "0898-65858299",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-1825.dhtml",
+                "zsjz_digest": "",
+                "wx": "",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {
+                    "vote_num": "2618",
+                    "score": "4.3"
+                },
+                "environment_satisfaction": {
+                    "vote_num": "3635",
+                    "score": "4.3"
+                },
+                "life_satisfaction": {
+                    "vote_num": "2492",
+                    "score": "4.1"
+                },
+                "major_satisfaction": {
+                    "无人机应用技术": {
+                        "satisfication_score": "5.0",
+                        "voters": "15"
+                    },
+                    "建筑消防技术": {
+                        "satisfication_score": "4.9",
+                        "voters": "125"
+                    },
+                    "司法鉴定技术": {
+                        "satisfication_score": "4.7",
+                        "voters": "206"
+                    },
+                    "信息安全技术应用": {
+                        "satisfication_score": "4.6",
+                        "voters": "17"
+                    },
+                    "现代通信技术": {
+                        "satisfication_score": "4.6",
+                        "voters": "28"
+                    },
+                    "刑事执行": {
+                        "satisfication_score": "4.6",
+                        "voters": "249"
+                    },
+                    "大数据与会计": {
+                        "satisfication_score": "4.5",
+                        "voters": "38"
+                    },
+                    "法律事务": {
+                        "satisfication_score": "4.5",
+                        "voters": "823"
+                    },
+                    "道路交通管理": {
+                        "satisfication_score": "4.5",
+                        "voters": "297"
+                    },
+                    "治安管理": {
+                        "satisfication_score": "4.4",
+                        "voters": "615"
+                    }
+                },
+                "major_recommand": {
+                    "治安管理": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "615"
+                    },
+                    "法律事务": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "529"
+                    },
+                    "道路交通管理": {
+                        "recommand_score": "4.5",
+                        "recommand_voters": "361"
+                    },
+                    "法律文秘": {
+                        "recommand_score": "4.5",
+                        "recommand_voters": "332"
+                    },
+                    "司法警务": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "321"
+                    }
+                },
+                "major_prefer": {
+                    "现代通信技术": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "49"
+                    },
+                    "治安管理": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "615"
+                    },
+                    "法律事务": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "529"
+                    },
+                    "司法警务": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "321"
+                    },
+                    "刑事执行": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "279"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "西南大学(荣昌校区)",
+            "BasicInfo": {
+                "name": "",
+                "location": "",
+                "follow": "",
+                "official_website": "",
+                "admission_website": "",
+                "phone": "",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-.dhtml",
+                "zsjz_digest": "",
+                "wx": "",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {},
+                "environment_satisfaction": {},
+                "life_satisfaction": {},
+                "major_satisfaction": {},
+                "major_recommand": {},
+                "major_prefer": {}
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "陆军勤务学院",
+            "BasicInfo": {
+                "name": "陆军勤务学院",
+                "location": "重庆市沙坪坝区大学城北一路20号陆军勤务学院 邮编：401331",
+                "follow": "140",
+                "official_website": "",
+                "admission_website": "",
+                "phone": "-",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-1980489429.dhtml",
+                "zsjz_digest": "",
+                "wx": "",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {},
+                "environment_satisfaction": {},
+                "life_satisfaction": {},
+                "major_satisfaction": {},
+                "major_recommand": {},
+                "major_prefer": {}
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "西昌医学高等专科学校",
+            "BasicInfo": {
+                "name": "西昌医学高等专科学校",
+                "location": "-",
+                "follow": "2",
+                "official_website": "https://jytyj.lsz.gov.cn/yz/index.html",
+                "admission_website": "https://jytyj.lsz.gov.cn/yz/index.html",
+                "phone": "0834-2560000、0834-2560999、0834-2561999",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-5530941158.dhtml",
+                "zsjz_digest": "",
+                "wx": "",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {},
+                "environment_satisfaction": {},
+                "life_satisfaction": {},
+                "major_satisfaction": {},
+                "major_recommand": {},
+                "major_prefer": {}
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "成都轨道交通职业学院",
+            "BasicInfo": {
+                "name": "成都轨道交通职业学院",
+                "location": "学院地址：成都东部新区三岔街道林栖大道96号（邮政编码：641400） 红花堰培训实训基地地址：成都市成华区红花堰北一路176号（邮政编码：610057） （2024级新生首年在红花堰培训实训基地就读）",
+                "follow": "2",
+                "official_website": "http://edu.gdxyedu.com/",
+                "admission_website": "http://edu.gdxyedu.com/",
+                "phone": "028-61630055，028-61630099",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-5530947378.dhtml",
+                "zsjz_digest": "",
+                "wx": "",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {},
+                "environment_satisfaction": {},
+                "life_satisfaction": {},
+                "major_satisfaction": {},
+                "major_recommand": {},
+                "major_prefer": {}
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "电子科技大学(沙河校区)",
+            "BasicInfo": {
+                "name": "电子科技大学(沙河校区)",
+                "location": "-",
+                "follow": "972",
+                "official_website": "https://www.uestc.edu.cn/",
+                "admission_website": "https://zs.uestc.edu.cn/",
+                "phone": "028-61831137",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-960614879.dhtml",
+                "zsjz_digest": "",
+                "wx": "",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {},
+                "environment_satisfaction": {},
+                "life_satisfaction": {},
+                "major_satisfaction": {},
+                "major_recommand": {},
+                "major_prefer": {}
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "武警警官学院",
+            "BasicInfo": {
+                "name": "武警警官学院",
+                "location": "地址：四川省成都市双流区警校路一段489号 邮编：610213",
+                "follow": "173",
+                "official_website": "https://www.gaokao.cn/school/2995",
+                "admission_website": "https://www.gaokao.cn/school/2995",
+                "phone": "028-60458206",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-1980498970.dhtml",
+                "zsjz_digest": "",
+                "wx": "微信号：wj--jgxy",
+                "wxshipin": "抖音：武警警官学院"
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {},
+                "environment_satisfaction": {},
+                "life_satisfaction": {},
+                "major_satisfaction": {},
+                "major_recommand": {},
+                "major_prefer": {}
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "贵州财经大学",
+            "BasicInfo": {
+                "name": "贵州财经大学",
+                "location": "贵阳市云岩区鹿冲关路276号",
+                "follow": "423",
+                "official_website": "https://www.gufe.edu.cn/",
+                "admission_website": "https://zsw.gufe.edu.cn/",
+                "phone": "0851-88575778",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-521.dhtml",
+                "zsjz_digest": "",
+                "wx": "",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {
+                    "vote_num": "3508",
+                    "score": "3.9"
+                },
+                "environment_satisfaction": {
+                    "vote_num": "4146",
+                    "score": "4.2"
+                },
+                "life_satisfaction": {
+                    "vote_num": "3346",
+                    "score": "3.6"
+                },
+                "major_satisfaction": {
+                    "大数据与会计": {
+                        "satisfication_score": "4.5",
+                        "voters": "41"
+                    },
+                    "音乐学": {
+                        "satisfication_score": "4.5",
+                        "voters": "70"
+                    },
+                    "审计学": {
+                        "satisfication_score": "4.4",
+                        "voters": "139"
+                    },
+                    "会计学": {
+                        "satisfication_score": "4.4",
+                        "voters": "406"
+                    },
+                    "财务管理": {
+                        "satisfication_score": "4.4",
+                        "voters": "194"
+                    },
+                    "环境设计": {
+                        "satisfication_score": "4.3",
+                        "voters": "20"
+                    },
+                    "舞蹈学": {
+                        "satisfication_score": "4.3",
+                        "voters": "63"
+                    },
+                    "金融学": {
+                        "satisfication_score": "4.3",
+                        "voters": "269"
+                    },
+                    "投资学": {
+                        "satisfication_score": "4.3",
+                        "voters": "135"
+                    },
+                    "工商管理": {
+                        "satisfication_score": "4.2",
+                        "voters": "143"
+                    }
+                },
+                "major_recommand": {
+                    "会计学": {
+                        "recommand_score": "4.8",
+                        "recommand_voters": "512"
+                    },
+                    "金融学": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "414"
+                    },
+                    "经济学": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "313"
+                    },
+                    "金融学类": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "247"
+                    },
+                    "财务管理": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "194"
+                    },
+                    "财政学": {
+                        "recommand_score": "4.5",
+                        "recommand_voters": "191"
+                    },
+                    "法学": {
+                        "recommand_score": "4.3",
+                        "recommand_voters": "178"
+                    },
+                    "金融工程": {
+                        "recommand_score": "4.5",
+                        "recommand_voters": "172"
+                    },
+                    "工商管理": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "160"
+                    },
+                    "审计学": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "150"
+                    }
+                },
+                "major_prefer": {
+                    "法学类": {
+                        "recommand_score": "5.0",
+                        "recommand_voters": "5"
+                    },
+                    "汉语国际教育": {
+                        "recommand_score": "4.9",
+                        "recommand_voters": "14"
+                    },
+                    "会计学": {
+                        "recommand_score": "4.8",
+                        "recommand_voters": "512"
+                    },
+                    "金融学": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "414"
+                    },
+                    "金融学类": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "247"
+                    },
+                    "财务管理": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "194"
+                    },
+                    "审计学": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "150"
+                    },
+                    "市场营销": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "77"
+                    },
+                    "信息管理与信息系统": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "38"
+                    },
+                    "传播学": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "19"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "西藏农牧学院",
+            "BasicInfo": {
+                "name": "西藏农牧学院",
+                "location": "西藏林芝市巴宜区育才西路100号",
+                "follow": "39",
+                "official_website": "http://www.xza.edu.cn/",
+                "admission_website": "http://www.xza.edu.cn/zsjy/zsxx/index.asp",
+                "phone": "08945888499",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-1767701198.dhtml",
+                "zsjz_digest": "",
+                "wx": "",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {
+                    "vote_num": "125",
+                    "score": "3.8"
+                },
+                "environment_satisfaction": {
+                    "vote_num": "278",
+                    "score": "4.2"
+                },
+                "life_satisfaction": {
+                    "vote_num": "124",
+                    "score": "3.6"
+                },
+                "major_satisfaction": {},
+                "major_recommand": {
+                    "电气工程及其自动化": {
+                        "recommand_score": "4.8",
+                        "recommand_voters": "34"
+                    },
+                    "土木工程": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "17"
+                    },
+                    "能源与动力工程": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "15"
+                    },
+                    "水利水电工程": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "11"
+                    },
+                    "农学": {
+                        "recommand_score": "4.9",
+                        "recommand_voters": "10"
+                    },
+                    "农业电气化": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "9"
+                    },
+                    "动物科学": {
+                        "recommand_score": "4.9",
+                        "recommand_voters": "7"
+                    },
+                    "动物医学": {
+                        "recommand_score": "4.3",
+                        "recommand_voters": "7"
+                    }
+                },
+                "major_prefer": {
+                    "农学": {
+                        "recommand_score": "4.9",
+                        "recommand_voters": "10"
+                    },
+                    "动物科学": {
+                        "recommand_score": "4.9",
+                        "recommand_voters": "7"
+                    },
+                    "电气工程及其自动化": {
+                        "recommand_score": "4.8",
+                        "recommand_voters": "34"
+                    },
+                    "动植物检疫": {
+                        "recommand_score": "4.8",
+                        "recommand_voters": "5"
+                    },
+                    "水利水电工程": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "11"
+                    },
+                    "农业电气化": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "9"
+                    },
+                    "能源与动力工程": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "15"
+                    },
+                    "土木工程": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "17"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "西藏大学",
+            "BasicInfo": {
+                "name": "西藏大学",
+                "location": "西藏拉萨市江苏路36号西藏大学",
+                "follow": "376",
+                "official_website": "https://www.utibet.edu.cn/",
+                "admission_website": "http://zjc.utibet.edu.cn/bkzsxxw.htm",
+                "phone": "0891-6405900",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-542.dhtml",
+                "zsjz_digest": "",
+                "wx": "",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {
+                    "vote_num": "2252",
+                    "score": "3.7"
+                },
+                "environment_satisfaction": {
+                    "vote_num": "2548",
+                    "score": "3.9"
+                },
+                "life_satisfaction": {
+                    "vote_num": "2018",
+                    "score": "3.3"
+                },
+                "major_satisfaction": {
+                    "畜牧兽医": {
+                        "satisfication_score": "4.6",
+                        "voters": "49"
+                    },
+                    "水利水电工程": {
+                        "satisfication_score": "4.5",
+                        "voters": "48"
+                    },
+                    "草业科学": {
+                        "satisfication_score": "4.4",
+                        "voters": "64"
+                    },
+                    "会计学": {
+                        "satisfication_score": "4.4",
+                        "voters": "28"
+                    },
+                    "化学": {
+                        "satisfication_score": "4.4",
+                        "voters": "22"
+                    },
+                    "地理科学": {
+                        "satisfication_score": "4.3",
+                        "voters": "24"
+                    },
+                    "动物医学": {
+                        "satisfication_score": "4.3",
+                        "voters": "52"
+                    },
+                    "中国少数民族语言文学": {
+                        "satisfication_score": "4.3",
+                        "voters": "55"
+                    },
+                    "舞蹈表演": {
+                        "satisfication_score": "4.3",
+                        "voters": "19"
+                    },
+                    "音乐学": {
+                        "satisfication_score": "4.3",
+                        "voters": "36"
+                    }
+                },
+                "major_recommand": {
+                    "经济学": {
+                        "recommand_score": "4.3",
+                        "recommand_voters": "171"
+                    },
+                    "中国少数民族语言文学": {
+                        "recommand_score": "4.5",
+                        "recommand_voters": "170"
+                    },
+                    "法学": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "170"
+                    },
+                    "土木工程": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "127"
+                    },
+                    "水利水电工程": {
+                        "recommand_score": "4.3",
+                        "recommand_voters": "95"
+                    },
+                    "教育学": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "89"
+                    },
+                    "临床医学": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "80"
+                    },
+                    "计算机科学与技术": {
+                        "recommand_score": "4.5",
+                        "recommand_voters": "80"
+                    },
+                    "生态学": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "64"
+                    },
+                    "汉语言文学": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "61"
+                    }
+                },
+                "major_prefer": {
+                    "动物医学": {
+                        "recommand_score": "4.9",
+                        "recommand_voters": "29"
+                    },
+                    "农业电气化": {
+                        "recommand_score": "4.9",
+                        "recommand_voters": "12"
+                    },
+                    "护理学": {
+                        "recommand_score": "4.8",
+                        "recommand_voters": "37"
+                    },
+                    "生态学": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "64"
+                    },
+                    "交通运输": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "53"
+                    },
+                    "教育技术学": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "36"
+                    },
+                    "信息工程": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "35"
+                    },
+                    "通信工程": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "35"
+                    },
+                    "音乐学": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "23"
+                    },
+                    "公共事业管理": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "11"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "西藏民族大学",
+            "BasicInfo": {
+                "name": "西藏民族大学",
+                "location": "渭城校区：陕西省咸阳市渭城区文汇东路6号（本科招生办所在校区）",
+                "follow": "91",
+                "official_website": "https://www.xzmu.edu.cn/",
+                "admission_website": "https://zs.xzmu.edu.cn/",
+                "phone": "029-33755799；33755035；33755427",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-543.dhtml",
+                "zsjz_digest": "",
+                "wx": "",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {
+                    "vote_num": "1613",
+                    "score": "4.2"
+                },
+                "environment_satisfaction": {
+                    "vote_num": "1867",
+                    "score": "4.4"
+                },
+                "life_satisfaction": {
+                    "vote_num": "1547",
+                    "score": "3.9"
+                },
+                "major_satisfaction": {
+                    "思想政治教育": {
+                        "satisfication_score": "4.9",
+                        "voters": "37"
+                    },
+                    "学前教育": {
+                        "satisfication_score": "4.8",
+                        "voters": "28"
+                    },
+                    "体育教育": {
+                        "satisfication_score": "4.8",
+                        "voters": "29"
+                    },
+                    "小学教育": {
+                        "satisfication_score": "4.7",
+                        "voters": "12"
+                    },
+                    "护理学": {
+                        "satisfication_score": "4.7",
+                        "voters": "31"
+                    },
+                    "新闻学": {
+                        "satisfication_score": "4.6",
+                        "voters": "81"
+                    },
+                    "财务管理": {
+                        "satisfication_score": "4.6",
+                        "voters": "25"
+                    },
+                    "汉语言文学": {
+                        "satisfication_score": "4.6",
+                        "voters": "162"
+                    },
+                    "广播电视学": {
+                        "satisfication_score": "4.6",
+                        "voters": "19"
+                    }
+                },
+                "major_recommand": {
+                    "法学": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "198"
+                    },
+                    "临床医学": {
+                        "recommand_score": "4.5",
+                        "recommand_voters": "153"
+                    },
+                    "汉语言文学": {
+                        "recommand_score": "4.5",
+                        "recommand_voters": "134"
+                    },
+                    "会计学": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "121"
+                    },
+                    "英语": {
+                        "recommand_score": "4.2",
+                        "recommand_voters": "113"
+                    },
+                    "哲学": {
+                        "recommand_score": "4.0",
+                        "recommand_voters": "80"
+                    },
+                    "教育学": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "71"
+                    },
+                    "民族学": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "65"
+                    },
+                    "金融学": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "63"
+                    },
+                    "新闻学": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "59"
+                    }
+                },
+                "major_prefer": {
+                    "土木工程": {
+                        "recommand_score": "5.0",
+                        "recommand_voters": "13"
+                    },
+                    "广告学": {
+                        "recommand_score": "4.9",
+                        "recommand_voters": "13"
+                    },
+                    "数字媒体技术": {
+                        "recommand_score": "4.9",
+                        "recommand_voters": "7"
+                    },
+                    "通信工程": {
+                        "recommand_score": "4.8",
+                        "recommand_voters": "33"
+                    },
+                    "财务管理": {
+                        "recommand_score": "4.8",
+                        "recommand_voters": "21"
+                    },
+                    "电子信息科学与技术": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "42"
+                    },
+                    "学前教育": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "39"
+                    },
+                    "小学教育": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "27"
+                    },
+                    "应用心理学": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "27"
+                    },
+                    "网络工程": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "11"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "西藏藏医药大学",
+            "BasicInfo": {
+                "name": "西藏藏医药大学",
+                "location": "西藏自治区拉萨市当热中路10号",
+                "follow": "31",
+                "official_website": "http://www.ttmc.edu.cn/",
+                "admission_website": "http://www.ttmc.edu.cn/zsjy/zsxx.htm",
+                "phone": "0891-6388340",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-544.dhtml",
+                "zsjz_digest": "",
+                "wx": "",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {
+                    "vote_num": "101",
+                    "score": "3.9"
+                },
+                "environment_satisfaction": {
+                    "vote_num": "109",
+                    "score": "3.9"
+                },
+                "life_satisfaction": {
+                    "vote_num": "85",
+                    "score": "3.7"
+                },
+                "major_satisfaction": {
+                    "藏医学": {
+                        "satisfication_score": "4.6",
+                        "voters": "43"
+                    },
+                    "藏药学": {
+                        "satisfication_score": "4.3",
+                        "voters": "24"
+                    }
+                },
+                "major_recommand": {
+                    "藏医学": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "67"
+                    },
+                    "藏药学": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "46"
+                    }
+                },
+                "major_prefer": {
+                    "护理学": {
+                        "recommand_score": "4.8",
+                        "recommand_voters": "6"
+                    },
+                    "藏医学": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "67"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "西藏警官高等专科学校",
+            "BasicInfo": {
+                "name": "西藏警官高等专科学校",
+                "location": "西藏自治区拉萨市城关区桑伊路1号",
+                "follow": "82",
+                "official_website": "http://gat.xizang.gov.cn/",
+                "admission_website": "http://xzjx.xzeduc.cn/link/page/id/21114",
+                "phone": "0891-6370259",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-540.dhtml",
+                "zsjz_digest": "",
+                "wx": "微信号：-",
+                "wxshipin": "无：无"
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {
+                    "vote_num": "315",
+                    "score": "3.8"
+                },
+                "environment_satisfaction": {
+                    "vote_num": "368",
+                    "score": "3.8"
+                },
+                "life_satisfaction": {
+                    "vote_num": "282",
+                    "score": "3.2"
+                },
+                "major_satisfaction": {},
+                "major_recommand": {
+                    "刑事侦查": {
+                        "recommand_score": "5.0",
+                        "recommand_voters": "11"
+                    },
+                    "治安管理": {
+                        "recommand_score": "5.0",
+                        "recommand_voters": "7"
+                    }
+                },
+                "major_prefer": {
+                    "刑事侦查": {
+                        "recommand_score": "5.0",
+                        "recommand_voters": "11"
+                    },
+                    "治安管理": {
+                        "recommand_score": "5.0",
+                        "recommand_voters": "7"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "拉萨师范高等专科学校",
+            "BasicInfo": {
+                "name": "拉萨师范高等专科学校",
+                "location": "西藏自治区拉萨市娘热路43号",
+                "follow": "36",
+                "official_website": "http://www.xzlssf.org/",
+                "admission_website": "http://www.xzlssf.org/",
+                "phone": "08916822775",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-57309249.dhtml",
+                "zsjz_digest": "",
+                "wx": "微信号：-",
+                "wxshipin": "无：无"
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {
+                    "vote_num": "294",
+                    "score": "4.1"
+                },
+                "environment_satisfaction": {
+                    "vote_num": "432",
+                    "score": "4.2"
+                },
+                "life_satisfaction": {
+                    "vote_num": "281",
+                    "score": "3.8"
+                },
+                "major_satisfaction": {
+                    "美术教育": {
+                        "satisfication_score": "4.8",
+                        "voters": "56"
+                    },
+                    "体育教育": {
+                        "satisfication_score": "4.7",
+                        "voters": "27"
+                    },
+                    "学前教育": {
+                        "satisfication_score": "4.7",
+                        "voters": "120"
+                    },
+                    "小学数学教育": {
+                        "satisfication_score": "4.7",
+                        "voters": "52"
+                    },
+                    "小学语文教育": {
+                        "satisfication_score": "4.3",
+                        "voters": "43"
+                    },
+                    "小学英语教育": {
+                        "satisfication_score": "4.3",
+                        "voters": "12"
+                    },
+                    "小学道德与法治教育": {
+                        "satisfication_score": "4.3",
+                        "voters": "18"
+                    },
+                    "音乐教育": {
+                        "satisfication_score": "4.3",
+                        "voters": "41"
+                    },
+                    "现代教育技术": {
+                        "satisfication_score": "4.0",
+                        "voters": "23"
+                    },
+                    "旅游管理": {
+                        "satisfication_score": "3.9",
+                        "voters": "55"
+                    }
+                },
+                "major_recommand": {
+                    "小学语文教育": {
+                        "recommand_score": "4.5",
+                        "recommand_voters": "54"
+                    },
+                    "小学数学教育": {
+                        "recommand_score": "4.5",
+                        "recommand_voters": "49"
+                    },
+                    "学前教育": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "47"
+                    },
+                    "体育教育": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "45"
+                    }
+                },
+                "major_prefer": {
+                    "小学科学教育": {
+                        "recommand_score": "5.0",
+                        "recommand_voters": "9"
+                    },
+                    "学前教育": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "47"
+                    },
+                    "小学道德与法治教育": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "21"
+                    },
+                    "小学教育": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "12"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "西藏职业技术学院",
+            "BasicInfo": {
+                "name": "西藏职业技术学院",
+                "location": "西藏职业技术学院西校区（主校区）：西藏自治区拉萨市城关区金珠中路金农巷5号 西藏职业技术学院北校区：西藏职业技术学院拉萨市城关区夺底路34号",
+                "follow": "25",
+                "official_website": "https://www.xzgzy.cn/",
+                "admission_website": "https://www.xzgzy.cn/zsjyw/",
+                "phone": "0891-6805103",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-57308187.dhtml",
+                "zsjz_digest": "",
+                "wx": "微信号：TVTC2006",
+                "wxshipin": "抖音：西藏职业技术学院招生就业处"
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {
+                    "vote_num": "550",
+                    "score": "3.8"
+                },
+                "environment_satisfaction": {
+                    "vote_num": "780",
+                    "score": "4.0"
+                },
+                "life_satisfaction": {
+                    "vote_num": "468",
+                    "score": "3.7"
+                },
+                "major_satisfaction": {
+                    "供用电技术": {
+                        "satisfication_score": "4.6",
+                        "voters": "18"
+                    },
+                    "林业技术": {
+                        "satisfication_score": "4.5",
+                        "voters": "30"
+                    },
+                    "大数据与会计": {
+                        "satisfication_score": "4.5",
+                        "voters": "33"
+                    },
+                    "市场营销": {
+                        "satisfication_score": "4.4",
+                        "voters": "19"
+                    },
+                    "计算机网络技术": {
+                        "satisfication_score": "4.4",
+                        "voters": "42"
+                    },
+                    "动物防疫与检疫": {
+                        "satisfication_score": "4.3",
+                        "voters": "27"
+                    },
+                    "作物生产与经营管理": {
+                        "satisfication_score": "4.3",
+                        "voters": "26"
+                    },
+                    "发电厂及电力系统": {
+                        "satisfication_score": "4.3",
+                        "voters": "47"
+                    },
+                    "建筑工程技术": {
+                        "satisfication_score": "4.2",
+                        "voters": "42"
+                    },
+                    "计算机应用技术": {
+                        "satisfication_score": "4.1",
+                        "voters": "56"
+                    }
+                },
+                "major_recommand": {
+                    "计算机网络技术": {
+                        "recommand_score": "4.2",
+                        "recommand_voters": "70"
+                    },
+                    "计算机应用技术": {
+                        "recommand_score": "4.1",
+                        "recommand_voters": "64"
+                    },
+                    "畜牧兽医": {
+                        "recommand_score": "3.9",
+                        "recommand_voters": "63"
+                    },
+                    "作物生产与经营管理": {
+                        "recommand_score": "3.4",
+                        "recommand_voters": "51"
+                    },
+                    "大数据与会计": {
+                        "recommand_score": "4.3",
+                        "recommand_voters": "43"
+                    },
+                    "发电厂及电力系统": {
+                        "recommand_score": "4.1",
+                        "recommand_voters": "41"
+                    },
+                    "园艺技术": {
+                        "recommand_score": "4.2",
+                        "recommand_voters": "40"
+                    },
+                    "林业技术": {
+                        "recommand_score": "3.7",
+                        "recommand_voters": "36"
+                    },
+                    "建筑工程技术": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "30"
+                    }
+                },
+                "major_prefer": {
+                    "建筑工程技术": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "30"
+                    },
+                    "酒店管理与数字化运营": {
+                        "recommand_score": "4.5",
+                        "recommand_voters": "13"
+                    },
+                    "供用电技术": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "26"
+                    },
+                    "大数据与会计": {
+                        "recommand_score": "4.3",
+                        "recommand_voters": "43"
+                    },
+                    "现代物流管理": {
+                        "recommand_score": "4.3",
+                        "recommand_voters": "11"
+                    },
+                    "计算机网络技术": {
+                        "recommand_score": "4.2",
+                        "recommand_voters": "70"
+                    },
+                    "园艺技术": {
+                        "recommand_score": "4.2",
+                        "recommand_voters": "40"
+                    },
+                    "市场营销": {
+                        "recommand_score": "4.2",
+                        "recommand_voters": "18"
+                    },
+                    "计算机应用技术": {
+                        "recommand_score": "4.1",
+                        "recommand_voters": "64"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "西安健康工程职业学院",
+            "BasicInfo": {
+                "name": "西安健康工程职业学院",
+                "location": "地址：陕西省西安市高新区环山旅游路草堂北路1号 邮编：710311",
+                "follow": "19",
+                "official_website": "https://www.xajkgc.cn/",
+                "admission_website": "https://www.xajkgc.cn/",
+                "phone": "029-68065141、68065142",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-1978.dhtml",
+                "zsjz_digest": "",
+                "wx": "微信号：jkgc1999",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {},
+                "environment_satisfaction": {},
+                "life_satisfaction": {},
+                "major_satisfaction": {
+                    "建筑工程技术": {
+                        "satisfication_score": "4.3",
+                        "voters": "17"
+                    },
+                    "大数据与会计": {
+                        "satisfication_score": "3.4",
+                        "voters": "15"
+                    }
+                },
+                "major_recommand": {
+                    "建筑工程技术": {
+                        "recommand_score": "4.3",
+                        "recommand_voters": "18"
+                    },
+                    "计算机网络技术": {
+                        "recommand_score": "3.6",
+                        "recommand_voters": "12"
+                    },
+                    "健康管理": {
+                        "recommand_score": "3.5",
+                        "recommand_voters": "11"
+                    }
+                },
+                "major_prefer": {
+                    "建筑工程技术": {
+                        "recommand_score": "4.3",
+                        "recommand_voters": "18"
+                    },
+                    "市场营销": {
+                        "recommand_score": "4.2",
+                        "recommand_voters": "5"
+                    },
+                    "大数据与会计": {
+                        "recommand_score": "4.0",
+                        "recommand_voters": "8"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "陆军边海防学院",
+            "BasicInfo": {
+                "name": "陆军边海防学院",
+                "location": "陕西省西安市长安区长安大道南延1号",
+                "follow": "100",
+                "official_website": "http://school.zsjyw.cn/ljbh/",
+                "admission_website": "http://school.zsjyw.cn/ljbh/",
+                "phone": "029-84722540，02984722535",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-1980488018.dhtml",
+                "zsjz_digest": "",
+                "wx": "微信号：陆军边海防学院",
+                "wxshipin": "腾讯微视：陆军边海防学院"
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {},
+                "environment_satisfaction": {},
+                "life_satisfaction": {},
+                "major_satisfaction": {},
+                "major_recommand": {},
+                "major_prefer": {}
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "空军工程大学",
+            "BasicInfo": {
+                "name": "空军工程大学",
+                "location": "陕西省西安市长乐东路甲字1号 邮编：710051",
+                "follow": "580",
+                "official_website": "http://www.afeu.cn:1000/",
+                "admission_website": "http://www.afeu.cn:1000/",
+                "phone": "029-87964322",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-1551.dhtml",
+                "zsjz_digest": "",
+                "wx": "",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {},
+                "environment_satisfaction": {},
+                "life_satisfaction": {},
+                "major_satisfaction": {},
+                "major_recommand": {},
+                "major_prefer": {}
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "火箭军工程大学",
+            "BasicInfo": {
+                "name": "火箭军工程大学",
+                "location": "地址：陕西省西安市灞桥区同心路2号 邮编：710025",
+                "follow": "232",
+                "official_website": "http://www.epgc.mil.cn/",
+                "admission_website": "http://www.epgc.mil.cn/",
+                "phone": "029-84742045",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-1980498243.dhtml",
+                "zsjz_digest": "",
+                "wx": "",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {},
+                "environment_satisfaction": {},
+                "life_satisfaction": {},
+                "major_satisfaction": {},
+                "major_recommand": {},
+                "major_prefer": {}
+            }
+        }
+    }
+]

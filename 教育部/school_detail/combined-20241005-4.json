@@ -1,0 +1,565 @@
+[
+    {
+        "SchoolInfo": {
+            "schoolName": "武警工程大学",
+            "BasicInfo": {
+                "name": "武警工程大学",
+                "location": "-",
+                "follow": "371",
+                "official_website": "https://www.nudt.edu.cn/",
+                "admission_website": "https://www.nudt.edu.cn/",
+                "phone": "029-84563227",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-1550.dhtml",
+                "zsjz_digest": "",
+                "wx": "",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {},
+                "environment_satisfaction": {},
+                "life_satisfaction": {},
+                "major_satisfaction": {},
+                "major_recommand": {},
+                "major_prefer": {}
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "天水师范学院",
+            "BasicInfo": {
+                "name": "天水师范学院",
+                "location": "甘肃省天水市秦州区藉河南路",
+                "follow": "192",
+                "official_website": "https://www.tsnu.edu.cn/",
+                "admission_website": "https://bkzs.tsnu.edu.cn/",
+                "phone": "0938-8363669",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-579.dhtml",
+                "zsjz_digest": "",
+                "wx": "",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {
+                    "vote_num": "2543",
+                    "score": "3.3"
+                },
+                "environment_satisfaction": {
+                    "vote_num": "3409",
+                    "score": "3.7"
+                },
+                "life_satisfaction": {
+                    "vote_num": "2669",
+                    "score": "2.6"
+                },
+                "major_satisfaction": {
+                    "电气工程及其自动化": {
+                        "satisfication_score": "4.7",
+                        "voters": "10"
+                    },
+                    "文物与博物馆学": {
+                        "satisfication_score": "4.2",
+                        "voters": "56"
+                    },
+                    "学前教育": {
+                        "satisfication_score": "4.2",
+                        "voters": "49"
+                    },
+                    "运动训练": {
+                        "satisfication_score": "4.2",
+                        "voters": "37"
+                    },
+                    "音乐学": {
+                        "satisfication_score": "4.1",
+                        "voters": "39"
+                    },
+                    "地理科学": {
+                        "satisfication_score": "4.1",
+                        "voters": "70"
+                    },
+                    "网络工程": {
+                        "satisfication_score": "4.1",
+                        "voters": "18"
+                    },
+                    "法学": {
+                        "satisfication_score": "4.0",
+                        "voters": "73"
+                    },
+                    "机械设计制造及其自动化": {
+                        "satisfication_score": "4.0",
+                        "voters": "91"
+                    },
+                    "财务管理": {
+                        "satisfication_score": "3.9",
+                        "voters": "95"
+                    }
+                },
+                "major_recommand": {
+                    "汉语言文学": {
+                        "recommand_score": "4.5",
+                        "recommand_voters": "360"
+                    },
+                    "数学与应用数学": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "235"
+                    },
+                    "土木工程": {
+                        "recommand_score": "4.3",
+                        "recommand_voters": "212"
+                    },
+                    "英语": {
+                        "recommand_score": "4.3",
+                        "recommand_voters": "206"
+                    },
+                    "小学教育": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "195"
+                    },
+                    "历史学": {
+                        "recommand_score": "4.3",
+                        "recommand_voters": "190"
+                    },
+                    "法学": {
+                        "recommand_score": "4.2",
+                        "recommand_voters": "148"
+                    },
+                    "学前教育": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "146"
+                    },
+                    "思想政治教育": {
+                        "recommand_score": "4.2",
+                        "recommand_voters": "127"
+                    },
+                    "体育教育": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "119"
+                    }
+                },
+                "major_prefer": {
+                    "商务英语": {
+                        "recommand_score": "5.0",
+                        "recommand_voters": "5"
+                    },
+                    "网络与新媒体": {
+                        "recommand_score": "4.9",
+                        "recommand_voters": "8"
+                    },
+                    "教育学类": {
+                        "recommand_score": "4.8",
+                        "recommand_voters": "26"
+                    },
+                    "电气工程及其自动化": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "34"
+                    },
+                    "电子信息工程": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "29"
+                    },
+                    "食品质量与安全": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "20"
+                    },
+                    "工程造价": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "20"
+                    },
+                    "视觉传达设计": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "15"
+                    },
+                    "学前教育": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "146"
+                    },
+                    "地理科学": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "113"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "定西师范高等专科学校",
+            "BasicInfo": {
+                "name": "定西师范高等专科学校",
+                "location": "甘肃省定西市安定区永定西路13号",
+                "follow": "37",
+                "official_website": "",
+                "admission_website": "",
+                "phone": "-",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-918.dhtml",
+                "zsjz_digest": "",
+                "wx": "",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {
+                    "vote_num": "551",
+                    "score": "3.8"
+                },
+                "environment_satisfaction": {
+                    "vote_num": "673",
+                    "score": "3.7"
+                },
+                "life_satisfaction": {
+                    "vote_num": "503",
+                    "score": "3.5"
+                },
+                "major_satisfaction": {
+                    "音乐教育": {
+                        "satisfication_score": "4.6",
+                        "voters": "12"
+                    },
+                    "学前教育": {
+                        "satisfication_score": "4.3",
+                        "voters": "91"
+                    },
+                    "计算机网络技术": {
+                        "satisfication_score": "4.2",
+                        "voters": "11"
+                    },
+                    "小学英语教育": {
+                        "satisfication_score": "4.0",
+                        "voters": "91"
+                    },
+                    "美术教育": {
+                        "satisfication_score": "4.0",
+                        "voters": "17"
+                    },
+                    "小学数学教育": {
+                        "satisfication_score": "4.0",
+                        "voters": "129"
+                    },
+                    "小学语文教育": {
+                        "satisfication_score": "3.9",
+                        "voters": "129"
+                    },
+                    "中草药栽培与加工技术": {
+                        "satisfication_score": "3.4",
+                        "voters": "11"
+                    },
+                    "小学道德与法治教育": {
+                        "satisfication_score": "3.4",
+                        "voters": "22"
+                    },
+                    "动漫制作技术": {
+                        "satisfication_score": "3.1",
+                        "voters": "10"
+                    }
+                },
+                "major_recommand": {
+                    "小学数学教育": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "66"
+                    },
+                    "学前教育": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "60"
+                    },
+                    "小学语文教育": {
+                        "recommand_score": "4.3",
+                        "recommand_voters": "51"
+                    },
+                    "小学英语教育": {
+                        "recommand_score": "3.9",
+                        "recommand_voters": "38"
+                    },
+                    "计算机网络技术": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "30"
+                    },
+                    "小学道德与法治教育": {
+                        "recommand_score": "4.2",
+                        "recommand_voters": "25"
+                    },
+                    "护理": {
+                        "recommand_score": "4.1",
+                        "recommand_voters": "19"
+                    },
+                    "中草药栽培与加工技术": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "18"
+                    }
+                },
+                "major_prefer": {
+                    "康复治疗技术": {
+                        "recommand_score": "4.9",
+                        "recommand_voters": "11"
+                    },
+                    "计算机网络技术": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "30"
+                    },
+                    "动漫制作技术": {
+                        "recommand_score": "4.7",
+                        "recommand_voters": "16"
+                    },
+                    "学前教育": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "60"
+                    },
+                    "小学数学教育": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "66"
+                    },
+                    "中草药栽培与加工技术": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "18"
+                    },
+                    "软件技术": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "17"
+                    },
+                    "药学": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "16"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "定西职业技术学院",
+            "BasicInfo": {
+                "name": "定西职业技术学院",
+                "location": "-",
+                "follow": "-",
+                "official_website": "https://www.dxvtc.edu.cn/",
+                "admission_website": "https://www.dxvtc.edu.cn/",
+                "phone": "0932-2243678",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-5441452800.dhtml",
+                "zsjz_digest": "",
+                "wx": "",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {},
+                "environment_satisfaction": {},
+                "life_satisfaction": {},
+                "major_satisfaction": {},
+                "major_recommand": {},
+                "major_prefer": {}
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "青海大学昆仑学院",
+            "BasicInfo": {
+                "name": "青海大学昆仑学院",
+                "location": "地址：青海省西宁市城北区生物园区宁张路175号 邮编：810016",
+                "follow": "60",
+                "official_website": "",
+                "admission_website": "",
+                "phone": "-",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-1915.dhtml",
+                "zsjz_digest": "",
+                "wx": "",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {
+                    "vote_num": "581",
+                    "score": "3.2"
+                },
+                "environment_satisfaction": {
+                    "vote_num": "723",
+                    "score": "3.4"
+                },
+                "life_satisfaction": {
+                    "vote_num": "538",
+                    "score": "2.9"
+                },
+                "major_satisfaction": {
+                    "财务管理": {
+                        "satisfication_score": "4.5",
+                        "voters": "56"
+                    },
+                    "公共事业管理": {
+                        "satisfication_score": "4.2",
+                        "voters": "21"
+                    },
+                    "电气工程及其自动化": {
+                        "satisfication_score": "4.1",
+                        "voters": "112"
+                    },
+                    "会计学": {
+                        "satisfication_score": "4.1",
+                        "voters": "51"
+                    },
+                    "机械设计制造及其自动化": {
+                        "satisfication_score": "4.0",
+                        "voters": "23"
+                    },
+                    "经济学": {
+                        "satisfication_score": "3.9",
+                        "voters": "62"
+                    },
+                    "人力资源管理": {
+                        "satisfication_score": "3.9",
+                        "voters": "56"
+                    },
+                    "化学工程与工艺": {
+                        "satisfication_score": "3.8",
+                        "voters": "23"
+                    },
+                    "土木工程": {
+                        "satisfication_score": "3.6",
+                        "voters": "101"
+                    },
+                    "环境科学": {
+                        "satisfication_score": "3.6",
+                        "voters": "26"
+                    }
+                },
+                "major_recommand": {
+                    "电气工程及其自动化": {
+                        "recommand_score": "4.5",
+                        "recommand_voters": "137"
+                    },
+                    "土木工程": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "98"
+                    },
+                    "经济学": {
+                        "recommand_score": "3.9",
+                        "recommand_voters": "73"
+                    },
+                    "自动化": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "67"
+                    },
+                    "会计学": {
+                        "recommand_score": "4.2",
+                        "recommand_voters": "67"
+                    }
+                },
+                "major_prefer": {
+                    "电气工程及其自动化": {
+                        "recommand_score": "4.5",
+                        "recommand_voters": "137"
+                    },
+                    "土木工程": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "98"
+                    },
+                    "自动化": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "67"
+                    },
+                    "水利水电工程": {
+                        "recommand_score": "4.4",
+                        "recommand_voters": "62"
+                    },
+                    "食品科学与工程": {
+                        "recommand_score": "4.3",
+                        "recommand_voters": "13"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "新疆维吾尔医学专科学校",
+            "BasicInfo": {
+                "name": "新疆维吾尔医学专科学校",
+                "location": "新疆和田市北京西路370号",
+                "follow": "50",
+                "official_website": "http://www.xjumc.cn/",
+                "admission_website": "http://www.xjumc.cn/school/ins/info/id/4621/pid/58",
+                "phone": "0903-7820029",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-921.dhtml",
+                "zsjz_digest": "",
+                "wx": "",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {
+                    "vote_num": "276",
+                    "score": "3.8"
+                },
+                "environment_satisfaction": {
+                    "vote_num": "515",
+                    "score": "4.0"
+                },
+                "life_satisfaction": {
+                    "vote_num": "246",
+                    "score": "3.8"
+                },
+                "major_satisfaction": {
+                    "护理": {
+                        "satisfication_score": "4.5",
+                        "voters": "42"
+                    },
+                    "维医学": {
+                        "satisfication_score": "4.3",
+                        "voters": "98"
+                    },
+                    "康复治疗技术": {
+                        "satisfication_score": "4.3",
+                        "voters": "16"
+                    },
+                    "维药学": {
+                        "satisfication_score": "4.2",
+                        "voters": "52"
+                    },
+                    "医学检验技术": {
+                        "satisfication_score": "3.8",
+                        "voters": "49"
+                    }
+                },
+                "major_recommand": {
+                    "维医学": {
+                        "recommand_score": "4.5",
+                        "recommand_voters": "224"
+                    },
+                    "维药学": {
+                        "recommand_score": "4.5",
+                        "recommand_voters": "142"
+                    }
+                },
+                "major_prefer": {
+                    "中药学": {
+                        "recommand_score": "4.8",
+                        "recommand_voters": "17"
+                    },
+                    "医学影像技术": {
+                        "recommand_score": "4.6",
+                        "recommand_voters": "24"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "SchoolInfo": {
+            "schoolName": "中国石油大学(北京)克拉玛依校区",
+            "BasicInfo": {
+                "name": "中国石油大学(北京)克拉玛依校区",
+                "location": "克拉玛依校区：新疆维吾尔自治区克拉玛依市安定路355号，邮编：834000",
+                "follow": "286",
+                "official_website": "https://www.cupk.edu.cn/",
+                "admission_website": "https://www.cupk.edu.cn/bkzs/",
+                "phone": "0990-6633036",
+                "zsjz_link": "https://gaokao.chsi.com.cn/zsgs/zhangcheng/listZszc--schId-1670654056.dhtml",
+                "zsjz_digest": "",
+                "wx": "",
+                "wxshipin": ""
+            },
+            "Satisfaction": {
+                "overall_satisfaction": {},
+                "environment_satisfaction": {},
+                "life_satisfaction": {},
+                "major_satisfaction": {},
+                "major_recommand": {},
+                "major_prefer": {}
+            }
+        }
+    }
+]
