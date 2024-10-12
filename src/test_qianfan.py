@@ -5,8 +5,8 @@ import qianfan
 # 通过环境变量初始化认证信息
 # 方式一：【推荐】使用安全认证AK/SK鉴权
 # 替换下列示例中参数，安全认证Access Key替换your_iam_ak，Secret Key替换your_iam_sk，如何获取请查看https://cloud.baidu.com/doc/Reference/s/9jwvz2egb
-os.environ["QIANFAN_ACCESS_KEY"] = "cd8b9ae5abc748c7a69066ab5c264376"
-os.environ["QIANFAN_SECRET_KEY"] = "e384b45b9d974721a0f5d1c1e3dd22ab"
+#os.environ["QIANFAN_ACCESS_KEY"] = "cd8b9ae5abc748c7a69066ab5c264376"
+#os.environ["QIANFAN_SECRET_KEY"] = "e384b45b9d974721a0f5d1c1e3dd22ab"
 
 # 方式二：【不推荐】使用应用AK/SK鉴权
 # 替换下列示例中参数，将应用API_Key、应用Secret key值替换为真实值
