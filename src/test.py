@@ -1,13 +1,23 @@
-import pandas as pd
-import json
+from openpyxl import load_workbook
 
-with open('教育部\\1.json', 'r', encoding='utf-8') as file:
-    data = json.load(file)
-    
-rows = []
-for school, majors in data.items():
-    for major, grade in majors.items():
-        rows.append([school, major, grade])
+def convert_number_to_string(file_path):
+    # 加载工作簿
+    wb = load_workbook(file_path)
 
-df = pd.DataFrame(rows, columns=["学校名称", "专业", "评级"])
-df.to_excel("教育部\第五次评价.xlsx", index=False)
+    # 遍历所有工作表
+    for sheet_name in wb.sheetnames:
+        sheet = wb[sheet_name]
+
+        # 遍历所有行和列
+        for row in sheet.iter_rows():
+            for cell in row:
+                # 如果单元格的值是数值类型，则将其转换为字符串类型
+                if isinstance(cell.value, (int, float)):
+                    cell.value = str(cell.value)
+
+    # 保存修改后的工作簿
+    wb.save(file_path)
+
+# 调用函数进行转换
+file_path = '教育部\\2024高校本科专业目录.xlsx'  # 替换为实际的文件路径
+convert_number_to_string(file_path)
