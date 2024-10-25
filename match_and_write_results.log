@@ -1,0 +1,5 @@
+ERROR:root:无法加载目标文件 2024高考\2024招生专业评估.xlsx: 'str' object has no attribute 'row'
+ERROR:root:无法加载目标文件 2024高考\2024招生专业评估.xlsx: 'str' object has no attribute 'row'
+INFO:root:加载评估结果文件 
+INFO:root:加载目标文件
+ERROR:root:无法加载目标文件 2024高考\2024招生专业评估.xlsx: 'str' object has no attribute 'row'

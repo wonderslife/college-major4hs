@@ -1,46 +1,58 @@
-from openpyxl import load_workbook
 import openpyxl
+import logging
 
-def split_professions(file_path):
-    # 加载工作簿
-    wb = load_workbook(file_path)
-    sheet = wb.active
+# 配置日志记录
+logging.basicConfig(level=logging.INFO)
 
-    # 用于存储拆分后的所有行数据
-    new_rows = []
+def match_and_write_results(source_file, target_file):
+    # 加载评估结果文件
+    try:
+        wb_source = openpyxl.load_workbook(source_file)
+        sheet_source = wb_source.active
+        logging.info("加载评估结果文件 ")
+    except Exception as e:
+        logging.error(f"无法加载评估结果文件 {source_file}: {e}")
+        return
 
-    # 遍历每一行
-    for row in sheet.iter_rows():
-        # 假设包含专业代码及名称的列名为"包含专业代码及名称"，你可以根据实际情况修改
-        profession_column_name = "包含专业代码及名称"
-        column_index = None
-        for column in sheet.columns:
-            if column[0].value == profession_column_name:
-                column_index = column[0].column
-                break
-            if column_index is not None:
-                # 在此处使用列索引进行操作
-                if row[column_index] is not None:
-            # 你的现有代码
-                    profession_values = row[sheet.columns[profession_column_name]].value.split(';')
-                    for profession_value in profession_values:
-                        new_row = []
-                        for cell in row:
-                            new_row.append(cell.value)
-                        new_row[sheet.columns[profession_column_name].number] = profession_value
-                        new_rows.append(new_row)
+    # 加载目标文件，并将数据存储在字典中
+    target_data = {}
+    try:
+        wb_target = openpyxl.load_workbook(target_file)
+        sheet_target = wb_target.active
+        logging.info("加载目标文件")
+        for index,row in sheet_target.iter_rows(min_row=2, values_only=True):
+            school_name = row[2]
+            major_code = row[3]
+            target_data[(school_name, major_code)] = index
+    except Exception as e:
+        logging.error(f"无法加载目标文件 {target_file}: {e}")
+        return
 
-    # 创建新的工作簿来存储拆分后的结果
-    new_wb = openpyxl.Workbook()
-    new_sheet = new_wb.active
+    # 遍历评估结果文件的每一行
+    for row in sheet_source.iter_rows(min_row=2, values_only=True):
+        school_name = row[0]
+        major_code = row[1]  # 学科代码
+        evaluation_result = row[3]  # 评估结果
 
-    # 将拆分后的行数据写入新的工作簿
-    for row in new_rows:
-        new_sheet.append(row)
+        # 在目标文件中查找匹配的学校和专业
+        found = False
+        key = (school_name, major_code)
+        if key in target_data:
+            target_row_index = target_data[key]
+            # 将评估结果写入目标文件的第9列
+            sheet_target.cell(row=target_row_index, column=9, value=evaluation_result)
+            found = True
+            logging.info(f"找到匹配的学校和专业: 学校 {school_name}, 专业代码 {major_code}, 评估 {evaluation_result}")
+        else:
+            logging.warning(f"未找到匹配的学校和专业: 学校 {school_name}, 专业代码 {major_code}")
 
-    # 保存新的工作簿
-    new_wb.save('split_professions.xlsx')
+    # 保存修改后的目标文件
+    try:
+        wb_target.save(target_file)
+    except Exception as e:
+        logging.error(f"保存目标文件 {target_file} 时出错: {e}")
 
-file_path = '教育部\\2024高校本科专业目录.xlsx'
-
-split_professions(file_path)
+if __name__ == "__main__":
+    source_file = "教育部\\4.5_evaluation.xlsx"
+    target_file = "2024高考\\2024招生专业评估.xlsx"
+    match_and_write_results(source_file, target_file)
