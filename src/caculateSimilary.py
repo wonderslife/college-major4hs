@@ -26,9 +26,9 @@ def jaccard_similarity(str1, str2):
     
     return intersection / union if union != 0 else 0
 
-str1_orginal = "管理科学与工程类(120102-信息管理与信息系统;120105-工程造价;120103-工程管理)"
+str1_orginal = "理科试验班类(理科基础类专业)(数学类) "
 str1 = re.sub(r'\d+-', '', str1_orginal)# 使用正则表达式去掉数字和横线
-str2_original = "管理科学与工程类(信息管理与信息系统、工程管理、工程造价)"
+str2_original = "理科试验班类(数学类;物理学类;天文学类;电子信息类;计算机类;化学类;环境科学与工程类;环境科学;地质学类;地球物理学类;生物科学类;文物保护技术)"
 str2 = re.sub(r'\d+-', '', str2_original)
 similarity = jaccard_similarity(str1, str2)
 print(f"Jaccard 相似度: {similarity:.2f}")
