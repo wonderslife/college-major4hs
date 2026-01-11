@@ -477,7 +477,7 @@ function displayVolunteers(volunteers) {
         }
         
         // 生成院校链接
-        const schoolLink = `<a href="javascript:void(0)" onclick="openUniversityAnalysis('${v.school_name}', '${v.major_name}', '${v.avg_rank_2025 || ''}')">${v.school_name}</a>`;
+        const schoolLink = `<a href="javascript:void(0)" onclick="openUniversityAnalysis('${v.school_name}', '${v.major_name}', '${v.avg_rank_2025 || ''}', event)">${v.school_name}</a>`;
         
         return `
         <tr draggable="true" data-volunteer-id="${v.id}" class="volunteer-row">
@@ -1383,7 +1383,13 @@ function getCategoryBadgeClass(category) {
 }
 
 // 打开院校分析页面
-function openUniversityAnalysis(schoolName, majorName = '', rank = '') {
+function openUniversityAnalysis(schoolName, majorName = '', rank = '', event) {
+    // 阻止事件冒泡，防止触发父元素的点击事件
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    
     // 保存学校信息到sessionStorage，在院校分析页面中使用
     const schoolInfo = {
         schoolName: schoolName,
