@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="hero-section text-center py-5">
+            <h1 class="display-4 fw-bold mb-3">
+                <i class="bi bi-graph-up"></i> 高校招生数据分析系统
+            </h1>
+            <p class="lead text-muted mb-4">
+                全面分析院校投档分数线，智能推荐适合的专业和院校
+            </p>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a href="/dashboard" class="btn btn-primary btn-lg px-4 gap-3">
+                    <i class="bi bi-speedometer2"></i> 查看数据看板
+                </a>
+                <a href="/search" class="btn btn-outline-primary btn-lg px-4">
+                    <i class="bi bi-search"></i> 开始搜索
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 统计卡片 -->
+<div class="row g-4 mb-5">
+    <div class="col-12">
+        <div class="alert alert-info d-flex align-items-center" role="alert">
+            <i class="bi bi-info-circle me-2 fs-5"></i>
+            <div>
+                <strong>数据来源：</strong>当前统计基于2025年投档分数线数据
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-5" id="stats-container">
+    <div class="col-6 col-md-3">
+        <div class="card stat-card text-center py-4">
+            <i class="bi bi-file-earmark-text fs-2 mb-2"></i>
+            <div class="stat-value" id="total-records">-</div>
+            <div class="stat-label">数据记录</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card text-center py-4" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <i class="bi bi-building fs-2 mb-2"></i>
+            <div class="stat-value" id="universities-count">-</div>
+            <div class="stat-label">院校数量</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card text-center py-4" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <i class="bi bi-book fs-2 mb-2"></i>
+            <div class="stat-value" id="majors-count">-</div>
+            <div class="stat-label">专业数量</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card text-center py-4" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+            <i class="bi bi-trophy fs-2 mb-2"></i>
+            <div class="stat-value" id="avg-score">-</div>
+            <div class="stat-label">平均投档分</div>
+        </div>
+    </div>
+</div>
+
+<!-- 功能介绍 -->
+<div class="row g-4 mb-5">
+    <div class="col-12 col-md-4">
+        <div class="card h-100 p-4">
+            <div class="card-body text-center">
+                <div class="icon-circle mb-3">
+                    <i class="bi bi-graph-up-arrow" style="font-size: 3rem; color: #667eea;"></i>
+                </div>
+                <h5 class="card-title">数据看板</h5>
+                <p class="card-text text-muted">
+                    可视化展示分数分布、位次分布等统计数据，直观了解整体情况
+                </p>
+                <a href="/dashboard" class="btn btn-outline-primary">
+                    查看详情 <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="card h-100 p-4">
+            <div class="card-body text-center">
+                <div class="icon-circle mb-3">
+                    <i class="bi bi-building-check" style="font-size: 3rem; color: #f5576c;"></i>
+                </div>
+                <h5 class="card-title">院校分析</h5>
+                <p class="card-text text-muted">
+                    查看各院校的投档分数线、专业设置、排名情况等多维度信息
+                </p>
+                <a href="/university" class="btn btn-outline-primary">
+                    查看详情 <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="card h-100 p-4">
+            <div class="card-body text-center">
+                <div class="icon-circle mb-3">
+                    <i class="bi bi-book-half" style="font-size: 3rem; color: #00f2fe;"></i>
+                </div>
+                <h5 class="card-title">专业分析</h5>
+                <p class="card-text text-muted">
+                    分析热门专业、专业对比、薪资预测等信息，辅助专业选择
+                </p>
+                <a href="/major" class="btn btn-outline-primary">
+                    查看详情 <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="card h-100 p-4">
+            <div class="card-body text-center">
+                <div class="icon-circle mb-3">
+                    <i class="bi bi-clock-history" style="font-size: 3rem; color: #f093fb;"></i>
+                </div>
+                <h5 class="card-title">历史分析</h5>
+                <p class="card-text text-muted">
+                    基于2023-2025三年数据,分析录取趋势、对比院校专业
+                </p>
+                <a href="/history" class="btn btn-outline-primary">
+                    查看详情 <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="card h-100 p-4">
+            <div class="card-body text-center">
+                <div class="icon-circle mb-3">
+                    <i class="bi bi-magic" style="font-size: 3rem; color: #43e97b;"></i>
+                </div>
+                <h5 class="card-title">位次预测</h5>
+                <p class="card-text text-muted">
+                    基于多算法模型预测2026年院校和专业录取位次,智能辅助志愿填报
+                </p>
+                <a href="/prediction" class="btn btn-outline-primary">
+                    查看详情 <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="card h-100 p-4">
+            <div class="card-body text-center">
+                <div class="icon-circle mb-3">
+                    <i class="bi bi-list-check" style="font-size: 3rem; color: #ff6b6b;"></i>
+                </div>
+                <h5 class="card-title">志愿填报</h5>
+                <p class="card-text text-muted">
+                    根据高考成绩和位次,智能推荐120个平行志愿,提供录取概率评估
+                </p>
+                <a href="/volunteer" class="btn btn-outline-primary">
+                    查看详情 <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 快速搜索 -->
+<div class="row mb-6">
+    <div class="col-12">
+        <div class="card p-5">
+            <h4 class="mb-4 text-center">
+                <i class="bi bi-search"></i> 快速搜索
+            </h4>
+            <form id="quick-search-form" class="row g-4 align-items-center justify-content-center">
+                <div class="col-12 col-md-7">
+                    <input type="text" class="form-control form-control-lg" 
+                           id="search-keyword" placeholder="输入院校名称或专业名称..." style="border-radius: 12px; border: 2px solid #e9ecef;">
+                </div>
+                <div class="col-12 col-md-3 mt-3 mt-md-0">
+                    <button type="submit" class="btn btn-primary btn-lg w-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 12px; padding: 12px 24px; font-weight: 600;">
+                        <i class="bi bi-search"></i> 搜索
+                    </button>
+                </div>
+            </form>
+            <div class="mt-4 text-center">
+                <h6 class="text-muted mb-3">热门搜索：</h6>
+                <div class="d-flex flex-wrap gap-2 justify-content-center">
+                    <a href="/search?keyword=计算机" class="badge bg-light text-secondary py-2 px-3" style="border-radius: 20px; font-size: 0.9rem;">计算机</a>
+                    <a href="/search?keyword=经济学" class="badge bg-light text-secondary py-2 px-3" style="border-radius: 20px; font-size: 0.9rem;">经济学</a>
+                    <a href="/search?keyword=金融学" class="badge bg-light text-secondary py-2 px-3" style="border-radius: 20px; font-size: 0.9rem;">金融学</a>
+                    <a href="/search?keyword=电子信息" class="badge bg-light text-secondary py-2 px-3" style="border-radius: 20px; font-size: 0.9rem;">电子信息</a>
+                    <a href="/search?keyword=人工智能" class="badge bg-light text-secondary py-2 px-3" style="border-radius: 20px; font-size: 0.9rem;">人工智能</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// 加载统计数据
+async function loadStatistics() {
+    console.log('开始加载统计数据...');
+    try {
+        const stats = await fetchAPI('/api/statistics');
+        console.log('统计数据:', stats);
+        if (stats) {
+            document.getElementById('total-records').textContent = formatNumber(stats.total_records);
+            document.getElementById('universities-count').textContent = formatNumber(stats.universities_count);
+            document.getElementById('majors-count').textContent = formatNumber(stats.majors_count);
+            if (stats.score_range && stats.score_range.mean !== undefined) {
+                document.getElementById('avg-score').textContent = stats.score_range.mean.toFixed(1);
+            } else {
+                document.getElementById('avg-score').textContent = '0';
+            }
+        } else {
+            console.error('统计数据为空');
+        }
+    } catch (error) {
+        console.error('加载统计数据失败:', error);
+    }
+}
+
+// 快速搜索
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('quick-search-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const keyword = document.getElementById('search-keyword').value;
+        if (keyword) {
+            window.location.href = `/search?keyword=${encodeURIComponent(keyword)}`;
+        }
+    });
+
+    // 页面加载完成后执行
+    loadStatistics();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,646 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <a href="/history" class="btn btn-outline-secondary mb-3">
+            <i class="bi bi-arrow-left"></i> 返回历史分析
+        </a>
+        <h2>
+            <i class="bi bi-graph-up-arrow"></i> 2026年位次预测
+        </h2>
+        <p class="text-muted">
+            基于2023-2025年历史数据，采用多种算法预测2026年院校和专业位次
+        </p>
+    </div>
+</div>
+
+<!-- 预测说明卡片 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-info-circle"></i> 预测说明
+                </h5>
+                <ul class="mb-0">
+                    <li><strong>算法类型</strong>：加权移动平均、线性趋势外推、指数平滑</li>
+                    <li><strong>置信度</strong>：高（3年完整数据）、中（2年数据）、低（波动较大）</li>
+                    <li><strong>适用范围</strong>：建议作为选校参考，请以实际招生简章为准</li>
+                    <li><strong>风险提示</strong>：招生政策调整、院校专业变动可能导致预测失效</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 预测输入区域 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-search"></i> 预测查询
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="nav nav-tabs mb-3" id="prediction-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="school-tab" data-bs-toggle="tab" data-bs-target="#school-prediction" type="button" role="tab">
+                            <i class="bi bi-building"></i> 学校预测
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="major-tab" data-bs-toggle="tab" data-bs-target="#major-prediction" type="button" role="tab">
+                            <i class="bi bi-book"></i> 专业预测
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- 学校预测表单 -->
+                <div class="tab-content" id="school-prediction">
+                    <div class="row g-3">
+                        <div class="col-md-8 position-relative">
+                            <label class="form-label">搜索学校</label>
+                            <input type="text" class="form-control" id="school-search-input"
+                                   placeholder="输入学校名称或编号，按回车搜索">
+                            <div id="school-suggestions" class="dropdown-menu position-absolute w-100" style="z-index: 1001;"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">操作</label>
+                            <button class="btn btn-primary w-100" onclick="predictSchool()">
+                                <i class="bi bi-magic"></i> 预测
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 专业预测表单 -->
+                <div class="tab-content fade" id="major-prediction">
+                    <div class="row g-3">
+                        <div class="col-md-5 position-relative" style="z-index: 1001;">
+                            <label class="form-label">学校</label>
+                            <input type="text" class="form-control" id="major-school-search-input"
+                                   placeholder="输入学校名称">
+                            <div id="major-school-suggestions" class="dropdown-menu position-absolute w-100"></div>
+                        </div>
+                        <div class="col-md-5 position-relative" style="z-index: 1000;">
+                            <label class="form-label">专业</label>
+                            <input type="text" class="form-control" id="major-search-input"
+                                   placeholder="输入专业名称">
+                            <div id="major-suggestions" class="dropdown-menu position-absolute w-100"></div>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <button class="btn btn-primary w-100" onclick="predictMajor()">
+                                <i class="bi bi-magic"></i> 预测
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 预测结果区域 -->
+<div class="row mb-4" id="prediction-result-section" style="display: none;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-check-circle"></i> 预测结果
+                </h5>
+                <button class="btn btn-sm btn-outline-danger" onclick="hideResult()">
+                    <i class="bi bi-x"></i> 关闭
+                </button>
+            </div>
+            <div class="card-body">
+                <!-- 结果摘要 -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-center py-3 bg-primary text-white">
+                            <h6 class="mb-2">预测位次</h6>
+                            <div class="display-6 fw-bold" id="predicted-rank">-</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center py-3" id="confidence-card">
+                            <h6 class="mb-2">置信度</h6>
+                            <div class="display-6 fw-bold" id="confidence-level">-</div>
+                            <small class="text-muted" id="confidence-desc"></small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center py-3 bg-info text-white">
+                            <h6 class="mb-2">置信区间</h6>
+                            <div class="fw-bold" id="confidence-interval">-</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center py-3 bg-success text-white">
+                            <h6 class="mb-2">趋势</h6>
+                            <div class="fw-bold" id="trend-desc">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 预测详情 -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="mb-3">预测依据</h6>
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="mb-2"><strong>使用算法：</strong><span id="algorithm-name">-</span></p>
+                                <p><strong>预测理由：</strong><span id="rationale-text">-</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="mb-3">历史对比</h6>
+                        <div class="card">
+                            <div class="card-body">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>年份</th>
+                                            <th>平均位次</th>
+                                            <th>专业数</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="historical-data-tbody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 批量预测 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-list-stars"></i> 批量预测
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">显示数量</label>
+                        <select class="form-select" id="batch-limit">
+                            <option value="20">前20所</option>
+                            <option value="50">前50所</option>
+                            <option value="100" selected>前100所</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">操作</label>
+                        <button class="btn btn-primary w-100" onclick="batchPredict()">
+                            <i class="bi bi-magic"></i> 开始批量预测
+                        </button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>排名</th>
+                                <th>学校</th>
+                                <th>2026预测位次</th>
+                                <th>置信度</th>
+                                <th>置信区间</th>
+                                <th>趋势</th>
+                            </tr>
+                        </thead>
+                        <tbody id="batch-results-tbody">
+                            <tr>
+                                <td colspan="6" class="text-center">点击"开始批量预测"查看结果</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// 学校搜索
+const schoolSearchInput = document.getElementById('school-search-input');
+const schoolSuggestions = document.getElementById('school-suggestions');
+let schoolSearchTimeout;
+let currentSchoolCode = '';
+
+schoolSearchInput.addEventListener('input', function(e) {
+    clearTimeout(schoolSearchTimeout);
+    const keyword = e.target.value.trim();
+
+    if (keyword.length < 1) {
+        schoolSuggestions.style.display = 'none';
+        return;
+    }
+
+    schoolSearchTimeout = setTimeout(async () => {
+        try {
+            const response = await fetch(`/api/history/schools?keyword=${keyword}`);
+            const schools = await response.json();
+
+            schoolSuggestions.innerHTML = '';
+            if (schools.length > 0) {
+                schools.slice(0, 10).forEach(school => {
+                    const item = document.createElement('a');
+                    item.className = 'dropdown-item';
+                    item.href = '#';
+                    item.textContent = `${school.name} (${school.code})`;
+                    item.onclick = () => {
+                        schoolSearchInput.value = school.name;
+                        currentSchoolCode = school.code;
+                        schoolSuggestions.style.display = 'none';
+                    };
+                    schoolSuggestions.appendChild(item);
+                });
+                schoolSuggestions.style.display = 'block';
+            } else {
+                schoolSuggestions.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('搜索学校失败:', error);
+        }
+    }, 300);
+});
+
+schoolSearchInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        const keyword = e.target.value.trim();
+        if (keyword && currentSchoolCode) {
+            predictSchool(currentSchoolCode);
+        }
+    }
+});
+
+// 专业预测的学校搜索
+const majorSchoolSearchInput = document.getElementById('major-school-search-input');
+const majorSchoolSuggestions = document.getElementById('major-school-suggestions');
+let currentMajorSchoolCode = '';
+
+majorSchoolSearchInput.addEventListener('input', function(e) {
+    const keyword = e.target.value.trim();
+
+    if (keyword.length < 1) {
+        majorSchoolSuggestions.style.display = 'none';
+        return;
+    }
+
+    setTimeout(async () => {
+        try {
+            const response = await fetch(`/api/history/schools?keyword=${keyword}`);
+            const schools = await response.json();
+
+            majorSchoolSuggestions.innerHTML = '';
+            if (schools.length > 0) {
+                schools.slice(0, 10).forEach(school => {
+                    const item = document.createElement('a');
+                    item.className = 'dropdown-item';
+                    item.href = '#';
+                    item.textContent = `${school.name} (${school.code})`;
+                    item.onclick = () => {
+                        majorSchoolSearchInput.value = school.name;
+                        currentMajorSchoolCode = school.code;
+                        majorSchoolSuggestions.style.display = 'none';
+                        // 清空专业搜索，因为学校改变了
+                        majorSearchInput.value = '';
+                        currentMajorName = '';
+                    };
+                    majorSchoolSuggestions.appendChild(item);
+                });
+                majorSchoolSuggestions.style.display = 'block';
+            } else {
+                majorSchoolSuggestions.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('搜索学校失败:', error);
+        }
+    }, 300);
+});
+
+// 专业预测的专业搜索
+const majorSearchInput = document.getElementById('major-search-input');
+const majorSuggestions = document.getElementById('major-suggestions');
+let currentMajorName = '';
+
+majorSearchInput.addEventListener('input', function(e) {
+    clearTimeout(schoolSearchTimeout);
+    const keyword = e.target.value.trim();
+
+    if (keyword.length < 1) {
+        majorSuggestions.style.display = 'none';
+        return;
+    }
+
+    schoolSearchTimeout = setTimeout(async () => {
+        try {
+            // 如果已选择学校，只显示该学校的专业；否则显示所有专业
+            let url = `/api/history/majors?keyword=${encodeURIComponent(keyword)}`;
+            if (currentMajorSchoolCode) {
+                url += `&school_code=${currentMajorSchoolCode}`;
+            }
+            
+            const response = await fetch(url);
+            const majors = await response.json();
+
+            majorSuggestions.innerHTML = '';
+            if (majors.length > 0) {
+                majors.slice(0, 10).forEach(major => {
+                    const item = document.createElement('a');
+                    item.className = 'dropdown-item';
+                    item.href = '#';
+                    item.textContent = major;
+                    item.onclick = () => {
+                        majorSearchInput.value = major;
+                        currentMajorName = major;
+                        majorSuggestions.style.display = 'none';
+                    };
+                    majorSuggestions.appendChild(item);
+                });
+                majorSuggestions.style.display = 'block';
+            } else {
+                majorSuggestions.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('搜索专业失败:', error);
+        }
+    }, 300);
+});
+
+// 学校预测
+async function predictSchool(schoolCode) {
+    if (!schoolCode) {
+        schoolCode = currentSchoolCode;
+    }
+    
+    if (!schoolCode) {
+        const keyword = schoolSearchInput.value.trim();
+        if (!keyword) {
+            alert('请先从下拉列表中选择学校');
+            return;
+        }
+        // 尝试根据学校名称查找学校代码
+        try {
+            const response = await fetch(`/api/history/schools?keyword=${encodeURIComponent(keyword)}`);
+            const schools = await response.json();
+            if (schools.length > 0) {
+                schoolCode = schools[0].code;
+                currentSchoolCode = schoolCode;
+            } else {
+                alert('未找到该学校，请从下拉列表中选择');
+                return;
+            }
+        } catch (error) {
+            console.error('查找学校失败:', error);
+            alert('查找学校失败，请从下拉列表中选择');
+            return;
+        }
+    }
+
+    try {
+        const response = await fetch(`/api/predict/school/${schoolCode}`);
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || '请求失败');
+        }
+
+        const data = await response.json();
+        displayPredictionResult(data, 'school');
+
+    } catch (error) {
+        console.error('预测失败:', error);
+        alert('预测失败: ' + error.message);
+    }
+}
+
+// 专业预测
+async function predictMajor() {
+    // 获取用户输入的学校名称和专业名称
+    let schoolCode = currentMajorSchoolCode;
+    const schoolName = majorSchoolSearchInput.value.trim();
+    let majorName = currentMajorName;
+    const majorInput = majorSearchInput.value.trim();
+
+    // 如果没有从下拉列表选择学校，根据输入查找
+    if (!schoolCode && schoolName) {
+        try {
+            const response = await fetch(`/api/history/schools?keyword=${encodeURIComponent(schoolName)}`);
+            const schools = await response.json();
+            if (schools.length > 0) {
+                schoolCode = schools[0].code;
+                currentMajorSchoolCode = schoolCode;
+            }
+        } catch (error) {
+            console.error('查找学校失败:', error);
+        }
+    }
+
+    if (!schoolCode) {
+        alert('请输入学校名称');
+        return;
+    }
+
+    // 如果没有从下拉列表选择专业，使用用户输入的专业名称
+    if (!majorName && majorInput) {
+        majorName = majorInput;
+    }
+
+    if (!majorName) {
+        alert('请输入专业名称');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/predict/major?school_code=${schoolCode}&major_name=${encodeURIComponent(majorName)}`);
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || '请求失败');
+        }
+
+        const data = await response.json();
+        displayPredictionResult(data, 'major');
+
+    } catch (error) {
+        console.error('预测失败:', error);
+        alert('预测失败: ' + error.message);
+    }
+}
+
+// 批量预测
+async function batchPredict() {
+    const limit = parseInt(document.getElementById('batch-limit').value);
+    const tbody = document.getElementById('batch-results-tbody');
+    tbody.innerHTML = '<tr><td colspan="6" class="text-center">加载中...</td></tr>';
+
+    try {
+        const response = await fetch(`/api/predict/batch-schools?limit=${limit}`);
+
+        if (!response.ok) {
+            throw new Error('请求失败');
+        }
+
+        const data = await response.json();
+        displayBatchResults(data.results);
+
+    } catch (error) {
+        console.error('批量预测失败:', error);
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-danger">加载失败</td></tr>';
+    }
+}
+
+// 显示预测结果
+function displayPredictionResult(data, type) {
+    const resultSection = document.getElementById('prediction-result-section');
+    resultSection.style.display = 'block';
+
+    const prediction = data.prediction;
+
+    // 更新摘要卡片
+    document.getElementById('predicted-rank').textContent = formatNumber(prediction.predicted_rank);
+
+    const confidenceColors = {
+        'high': 'bg-success',
+        'medium': 'bg-warning',
+        'low': 'bg-danger'
+    };
+    document.getElementById('confidence-card').className = `card text-center py-3 ${confidenceColors[prediction.confidence]} text-white`;
+    document.getElementById('confidence-level').textContent = prediction.confidence === 'high' ? '高' : prediction.confidence === 'medium' ? '中' : '低';
+
+    const confidenceDescs = {
+        'high': '数据完整，预测可靠',
+        'medium': '数据较完整，仅供参考',
+        'low': '数据不完整，需谨慎'
+    };
+    document.getElementById('confidence-desc').textContent = confidenceDescs[prediction.confidence];
+
+    document.getElementById('confidence-interval').textContent = `${formatNumber(prediction.confidence_interval[0])} - ${formatNumber(prediction.confidence_interval[1])}`;
+
+    document.getElementById('trend-desc').textContent = prediction.trend;
+
+    // 更新预测详情
+    document.getElementById('algorithm-name').textContent = getAlgorithmName(prediction.algorithm);
+    document.getElementById('rationale-text').textContent = prediction.rationale;
+
+    // 获取历史数据
+    if (type === 'school') {
+        loadHistoricalData(data.school_code);
+    }
+
+    resultSection.scrollIntoView({ behavior: 'smooth' });
+}
+
+function getAlgorithmName(algorithm) {
+    const names = {
+        'weighted_moving_avg': '加权移动平均法',
+        'linear_trend': '线性趋势外推法',
+        'exponential_smoothing': '指数平滑法',
+        'group_reference': '分组参考预测法',
+        'cross_school_aggregate': '跨校聚合法',
+        'school_trend_plus_bias': '学校趋势+专业偏差法'
+    };
+    return names[algorithm] || algorithm;
+}
+
+// 加载历史数据
+async function loadHistoricalData(schoolCode) {
+    try {
+        const response = await fetch(`/api/history/school/${schoolCode}`);
+        const data = await response.json();
+
+        const tbody = document.getElementById('historical-data-tbody');
+        tbody.innerHTML = '';
+
+        const years = ['2023', '2024', '2025'];
+        years.forEach(year => {
+            if (data.years && data.years[year]) {
+                const yearData = data.years[year];
+                const row = `
+                    <tr>
+                        <td><strong>${year}年</strong></td>
+                        <td>${formatNumber(Math.round(yearData.avg_rank))}</td>
+                        <td>${yearData.total_majors}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            }
+        });
+
+    } catch (error) {
+        console.error('加载历史数据失败:', error);
+    }
+}
+
+// 显示批量结果
+function displayBatchResults(results) {
+    const tbody = document.getElementById('batch-results-tbody');
+    tbody.innerHTML = '';
+
+    results.forEach((item, index) => {
+        const confidenceBadges = {
+            'high': '<span class="badge bg-success">高</span>',
+            'medium': '<span class="badge bg-warning text-dark">中</span>',
+            'low': '<span class="badge bg-danger">低</span>'
+        };
+
+        const row = `
+            <tr>
+                <td>${index + 1}</td>
+                <td>
+                    <a href="/history/school/${item.code}" class="text-decoration-none">
+                        ${item.name}
+                    </a>
+                </td>
+                <td class="fw-bold">${formatNumber(item.prediction.predicted_rank)}</td>
+                <td>${confidenceBadges[item.prediction.confidence]}</td>
+                <td>${formatNumber(item.prediction.confidence_interval[0])} - ${formatNumber(item.prediction.confidence_interval[1])}</td>
+                <td><span class="badge bg-info">${item.prediction.trend}</span></td>
+            </tr>
+        `;
+        tbody.innerHTML += row;
+    });
+}
+
+// 隐藏结果
+function hideResult() {
+    document.getElementById('prediction-result-section').style.display = 'none';
+}
+
+// 格式化数字
+function formatNumber(num) {
+    if (num === undefined || num === null || isNaN(num)) return '-';
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+// Tab切换
+document.getElementById('school-tab').addEventListener('click', function() {
+    document.getElementById('school-tab').classList.add('active');
+    document.getElementById('major-tab').classList.remove('active');
+    document.getElementById('school-prediction').classList.add('show', 'active');
+    document.getElementById('major-prediction').classList.remove('show', 'active');
+});
+
+document.getElementById('major-tab').addEventListener('click', function() {
+    document.getElementById('major-tab').classList.add('active');
+    document.getElementById('school-tab').classList.remove('active');
+    document.getElementById('major-prediction').classList.add('show', 'active');
+    document.getElementById('school-prediction').classList.remove('show', 'active');
+});
+</script>
+{% endblock %}

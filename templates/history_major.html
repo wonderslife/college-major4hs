@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <a href="/history" class="btn btn-outline-secondary mb-3">
+            <i class="bi bi-arrow-left"></i> 返回历史分析
+        </a>
+        <h2 id="major-name">
+            <i class="bi bi-book"></i> 加载中...
+        </h2>
+    </div>
+</div>
+
+<!-- 专业统计 -->
+<div class="row g-4 mb-4" id="major-stats">
+    <div class="col-6 col-md-3">
+        <div class="card stat-card text-center py-3">
+            <h6 class="text-muted mb-2">2023年</h6>
+            <h4 id="count-2023">-</h4>
+            <div class="stat-label">开设学校</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card text-center py-3" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <h6 class="text-muted mb-2">2024年</h6>
+            <h4 id="count-2024">-</h4>
+            <div class="stat-label">开设学校</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card text-center py-3" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <h6 class="text-muted mb-2">2025年</h6>
+            <h4 id="count-2025">-</h4>
+            <div class="stat-label">开设学校</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card text-center py-3" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+            <h6 class="text-muted mb-2">平均分</h6>
+            <h4 id="avg-score-2025">-</h4>
+            <div class="stat-label">2025年</div>
+        </div>
+    </div>
+</div>
+
+<!-- 分数分布 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-bar-chart"></i> 2025年分数分布
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="position: relative; height:400px; width:100%">
+                    <canvas id="scoreDistributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 开设学校排行 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-sort-numeric-down"></i> 开设学校排行 (按2025年分数)
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>排名</th>
+                                <th>学校代码</th>
+                                <th>学校名称</th>
+                                <th>2023</th>
+                                <th>2024</th>
+                                <th>2025</th>
+                                <th>趋势</th>
+                            </tr>
+                        </thead>
+                        <tbody id="schools-tbody">
+                            <tr>
+                                <td colspan="7" class="text-center">加载中...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const majorName = '{{ major_name | safe }}';
+let majorData = null;
+let distributionChart = null;
+
+// 加载专业数据
+async function loadMajorData() {
+    try {
+        const response = await fetch(`/api/history/major/${encodeURIComponent(majorName)}`);
+        majorData = await response.json();
+
+        if (majorData.error) {
+            alert(majorData.error);
+            window.location.href = '/history';
+            return;
+        }
+
+        document.getElementById('major-name').innerHTML = `
+            <i class="bi bi-book"></i> ${majorName}
+        `;
+
+        // 更新统计数据
+        updateStats();
+
+        // 加载分数分布图
+        updateDistributionChart();
+
+        // 加载学校排行
+        updateSchoolRanking();
+
+    } catch (error) {
+        console.error('加载专业数据失败:', error);
+        alert('加载数据失败');
+    }
+}
+
+// 更新统计数据
+function updateStats() {
+    const years = ['2023', '2024', '2025'];
+
+    years.forEach(year => {
+        const count = majorData[year] ? majorData[year].length : 0;
+        document.getElementById(`count-${year}`).textContent = count;
+    });
+
+    // 计算2025年平均分
+    if (majorData['2025']) {
+        const scores = majorData['2025'].map(s => s.score).filter(s => s > 0);
+        const avg = scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1) : '-';
+        document.getElementById('avg-score-2025').textContent = avg;
+    }
+}
+
+// 更新分数分布图
+function updateDistributionChart() {
+    if (!majorData['2025']) return;
+
+    const scores = majorData['2025'].map(s => s.score).filter(s => s > 0);
+
+    // 分数段分布
+    const ranges = [
+        { min: 0, max: 400, label: '0-400' },
+        { min: 400, max: 450, label: '400-450' },
+        { min: 450, max: 500, label: '450-500' },
+        { min: 500, max: 550, label: '500-550' },
+        { min: 550, max: 600, label: '550-600' },
+        { min: 600, max: 650, label: '600-650' },
+        { min: 650, max: 700, label: '650-700' },
+        { min: 700, max: 800, label: '700+' }
+    ];
+
+    const distribution = ranges.map(range => {
+        return scores.filter(s => s >= range.min && s < range.max).length;
+    });
+
+    const ctx = document.getElementById('scoreDistributionChart').getContext('2d');
+
+    distributionChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ranges.map(r => r.label),
+            datasets: [{
+                label: '学校数量',
+                data: distribution,
+                backgroundColor: [
+                    'rgba(102, 126, 234, 0.7)',
+                    'rgba(245, 87, 108, 0.7)',
+                    'rgba(0, 242, 254, 0.7)',
+                    'rgba(67, 233, 123, 0.7)',
+                    'rgba(255, 159, 64, 0.7)',
+                    'rgba(153, 102, 255, 0.7)',
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(201, 203, 207, 0.7)'
+                ],
+                borderColor: [
+                    'rgb(102, 126, 234)',
+                    'rgb(245, 87, 108)',
+                    'rgb(0, 242, 254)',
+                    'rgb(67, 233, 123)',
+                    'rgb(255, 159, 64)',
+                    'rgb(153, 102, 255)',
+                    'rgb(255, 99, 132)',
+                    'rgb(201, 203, 207)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: '学校数量'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: '分数段'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// 更新学校排行
+function updateSchoolRanking() {
+    if (!majorData['2025']) return;
+
+    const tbody = document.getElementById('schools-tbody');
+    tbody.innerHTML = '';
+
+    // 收集学校数据
+    const schoolMap = new Map();
+
+    Object.keys(majorData).forEach(year => {
+        majorData[year].forEach(item => {
+            if (!schoolMap.has(item.school_code)) {
+                schoolMap.set(item.school_code, {
+                    code: item.school_code,
+                    name: item.school_name,
+                    scores: {}
+                });
+            }
+            schoolMap.get(item.school_code).scores[year] = item.score;
+        });
+    });
+
+    // 转换为数组并按2025年分数排序
+    const schools = Array.from(schoolMap.values())
+        .filter(s => s.scores['2025'])
+        .sort((a, b) => b.scores['2025'] - a.scores['2025']);
+
+    schools.slice(0, 50).forEach((school, index) => {
+        const score23 = school.scores['2023'] || '-';
+        const score24 = school.scores['2024'] || '-';
+        const score25 = school.scores['2025'];
+
+        // 计算趋势
+        let trend = '稳定';
+        let trendClass = 'text-primary';
+        if (score23 !== '-' && score24 !== '-' && score25 !== '-') {
+            const diff = score25 - score23;
+            if (diff > 5) {
+                trend = '上升';
+                trendClass = 'text-success';
+            } else if (diff < -5) {
+                trend = '下降';
+                trendClass = 'text-danger';
+            }
+        }
+
+        const row = `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${school.code}</td>
+                <td>
+                    <a href="/history/school/${school.code}" class="text-decoration-none">
+                        ${school.name}
+                    </a>
+                </td>
+                <td>${score23}</td>
+                <td>${score24}</td>
+                <td><strong>${score25}</strong></td>
+                <td class="${trendClass}">${trend}</td>
+            </tr>
+        `;
+        tbody.innerHTML += row;
+    });
+}
+
+// 页面加载
+document.addEventListener('DOMContentLoaded', loadMajorData);
+</script>
+{% endblock %}

@@ -1,0 +1,15 @@
+flask==3.0.0
+pandas==2.1.4
+numpy==1.26.2
+openpyxl==3.1.2
+plotly==5.18.0
+kaleido==0.2.1
+xlsxwriter==3.1.9
+reportlab==4.0.7
+cachetools==5.3.2
+gunicorn==21.2.0
+pydantic>=2.0.0
+pytest>=7.0.0
+pytest-cov>=4.0.0
+pytest-mock>=3.0.0
+

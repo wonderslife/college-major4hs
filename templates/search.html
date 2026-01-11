@@ -1,0 +1,870 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2>
+            <i class="bi bi-search"></i> 搜索查询
+        </h2>
+        <p class="text-muted">根据分数、院校、专业搜索适合的报考信息</p>
+    </div>
+</div>
+
+<!-- 搜索选项卡 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <ul class="nav nav-tabs" id="searchTabs" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#keyword-search">
+                    <i class="bi bi-keyboard"></i> 关键词搜索
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#score-search">
+                    <i class="bi bi-graph-up"></i> 分数段搜索
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#rank-search">
+                    <i class="bi bi-sort-numeric-down"></i> 位次范围搜索
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#advanced-search">
+                    <i class="bi bi-sliders"></i> 综合查询
+                </button>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- 搜索内容区 -->
+<div class="tab-content" id="searchTabsContent">
+    <!-- 关键词搜索 -->
+    <div class="tab-pane fade show active" id="keyword-search">
+        <div class="card p-4 mb-4">
+            <form id="keyword-search-form" class="row g-3">
+                <div class="col-12 col-md-10">
+                    <input type="text" class="form-control form-control-lg" id="search-keyword"
+                           placeholder="输入院校名称或专业名称进行搜索...">
+                </div>
+                <div class="col-6 col-md-2">
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="bi bi-search"></i> 搜索
+                    </button>
+                </div>
+            </form>
+            <div class="mt-3">
+                <h6 class="text-muted mb-2">热门搜索：</h6>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="javascript:void(0)" onclick="quickSearch('计算机')" class="badge bg-light text-secondary text-decoration-none p-2">计算机</a>
+                    <a href="javascript:void(0)" onclick="quickSearch('经济学')" class="badge bg-light text-secondary text-decoration-none p-2">经济学</a>
+                    <a href="javascript:void(0)" onclick="quickSearch('金融学')" class="badge bg-light text-secondary text-decoration-none p-2">金融学</a>
+                    <a href="javascript:void(0)" onclick="quickSearch('电子信息')" class="badge bg-light text-secondary text-decoration-none p-2">电子信息</a>
+                    <a href="javascript:void(0)" onclick="quickSearch('人工智能')" class="badge bg-light text-secondary text-decoration-none p-2">人工智能</a>
+                    <a href="javascript:void(0)" onclick="quickSearch('数据科学')" class="badge bg-light text-secondary text-decoration-none p-2">数据科学</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 分数段搜索 -->
+    <div class="tab-pane fade" id="score-search">
+        <div class="card p-4 mb-4">
+            <form id="score-search-form" class="row g-3">
+                <div class="col-6 col-md-5">
+                    <label class="form-label">最低分数</label>
+                    <input type="number" class="form-control" id="min-score"
+                           placeholder="例如: 500" min="367" max="695">
+                </div>
+                <div class="col-6 col-md-5">
+                    <label class="form-label">最高分数</label>
+                    <input type="number" class="form-control" id="max-score"
+                           placeholder="例如: 600" min="367" max="695">
+                </div>
+                <div class="col-12 col-md-2">
+                    <label class="form-label d-md-block d-none">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="bi bi-search"></i> 搜索
+                    </button>
+                </div>
+            </form>
+            <div class="mt-3">
+                <h6 class="text-muted mb-2">快速选择：</h6>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="javascript:void(0)" onclick="quickScoreSearch(650, 695)" class="badge bg-danger text-white text-decoration-none p-2">650分以上</a>
+                    <a href="javascript:void(0)" onclick="quickScoreSearch(600, 649)" class="badge bg-warning text-dark text-decoration-none p-2">600-649分</a>
+                    <a href="javascript:void(0)" onclick="quickScoreSearch(550, 599)" class="badge bg-info text-white text-decoration-none p-2">550-599分</a>
+                    <a href="javascript:void(0)" onclick="quickScoreSearch(500, 549)" class="badge bg-primary text-white text-decoration-none p-2">500-549分</a>
+                    <a href="javascript:void(0)" onclick="quickScoreSearch(450, 499)" class="badge bg-secondary text-white text-decoration-none p-2">450-499分</a>
+                    <a href="javascript:void(0)" onclick="quickScoreSearch(367, 449)" class="badge bg-light text-dark text-decoration-none p-2">450分以下</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 位次范围搜索 -->
+    <div class="tab-pane fade" id="rank-search">
+        <div class="card p-4 mb-4">
+            <form id="rank-search-form" class="row g-3">
+                <div class="col-6 col-md-5">
+                    <label class="form-label">最低位次</label>
+                    <input type="number" class="form-control" id="min-rank"
+                           placeholder="例如: 10000" min="1" max="120000">
+                </div>
+                <div class="col-6 col-md-5">
+                    <label class="form-label">最高位次</label>
+                    <input type="number" class="form-control" id="max-rank"
+                           placeholder="例如: 20000" min="1" max="120000">
+                </div>
+                <div class="col-12 col-md-2">
+                    <label class="form-label d-md-block d-none">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="bi bi-search"></i> 搜索
+                    </button>
+                </div>
+            </form>
+            <div class="mt-3">
+                <h6 class="text-muted mb-2">快速选择：</h6>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="javascript:void(0)" onclick="quickRankSearch(1, 1000)" class="badge bg-danger text-white text-decoration-none p-2">前1000名</a>
+                    <a href="javascript:void(0)" onclick="quickRankSearch(1001, 5000)" class="badge bg-warning text-dark text-decoration-none p-2">1001-5000名</a>
+                    <a href="javascript:void(0)" onclick="quickRankSearch(5001, 10000)" class="badge bg-info text-white text-decoration-none p-2">5001-10000名</a>
+                    <a href="javascript:void(0)" onclick="quickRankSearch(10001, 20000)" class="badge bg-primary text-white text-decoration-none p-2">10001-20000名</a>
+                    <a href="javascript:void(0)" onclick="quickRankSearch(20001, 50000)" class="badge bg-secondary text-white text-decoration-none p-2">20001-50000名</a>
+                    <a href="javascript:void(0)" onclick="quickRankSearch(50001, 120000)" class="badge bg-light text-dark text-decoration-none p-2">50001名以后</a>
+                </div>
+            </div>
+            <div class="alert alert-info mt-3 mb-0">
+                <i class="bi bi-info-circle"></i> <strong>提示：</strong>位次越小表示排名越靠前。例如位次1表示全省第1名。
+            </div>
+        </div>
+    </div>
+
+    <!-- 综合查询 -->
+    <div class="tab-pane fade" id="advanced-search">
+        <div class="card p-4 mb-4">
+            <form id="advanced-search-form">
+                <div class="row g-3">
+                    <!-- 基础查询条件 -->
+                    <div class="col-12">
+                        <h6 class="text-muted border-bottom pb-2">基础查询条件</h6>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">关键词</label>
+                        <input type="text" class="form-control" id="adv-keyword"
+                               placeholder="输入院校名称或专业名称...">
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label">所在城市</label>
+                        <select class="form-select" id="adv-city">
+                            <option value="">不限</option>
+                            <option value="北京">北京</option>
+                            <option value="上海">上海</option>
+                            <option value="广州">广州</option>
+                            <option value="深圳">深圳</option>
+                            <option value="杭州">杭州</option>
+                            <option value="成都">成都</option>
+                            <option value="南京">南京</option>
+                            <option value="武汉">武汉</option>
+                            <option value="苏州">苏州</option>
+                            <option value="重庆">重庆</option>
+                            <option value="天津">天津</option>
+                            <option value="西安">西安</option>
+                            <option value="长沙">长沙</option>
+                        </select>
+                    </div>
+
+                    <!-- 院校标签 -->
+                    <div class="col-12">
+                        <h6 class="text-muted border-bottom pb-2">院校标签</h6>
+                    </div>
+
+                    <div class="col-6 col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="adv-985">
+                            <label class="form-check-label" for="adv-985">985院校</label>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="adv-211">
+                            <label class="form-check-label" for="adv-211">211院校</label>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="adv-double">
+                            <label class="form-check-label" for="adv-double">双一流</label>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="adv-foreign">
+                            <label class="form-check-label" for="adv-foreign">中外合作</label>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="adv-private">
+                            <label class="form-check-label" for="adv-private">民办院校</label>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="adv-independent">
+                            <label class="form-check-label" for="adv-independent">独立学院</label>
+                        </div>
+                    </div>
+
+                    <!-- 分数和位次 -->
+                    <div class="col-12">
+                        <h6 class="text-muted border-bottom pb-2">分数与位次</h6>
+                    </div>
+
+                    <div class="col-6 col-md-3">
+                        <label class="form-label">最低分数</label>
+                        <input type="number" class="form-control" id="adv-min-score"
+                               placeholder="例如: 500" min="367" max="695">
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <label class="form-label">最高分数</label>
+                        <input type="number" class="form-control" id="adv-max-score"
+                               placeholder="例如: 600" min="367" max="695">
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <label class="form-label">最低位次</label>
+                        <input type="number" class="form-control" id="adv-min-rank"
+                               placeholder="例如: 10000" min="1" max="120000">
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <label class="form-label">最高位次</label>
+                        <input type="number" class="form-control" id="adv-max-rank"
+                               placeholder="例如: 20000" min="1" max="120000">
+                    </div>
+
+                    <!-- 保研率 -->
+                    <div class="col-12">
+                        <h6 class="text-muted border-bottom pb-2">保研率范围 (%)</h6>
+                    </div>
+
+                    <div class="col-6 col-md-3">
+                        <label class="form-label">最低保研率</label>
+                        <input type="number" class="form-control" id="adv-min-pg"
+                               placeholder="例如: 20" min="0" max="100" step="0.01">
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <label class="form-label">最高保研率</label>
+                        <input type="number" class="form-control" id="adv-max-pg"
+                               placeholder="例如: 50" min="0" max="100" step="0.01">
+                    </div>
+
+                    <!-- 排序 -->
+                    <div class="col-12">
+                        <h6 class="text-muted border-bottom pb-2">排序方式</h6>
+                    </div>
+
+                    <div class="col-6 col-md-4">
+                        <label class="form-label">排序字段</label>
+                        <select class="form-select" id="adv-sort-by">
+                            <option value="score">按分数</option>
+                            <option value="rank">按位次</option>
+                            <option value="postgraduate_rate">按保研率</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <label class="form-label">排序方向</label>
+                        <select class="form-select" id="adv-sort-order">
+                            <option value="desc">降序（从高到低）</option>
+                            <option value="asc">升序（从低到高）</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                        <label class="form-label d-md-block d-none">&nbsp;</label>
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="bi bi-search"></i> 开始查询
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 搜索结果 -->
+<div class="row mb-4" id="results-section" style="display: none;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-list-ul"></i> 搜索结果
+                    <span class="badge bg-primary ms-2" id="result-count">0</span>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>院校名称</th>
+                                <th>专业名称</th>
+                                <th>城市</th>
+                                <th>投档分</th>
+                                <th>位次</th>
+                                <th>保研率</th>
+                                <th>学科评估</th>
+                            </tr>
+                        </thead>
+                        <tbody id="search-results">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-2 text-muted small">
+                    <i class="bi bi-arrow-down-up"></i> 点击列头可排序（当前排序：<span id="current-sort">默认</span>）
+                </div>
+            </div>
+            <div class="card-footer">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mb-0" id="pagination">
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 无结果提示 -->
+<div class="row mb-4" id="no-results" style="display: none;">
+    <div class="col-12">
+        <div class="card text-center p-5">
+            <i class="bi bi-search" style="font-size: 4rem; color: #dee2e6;"></i>
+            <h4 class="mt-3">未找到匹配结果</h4>
+            <p class="text-muted">请尝试使用其他关键词或调整搜索条件</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentSearchType = 'keyword';
+let currentPage = 1;
+let perPage = 20;
+let currentKeyword = '';
+let currentMinScore = null;
+let currentMaxScore = null;
+let currentMinRank = null;
+let currentMaxRank = null;
+let currentResults = [];
+let sortField = '';
+let sortDirection = 'asc';
+
+// 关键词搜索
+document.getElementById('keyword-search-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    currentSearchType = 'keyword';
+    currentKeyword = document.getElementById('search-keyword').value;
+    currentPage = 1;
+    sortField = '';
+    sortDirection = 'asc';
+    await performSearch();
+});
+
+// 分数段搜索
+document.getElementById('score-search-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    currentSearchType = 'score';
+    currentMinScore = parseInt(document.getElementById('min-score').value) || null;
+    currentMaxScore = parseInt(document.getElementById('max-score').value) || null;
+    currentPage = 1;
+    sortField = '';
+    sortDirection = 'asc';
+    await performSearch();
+});
+
+// 位次范围搜索
+document.getElementById('rank-search-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    currentSearchType = 'rank';
+    currentMinRank = parseInt(document.getElementById('min-rank').value) || null;
+    currentMaxRank = parseInt(document.getElementById('max-rank').value) || null;
+    currentPage = 1;
+    sortField = '';
+    sortDirection = 'asc';
+    await performSearch();
+});
+
+// 快速搜索
+async function quickSearch(keyword) {
+    document.getElementById('search-keyword').value = keyword;
+    currentSearchType = 'keyword';
+    currentKeyword = keyword;
+    currentPage = 1;
+    sortField = '';
+    sortDirection = 'asc';
+    await performSearch();
+}
+
+// 快速分数搜索
+async function quickScoreSearch(min, max) {
+    document.getElementById('min-score').value = min;
+    document.getElementById('max-score').value = max;
+    currentSearchType = 'score';
+    currentMinScore = min;
+    currentMaxScore = max;
+    currentPage = 1;
+    sortField = '';
+    sortDirection = 'asc';
+    await performSearch();
+}
+
+// 快速位次搜索
+async function quickRankSearch(min, max) {
+    document.getElementById('min-rank').value = min;
+    document.getElementById('max-rank').value = max;
+    currentSearchType = 'rank';
+    currentMinRank = min;
+    currentMaxRank = max;
+    currentPage = 1;
+    sortField = '';
+    sortDirection = 'asc';
+    await performSearch();
+}
+
+// 执行搜索
+async function performSearch() {
+    let url = '';
+
+    if (currentSearchType === 'keyword') {
+        if (!currentKeyword.trim()) {
+            alert('请输入搜索关键词');
+            return;
+        }
+        url = `/api/search?keyword=${encodeURIComponent(currentKeyword)}&page=1&per_page=10000`;
+    } else if (currentSearchType === 'score') {
+        url = `/api/by-score?min_score=${currentMinScore || ''}&max_score=${currentMaxScore || ''}&page=1&per_page=10000`;
+    } else if (currentSearchType === 'rank') {
+        // 调用后端位次搜索API
+        url = `/api/by-rank?min_rank=${currentMinRank || ''}&max_rank=${currentMaxRank || ''}&page=1&per_page=10000`;
+    }
+
+    const results = await fetchAPI(url);
+    if (results) {
+        if (results.results && results.results.length === 0) {
+            document.getElementById('no-results').style.display = 'block';
+            document.getElementById('results-section').style.display = 'none';
+            currentResults = [];
+            return;
+        }
+
+        // 保存所有结果用于排序
+        currentResults = results.results || results;
+
+        // 应用排序
+        applySort();
+
+        // 显示结果
+        displayResults();
+    }
+}
+
+// 排序函数
+function sortBy(field) {
+    if (sortField === field) {
+        // 切换排序方向
+        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+        sortField = field;
+        sortDirection = 'asc';
+    }
+
+    applySort();
+    displayResults();
+    updateSortLabel();
+}
+
+// 应用排序
+function applySort() {
+    if (!sortField) return;
+
+    currentResults.sort((a, b) => {
+        let aVal, bVal;
+
+        switch(sortField) {
+            case 'university':
+                aVal = a.university.toLowerCase();
+                bVal = b.university.toLowerCase();
+                break;
+            case 'major':
+                aVal = a.major.toLowerCase();
+                bVal = b.major.toLowerCase();
+                break;
+            case 'score':
+                aVal = a.score;
+                bVal = b.score;
+                break;
+            case 'rank':
+                aVal = a.rank;
+                bVal = b.rank;
+                break;
+            default:
+                return 0;
+        }
+
+        if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
+        if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
+        return 0;
+    });
+}
+
+// 更新排序标签
+function updateSortLabel() {
+    const sortLabels = {
+        'university': '院校名称',
+        'major': '专业名称',
+        'score': '投档分',
+        'rank': '位次'
+    };
+    const directionLabel = sortDirection === 'asc' ? '升序' : '降序';
+    document.getElementById('current-sort').textContent =
+        sortField ? `${sortLabels[sortField]} (${directionLabel})` : '默认';
+}
+
+// 显示结果（带分页）
+function displayResults() {
+    if (currentResults.length === 0) {
+        document.getElementById('no-results').style.display = 'block';
+        document.getElementById('results-section').style.display = 'none';
+        return;
+    }
+
+    document.getElementById('no-results').style.display = 'none';
+    document.getElementById('results-section').style.display = 'block';
+    document.getElementById('result-count').textContent = currentResults.length;
+
+    // 计算当前页数据
+    const start = (currentPage - 1) * perPage;
+    const end = start + perPage;
+    const pageData = currentResults.slice(start, end);
+
+    // 渲染结果
+    const tbody = document.getElementById('search-results');
+    tbody.innerHTML = '';
+
+    const startIndex = start + 1;
+    pageData.forEach((item, index) => {
+        const row = document.createElement('tr');
+        const tags = item.tags || {};
+
+        // 生成标签 HTML
+        let tagsHtml = '';
+        if (tags.is_985) {
+            tagsHtml += '<span class="badge bg-danger me-1">985</span>';
+        }
+        if (tags.is_211) {
+            tagsHtml += '<span class="badge bg-warning text-dark me-1">211</span>';
+        }
+        if (tags.is_double_first_class && !tags.is_985 && !tags.is_211) {
+            tagsHtml += '<span class="badge bg-success me-1">双一流</span>';
+        }
+        if (tags.is_private) {
+            tagsHtml += '<span class="badge bg-secondary me-1">民办</span>';
+        }
+        if (tags.is_independent) {
+            tagsHtml += '<span class="badge bg-dark me-1">独立学院</span>';
+        }
+
+        // 学科评估徽章
+        let evaluationBadges = '';
+        if (item.evaluations && item.evaluations.length > 0) {
+            item.evaluations.forEach(eva => {
+                const badgeColor = getEvaluationBadgeColor(eva.评估结果);
+                evaluationBadges += `<span class="badge ${badgeColor} me-1" title="${eva.学科名称}">${eva.评估结果}</span>`;
+            });
+        } else {
+            evaluationBadges = '<span class="text-muted small">无评估数据</span>';
+        }
+
+        // 保研率显示
+        let postgraduateHtml = '';
+        if (item.postgraduate_info && item.postgraduate_info.rate !== null) {
+            const rate = item.postgraduate_info.rate;
+            const count = item.postgraduate_info.count;
+            const badgeColor = getPostgraduateBadgeColor(rate);
+            postgraduateHtml = `<span class="badge ${badgeColor}" title="保研人数: ${count}">${rate.toFixed(2)}%</span>`;
+        } else {
+            postgraduateHtml = '<span class="text-muted">-</span>';
+        }
+
+        // 院校名称带链接
+        let nameHtml = item.detail_link
+            ? `<a href="${item.detail_link}" target="_blank" class="text-decoration-none" title="点击查看学校详情"><strong>${item.university}</strong> <i class="bi bi-box-arrow-up-right small"></i></a>`
+            : `<strong>${item.university}</strong>`;
+
+        row.innerHTML = `
+            <td>${startIndex + index}</td>
+            <td>
+                ${nameHtml}
+                ${tagsHtml ? `<div class="mt-1">${tagsHtml}</div>` : ''}
+            </td>
+            <td>${item.major}</td>
+            <td>${item.city || '未知'}</td>
+            <td class="text-primary fw-bold">${item.score}</td>
+            <td>${formatNumber(item.rank)}</td>
+            <td>${postgraduateHtml}</td>
+            <td>${evaluationBadges}</td>
+        `;
+        tbody.appendChild(row);
+    });
+
+    // 渲染分页
+    renderPagination();
+}
+
+// 渲染分页
+function renderPagination() {
+    const nav = document.getElementById('pagination');
+    nav.innerHTML = '';
+
+    const totalPages = Math.ceil(currentResults.length / perPage);
+    const prevClass = currentPage === 1 ? 'disabled' : '';
+    const nextClass = currentPage === totalPages ? 'disabled' : '';
+
+    nav.innerHTML = `
+        <li class="page-item ${prevClass}">
+            <a class="page-link" href="#" onclick="changePage(1); return false;">首页</a>
+        </li>
+        <li class="page-item ${prevClass}">
+            <a class="page-link" href="#" onclick="changePage(${currentPage - 1}); return false;">上一页</a>
+        </li>
+        <li class="page-item active">
+            <span class="page-link">${currentPage} / ${totalPages}</span>
+        </li>
+        <li class="page-item ${nextClass}">
+            <a class="page-link" href="#" onclick="changePage(${currentPage + 1}); return false;">下一页</a>
+        </li>
+        <li class="page-item ${nextClass}">
+            <a class="page-link" href="#" onclick="changePage(${totalPages}); return false;">末页</a>
+        </li>
+    `;
+}
+
+// 切换页面
+function changePage(page) {
+    const totalPages = Math.ceil(currentResults.length / perPage);
+    if (page < 1 || page > totalPages) return;
+    currentPage = page;
+    displayResults();
+}
+
+// 综合查询
+document.getElementById('advanced-search-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    currentSearchType = 'advanced';
+    currentPage = 1;
+
+    // 构建查询参数
+    const params = new URLSearchParams();
+
+    const keyword = document.getElementById('adv-keyword').value;
+    if (keyword) params.append('keyword', keyword);
+
+    const city = document.getElementById('adv-city').value;
+    if (city) params.append('city', city);
+
+    if (document.getElementById('adv-985').checked) params.append('is_985', 'true');
+    if (document.getElementById('adv-211').checked) params.append('is_211', 'true');
+    if (document.getElementById('adv-double').checked) params.append('is_double_first_class', 'true');
+    if (document.getElementById('adv-foreign').checked) params.append('has_foreign_cooperation', 'true');
+    if (document.getElementById('adv-private').checked) params.append('is_private', 'true');
+    if (document.getElementById('adv-independent').checked) params.append('is_independent', 'true');
+
+    const minScore = document.getElementById('adv-min-score').value;
+    const maxScore = document.getElementById('adv-max-score').value;
+    if (minScore) params.append('min_score', minScore);
+    if (maxScore) params.append('max_score', maxScore);
+
+    const minRank = document.getElementById('adv-min-rank').value;
+    const maxRank = document.getElementById('adv-max-rank').value;
+    if (minRank) params.append('min_rank', minRank);
+    if (maxRank) params.append('max_rank', maxRank);
+
+    const minPg = document.getElementById('adv-min-pg').value;
+    const maxPg = document.getElementById('adv-max-pg').value;
+    if (minPg) params.append('min_postgraduate_rate', minPg);
+    if (maxPg) params.append('max_postgraduate_rate', maxPg);
+
+    const sortBy = document.getElementById('adv-sort-by').value;
+    const sortOrder = document.getElementById('adv-sort-order').value;
+    params.append('sort_by', sortBy);
+    params.append('sort_order', sortOrder);
+
+    params.append('page', '1');
+    params.append('per_page', '10000');
+
+    const results = await fetchAPI(`/api/advanced-search?${params.toString()}`);
+    if (!results) {
+        alert('查询失败，请稍后重试');
+        return;
+    }
+    
+    if (results.error) {
+        alert(`查询错误: ${results.error}`);
+        return;
+    }
+    
+    if (results.results) {
+        if (results.results.length === 0) {
+            document.getElementById('no-results').style.display = 'block';
+            document.getElementById('results-section').style.display = 'none';
+            currentResults = [];
+            return;
+        }
+
+        currentResults = results.results;
+        displayAdvancedResults();
+    } else {
+        alert('返回数据格式错误');
+    }
+});
+
+// 显示综合查询结果
+function displayAdvancedResults() {
+    if (currentResults.length === 0) {
+        document.getElementById('no-results').style.display = 'block';
+        document.getElementById('results-section').style.display = 'none';
+        return;
+    }
+
+    document.getElementById('no-results').style.display = 'none';
+    document.getElementById('results-section').style.display = 'block';
+    document.getElementById('result-count').textContent = currentResults.length;
+
+    const start = (currentPage - 1) * perPage;
+    const end = start + perPage;
+    const pageData = currentResults.slice(start, end);
+
+    const tbody = document.getElementById('search-results');
+    tbody.innerHTML = '';
+
+    const startIndex = start + 1;
+    pageData.forEach((item, index) => {
+        const row = document.createElement('tr');
+        const tags = item.tags || {};
+
+        // 生成标签 HTML
+        let tagsHtml = '';
+        if (tags.is_985) {
+            tagsHtml += '<span class="badge bg-danger me-1">985</span>';
+        }
+        if (tags.is_211) {
+            tagsHtml += '<span class="badge bg-warning text-dark me-1">211</span>';
+        }
+        if (tags.is_double_first_class && !tags.is_985 && !tags.is_211) {
+            tagsHtml += '<span class="badge bg-success me-1">双一流</span>';
+        }
+        if (tags.is_private) {
+            tagsHtml += '<span class="badge bg-secondary me-1">民办</span>';
+        }
+        if (tags.is_independent) {
+            tagsHtml += '<span class="badge bg-dark me-1">独立学院</span>';
+        }
+        if (item.has_foreign_cooperation) {
+            tagsHtml += '<span class="badge bg-info text-dark me-1">中外合作</span>';
+        }
+
+        // 学科评估徽章
+        let evaluationBadges = '';
+        if (item.evaluations && item.evaluations.length > 0) {
+            item.evaluations.forEach(eva => {
+                const badgeColor = getEvaluationBadgeColor(eva.评估结果);
+                evaluationBadges += `<span class="badge ${badgeColor} me-1" title="${eva.学科名称}">${eva.评估结果}</span>`;
+            });
+        } else {
+            evaluationBadges = '<span class="text-muted small">无评估数据</span>';
+        }
+
+        // 保研率显示
+        let postgraduateHtml = '';
+        if (item.postgraduate_info && item.postgraduate_info.rate !== null) {
+            const rate = item.postgraduate_info.rate;
+            const count = item.postgraduate_info.count;
+            const badgeColor = getPostgraduateBadgeColor(rate);
+            postgraduateHtml = `<span class="badge ${badgeColor}" title="保研人数: ${count}">${rate.toFixed(2)}%</span>`;
+        } else {
+            postgraduateHtml = '<span class="text-muted">-</span>';
+        }
+
+        // 院校名称带链接
+        let nameHtml = item.detail_link
+            ? `<a href="${item.detail_link}" target="_blank" class="text-decoration-none" title="点击查看学校详情"><strong>${item.university}</strong> <i class="bi bi-box-arrow-up-right small"></i></a>`
+            : `<strong>${item.university}</strong>`;
+
+        row.innerHTML = `
+            <td>${startIndex + index}</td>
+            <td>
+                ${nameHtml}
+                ${tagsHtml ? `<div class="mt-1">${tagsHtml}</div>` : ''}
+            </td>
+            <td>${item.major}</td>
+            <td>${item.city || '未知'}</td>
+            <td class="text-primary fw-bold">${item.score}</td>
+            <td>${formatNumber(item.rank)}</td>
+            <td>${postgraduateHtml}</td>
+            <td>${evaluationBadges}</td>
+        `;
+        tbody.appendChild(row);
+    });
+
+    renderPagination();
+}
+
+// 保研率颜色映射
+function getPostgraduateBadgeColor(rate) {
+    if (rate >= 50) {
+        return 'bg-success';
+    } else if (rate < 20) {
+        return 'bg-warning text-dark';
+    }
+    return 'bg-primary';
+}
+
+// 学科评估结果颜色映射
+function getEvaluationBadgeColor(result) {
+    const colorMap = {
+        'A+': 'bg-danger',
+        'A': 'bg-danger',
+        'A-': 'bg-danger',
+        'B+': 'bg-warning text-dark',
+        'B': 'bg-warning text-dark',
+        'B-': 'bg-warning text-dark',
+        'C+': 'bg-info text-dark',
+        'C': 'bg-info text-dark',
+        'C-': 'bg-info text-dark'
+    };
+    return colorMap[result] || 'bg-secondary';
+}
+
+// 页面加载时处理URL参数
+window.addEventListener('load', function() {
+    // 处理URL中的keyword参数
+    const urlParams = new URLSearchParams(window.location.search);
+    const keyword = urlParams.get('keyword');
+    if (keyword) {
+        // 填充搜索框
+        document.getElementById('search-keyword').value = keyword;
+        // 执行搜索
+        currentSearchType = 'keyword';
+        currentKeyword = keyword;
+        currentPage = 1;
+        sortField = '';
+        sortDirection = 'asc';
+        performSearch();
+    }
+});
+</script>
+{% endblock %}

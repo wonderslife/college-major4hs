@@ -1,0 +1,556 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2>
+            <i class="bi bi-book"></i> 专业分析
+        </h2>
+        <p class="text-muted">查看各热门专业的投档分数线和开设院校情况</p>
+    </div>
+</div>
+
+<!-- 搜索和筛选 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card p-3">
+            <div class="row g-3">
+                <div class="col-12 col-md-3">
+                    <input type="text" class="form-control" id="major-search"
+                           placeholder="搜索专业名称...">
+                </div>
+                <div class="col-6 col-md-2">
+                    <select class="form-select" id="score-filter">
+                        <option value="">所有分数段</option>
+                        <option value="650">650分以上</option>
+                        <option value="600">600-649分</option>
+                        <option value="550">550-599分</option>
+                        <option value="500">500-549分</option>
+                        <option value="450">450-499分</option>
+                        <option value="0">450分以下</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="number" class="form-control" id="min-rank"
+                           placeholder="最低位次" min="1" max="120000">
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="number" class="form-control" id="max-rank"
+                           placeholder="最高位次" min="1" max="120000">
+                </div>
+                <div class="col-12 col-md-3">
+                    <button class="btn btn-primary w-100" id="filter-btn">
+                        <i class="bi bi-funnel"></i> 筛选
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 专业列表 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="data-table table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>排名</th>
+                        <th>专业名称</th>
+                        <th>最低分</th>
+                        <th>最高分</th>
+                        <th>平均分</th>
+                        <th>开设院校</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="major-list">
+                    <tr>
+                        <td colspan="7" class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">加载中...</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 分页 -->
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center" id="pagination">
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- 专业详情模态框 -->
+<div class="modal fade" id="majorModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">专业详情</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">加载中...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="export-btn">
+                    <i class="bi bi-download"></i> 导出数据
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+/* 专业详情模态框增强样式 */
+#majorModal .modal-dialog {
+    max-width: 90vw;
+}
+#majorModal .modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* 院校标签徽章增强 */
+.badge {
+    padding: 0.25em 0.5em;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+}
+
+/* 保研率徽章突出显示 */
+.fs-6 {
+    font-size: 0.875rem;
+}
+
+/* 对比卡片悬停效果 */
+.compare-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* 表格行高亮 */
+.major-row:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+</style>
+
+<script>
+let currentPage = 1;
+let perPage = 20;
+
+// 学科评估结果颜色映射
+function getEvaluationBadgeColor(result) {
+    const colorMap = {
+        'A+': 'bg-danger',
+        'A': 'bg-danger',
+        'A-': 'bg-danger',
+        'B+': 'bg-warning text-dark',
+        'B': 'bg-warning text-dark',
+        'B-': 'bg-warning text-dark',
+        'C+': 'bg-info text-dark',
+        'C': 'bg-info text-dark',
+        'C-': 'bg-info text-dark'
+    };
+    return colorMap[result] || 'bg-secondary';
+}
+
+// 保研率颜色映射
+function getPostgraduateBadgeColor(rate) {
+    if (rate >= 50) {
+        return 'bg-success';  // 50%以上：绿色
+    } else if (rate < 20) {
+        return 'bg-warning text-dark';  // 20%以下：橙色
+    }
+    return 'bg-primary';  // 20%-50%：蓝色
+}
+
+async function loadMajors(page = 1) {
+    const search = document.getElementById('major-search').value;
+    const scoreFilter = document.getElementById('score-filter').value;
+    const minRankInput = document.getElementById('min-rank').value;
+    const maxRankInput = document.getElementById('max-rank').value;
+
+    let url = `/api/top-majors?limit=1000`;
+
+    const data = await fetchAPI(url);
+    if (!data) return;
+
+    // 客户端筛选
+    let filtered = data;
+    if (search) {
+        filtered = filtered.filter(m => m.name.toLowerCase().includes(search.toLowerCase()));
+    }
+    if (scoreFilter) {
+        const minScore = parseInt(scoreFilter);
+        if (minScore >= 650) {
+            // 650分以上：最低分 >= 650
+            filtered = filtered.filter(m => m.min_score >= 650);
+        } else if (minScore >= 600) {
+            // 600-649分：最低分 >= 600 && 最低分 < 650
+            filtered = filtered.filter(m => m.min_score >= 600 && m.min_score < 650);
+        } else if (minScore >= 550) {
+            // 550-599分：最低分 >= 550 && 最低分 < 600
+            filtered = filtered.filter(m => m.min_score >= 550 && m.min_score < 600);
+        } else if (minScore >= 500) {
+            // 500-549分：最低分 >= 500 && 最低分 < 550
+            filtered = filtered.filter(m => m.min_score >= 500 && m.min_score < 550);
+        } else if (minScore >= 450) {
+            // 450-499分：最低分 >= 450 && 最低分 < 500
+            filtered = filtered.filter(m => m.min_score >= 450 && m.min_score < 500);
+        } else {
+            // 450分以下：最低分 < 450
+            filtered = filtered.filter(m => m.min_score < 450);
+        }
+    }
+    if (minRankInput || maxRankInput) {
+        const minRank = minRankInput ? parseInt(minRankInput) : 1;
+        const maxRank = maxRankInput ? parseInt(maxRankInput) : 120000;
+
+        if (minRankInput && maxRankInput) {
+            // 两个都输入了,筛选范围
+            filtered = filtered.filter(m => m.min_rank >= minRank && m.min_rank <= maxRank);
+        } else if (minRankInput) {
+            // 只输入了最低位次
+            filtered = filtered.filter(m => m.min_rank >= minRank);
+        } else {
+            // 只输入了最高位次
+            filtered = filtered.filter(m => m.min_rank <= maxRank);
+        }
+    }
+
+    // 分页
+    const total = filtered.length;
+    const totalPages = Math.ceil(total / perPage);
+    const start = (page - 1) * perPage;
+    const pageData = filtered.slice(start, start + perPage);
+
+    // 渲染列表
+    const tbody = document.getElementById('major-list');
+    tbody.innerHTML = '';
+
+    pageData.forEach((major, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${start + index + 1}</td>
+            <td><strong>${major.name}</strong></td>
+            <td class="text-danger">${major.min_score}</td>
+            <td class="text-success">${major.max_score}</td>
+            <td class="text-primary">${major.avg_score}</td>
+            <td>${major.university_count}</td>
+            <td>
+                <button class="btn btn-sm btn-primary" onclick="showMajorDetail('${major.name}')">
+                    <i class="bi bi-eye"></i> 查看
+                </button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+
+    // 渲染分页
+    renderPagination(page, totalPages);
+}
+
+function renderPagination(page, totalPages) {
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
+
+    const prevClass = page === 1 ? 'disabled' : '';
+    const nextClass = page === totalPages ? 'disabled' : '';
+
+    pagination.innerHTML = `
+        <li class="page-item ${prevClass}">
+            <a class="page-link" href="#" onclick="loadMajors(1); return false;">首页</a>
+        </li>
+        <li class="page-item ${prevClass}">
+            <a class="page-link" href="#" onclick="loadMajors(${page - 1}); return false;">上一页</a>
+        </li>
+        <li class="page-item active">
+            <span class="page-link">${page} / ${totalPages}</span>
+        </li>
+        <li class="page-item ${nextClass}">
+            <a class="page-link" href="#" onclick="loadMajors(${page + 1}); return false;">下一页</a>
+        </li>
+        <li class="page-item ${nextClass}">
+            <a class="page-link" href="#" onclick="loadMajors(${totalPages}); return false;">末页</a>
+        </li>
+    `;
+}
+
+async function showMajorDetail(name) {
+    document.getElementById('modalTitle').textContent = name;
+    document.getElementById('modalContent').innerHTML = '<div class="text-center"><div class="spinner-border"></div></div>';
+
+    const modal = new bootstrap.Modal(document.getElementById('majorModal'));
+    modal.show();
+
+    const detail = await fetchAPI(`/api/major/${encodeURIComponent(name)}`);
+    if (detail && !detail.error) {
+        let html = `
+            <div class="row mb-4">
+                <div class="col-6 col-md-3">
+                    <div class="card text-center py-3 border-0 shadow-sm">
+                        <h6 class="text-muted mb-1">开设院校</h6>
+                        <h4 class="text-primary mb-0">${detail.statistics.total_universities}</h4>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card text-center py-3 border-0 shadow-sm">
+                        <h6 class="text-muted mb-1">最低分</h6>
+                        <h4 class="text-danger mb-0">${detail.statistics.min_score}</h4>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card text-center py-3 border-0 shadow-sm">
+                        <h6 class="text-muted mb-1">最高分</h6>
+                        <h4 class="text-success mb-0">${detail.statistics.max_score}</h4>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card text-center py-3 border-0 shadow-sm">
+                        <h6 class="text-muted mb-1">平均分</h6>
+                        <h4 class="text-primary mb-0">${detail.statistics.avg_score}</h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0"><i class="bi bi-building"></i> 开设院校详情</h6>
+                <div>
+                    <button class="btn btn-sm btn-outline-secondary" id="compareBtn" onclick="toggleCompare()">
+                        <i class="bi bi-arrows-collapse"></i> 对比模式
+                    </button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th width="30%">院校名称</th>
+                            <th width="15%">城市</th>
+                            <th width="10%" class="text-center">投档分</th>
+                            <th width="10%" class="text-center">位次</th>
+                            <th width="20%">院校标签</th>
+                            <th width="15%" class="text-center">保研率</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        detail.universities.forEach(uni => {
+            // 生成院校标签徽章
+            let tagsHtml = '';
+            if (uni.is_double_first_class) {
+                tagsHtml += '<span class="badge bg-danger me-1">双一流</span>';
+            }
+            if (uni.is_985) {
+                tagsHtml += '<span class="badge bg-primary me-1">985</span>';
+            }
+            if (uni.is_211) {
+                tagsHtml += '<span class="badge bg-info text-dark me-1">211</span>';
+            }
+            if (!tagsHtml) {
+                tagsHtml = '<span class="text-muted small">普通院校</span>';
+            }
+
+            // 院校名称
+            let nameHtml = uni.detail_link
+                ? `<a href="${uni.detail_link}" target="_blank" class="text-decoration-none text-dark" title="点击查看学校详情"><strong>${uni.university}</strong> <i class="bi bi-box-arrow-up-right small text-muted"></i></a>`
+                : `<strong>${uni.university}</strong>`;
+
+            // 保研率显示 - 突出显示
+            let postgraduateHtml = '';
+            if (uni.postgraduate_info && uni.postgraduate_info.rate !== null && uni.postgraduate_info.rate !== '') {
+                const rate = parseFloat(uni.postgraduate_info.rate);
+                const count = uni.postgraduate_info.count;
+                const rank = uni.postgraduate_info.rank;
+
+                let rateClass = 'bg-secondary';
+                if (rate >= 50) {
+                    rateClass = 'bg-success';  // 50%以上：绿色
+                } else if (rate >= 30) {
+                    rateClass = 'bg-primary';  // 30%-50%：蓝色
+                } else if (rate >= 20) {
+                    rateClass = 'bg-info text-dark';  // 20%-30%：青色
+                } else if (rate >= 10) {
+                    rateClass = 'bg-warning text-dark';  // 10%-20%：橙色
+                } else {
+                    rateClass = 'bg-secondary';  // 10%以下：灰色
+                }
+
+                postgraduateHtml = `
+                    <div class="d-flex flex-column align-items-center">
+                        <span class="badge ${rateClass} fs-6" title="排名: ${rank}, 保研人数: ${count}">${rate.toFixed(2)}%</span>
+                        ${rank ? `<small class="text-muted" style="font-size: 0.75rem;">排名#${rank}</small>` : ''}
+                    </div>
+                `;
+            } else {
+                postgraduateHtml = '<span class="text-muted">暂无数据</span>';
+            }
+
+            html += `
+                <tr class="major-row" data-score="${uni.score}" data-rank="${uni.rank}" data-rate="${uni.postgraduate_info?.rate || 0}">
+                    <td>
+                        <div class="d-flex justify-content-between align-items-start">
+                            ${nameHtml}
+                        </div>
+                    </td>
+                    <td><span class="text-muted">${uni.city || '未知'}</span></td>
+                    <td class="text-center"><strong class="text-danger">${uni.score}</strong></td>
+                    <td class="text-center"><span class="text-muted">${formatNumber(uni.rank)}</span></td>
+                    <td>
+                        <div class="d-flex flex-wrap gap-1">${tagsHtml}</div>
+                        ${uni.department ? `<small class="text-muted d-block mt-1">${uni.department}</small>` : ''}
+                    </td>
+                    <td class="text-center">${postgraduateHtml}</td>
+                </tr>
+            `;
+        });
+
+        html += `
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="compare-section" class="mt-4" style="display: none;">
+                <h6 class="mb-3"><i class="bi bi-bar-chart"></i> 院校对比分析</h6>
+                <div class="row" id="compare-cards"></div>
+            </div>
+        `;
+
+        document.getElementById('modalContent').innerHTML = html;
+    }
+}
+
+// 对比模式切换
+let isCompareMode = false;
+function toggleCompare() {
+    isCompareMode = !isCompareMode;
+    const btn = document.getElementById('compareBtn');
+    const compareSection = document.getElementById('compare-section');
+
+    if (isCompareMode) {
+        btn.innerHTML = '<i class="bi bi-arrows-expand"></i> 关闭对比';
+        compareSection.style.display = 'block';
+        updateCompareSection();
+    } else {
+        btn.innerHTML = '<i class="bi bi-arrows-collapse"></i> 对比模式';
+        compareSection.style.display = 'none';
+    }
+}
+
+// 更新对比区域
+function updateCompareSection() {
+    const rows = document.querySelectorAll('.major-row');
+    const cardsContainer = document.getElementById('compare-cards');
+    cardsContainer.innerHTML = '';
+
+    // 按分数排序
+    const sortedRows = Array.from(rows).sort((a, b) => {
+        return b.dataset.score - a.dataset.score;
+    });
+
+    sortedRows.forEach((row, index) => {
+        const name = row.querySelector('td:first-child strong').textContent;
+        const score = parseInt(row.dataset.score);
+        const rate = parseFloat(row.dataset.rate) || 0;
+
+        const cardHtml = `
+            <div class="col-6 col-md-4 mb-3">
+                <div class="card h-100 ${index === 0 ? 'border-primary' : ''}">
+                    ${index === 0 ? '<div class="card-header bg-primary text-white"><small><i class="bi bi-trophy"></i> 最高分院校</small></div>' : ''}
+                    <div class="card-body">
+                        <h6 class="card-title mb-2">${name}</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small">投档分</span>
+                            <strong class="text-danger">${score}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">保研率</span>
+                            ${rate > 0 ? `<strong class="text-primary">${rate.toFixed(2)}%</strong>` : '<span class="text-muted small">暂无</span>'}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        cardsContainer.innerHTML += cardHtml;
+    });
+}
+
+// 筛选按钮
+document.getElementById('filter-btn').addEventListener('click', () => {
+    loadMajors(1);
+});
+
+// 页面加载时执行
+loadMajors(1);
+</script>
+
+<style>
+/* 专业详情模态框增强样式 */
+#majorModal .modal-dialog {
+    max-width: 90vw;
+}
+#majorModal .modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* 院校标签徽章增强 */
+.badge {
+    padding: 0.25em 0.5em;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+}
+
+/* 保研率徽章突出显示 */
+.fs-6 {
+    font-size: 0.875rem;
+}
+
+/* 表格行高亮 */
+.major-row:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+/* 表格列间距优化 */
+.table td {
+    vertical-align: middle;
+    padding: 0.75rem 0.5rem;
+}
+
+/* 保研率徽章容器 */
+.d-flex.flex-column {
+    gap: 0.25rem;
+}
+
+/* 统计卡片 */
+.card {
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+}
+</style>
+{% endblock %}

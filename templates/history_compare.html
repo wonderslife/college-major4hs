@@ -1,0 +1,758 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <a href="/history" class="btn btn-outline-secondary mb-3">
+            <i class="bi bi-arrow-left"></i> 返回历史分析
+        </a>
+        <h2>
+            <i class="bi bi-arrows-collapse"></i> 学校对比分析
+        </h2>
+        <p class="text-muted">对比多所学校的分数、位次和趋势变化</p>
+    </div>
+</div>
+
+<!-- 添加学校 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card p-3">
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <label class="form-label">搜索并添加学校</label>
+                    <input type="text" class="form-control" id="school-search"
+                           placeholder="输入学校名称或编号,按回车添加">
+                    <div id="school-suggestions" class="dropdown-menu"></div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">已选学校 (最多10所)</label>
+                    <div class="d-flex gap-2">
+                        <span class="badge bg-primary fs-6" id="selected-count">0</span>
+                        <button class="btn btn-outline-danger" onclick="clearSelection()" id="clear-btn" disabled>
+                            <i class="bi bi-x-circle"></i> 清空
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 已选学校列表 -->
+<div class="row mb-4" id="selected-schools-section" style="display: none;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-check-circle"></i> 已选学校
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-2" id="selected-schools-container">
+                </div>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-primary w-100" onclick="doCompare()" id="compare-btn" disabled>
+                    <i class="bi bi-graph-up-arrow"></i> 开始对比
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 对比结果 -->
+<div class="row mb-4" id="compare-result-section" style="display: none;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-table"></i> 对比结果
+                </h5>
+                <button class="btn btn-sm btn-outline-secondary" onclick="hideResult()">
+                    <i class="bi bi-x"></i> 关闭
+                </button>
+            </div>
+            <div class="card-body">
+                <!-- 学校对比选项卡 -->
+                <ul class="nav nav-tabs mb-4" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#school-compare-tab">
+                            <i class="bi bi-building"></i> 学校对比
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#major-compare-tab" id="major-compare-tab-btn">
+                            <i class="bi bi-book"></i> 专业对比
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- 学校对比内容 -->
+                <div class="tab-content" id="school-compare-tab">
+                    <!-- 年度对比表格 -->
+                <!-- 年度对比表格 -->
+                <h6 class="mb-3">年度数据对比</h6>
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>年份</th>
+                                <th id="school1-header">学校1</th>
+                                <th id="school2-header">学校2</th>
+                            </tr>
+                        </thead>
+                        <tbody id="yearly-compare-tbody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 分数趋势对比图 -->
+                <h6 class="mb-3">分数趋势对比</h6>
+                <div class="chart-container" style="position: relative; height:400px; width:100%">
+                    <canvas id="scoreCompareChart"></canvas>
+                </div>
+
+                <!-- 位次趋势对比图 -->
+                <h6 class="mb-3 mt-4">位次趋势对比</h6>
+                <div class="chart-container" style="position: relative; height:400px; width:100%">
+                    <canvas id="rankCompareChart"></canvas>
+                </div>
+
+                <!-- 趋势概览对比 -->
+                <h6 class="mb-3 mt-4">趋势概览对比</h6>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>学校</th>
+                                <th>分数趋势</th>
+                                <th>分数变化</th>
+                                <th>位次趋势</th>
+                                <th>位次变化</th>
+                                <th>增长率</th>
+                                <th>稳定性</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trend-compare-tbody">
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+
+                <!-- 专业对比内容 -->
+                <div class="tab-content" id="major-compare-tab">
+                    <!-- 专业筛选控件 -->
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <h6 class="mb-3"><i class="bi bi-sliders"></i> 专业筛选</h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">搜索专业</label>
+                                    <input type="text" class="form-control" id="major-search"
+                                           placeholder="输入专业名称，按回车添加">
+                                    <div id="major-suggestions" class="dropdown-menu"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">已选专业 (最多5个)</label>
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <span class="badge bg-primary" id="selected-major-count">0</span>
+                                        <button class="btn btn-outline-danger btn-sm" onclick="clearMajorSelection()" id="clear-major-btn" disabled>
+                                            <i class="bi bi-x-circle"></i> 清空
+                                        </button>
+                                        <button class="btn btn-primary btn-sm" onclick="compareMajors()" id="compare-major-btn" disabled>
+                                            <i class="bi bi-graph-up-arrow"></i> 开始对比
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">分数范围</label>
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <input type="number" class="form-control form-control-sm" id="min-score-filter"
+                                               placeholder="最低分" min="400" max="750">
+                                        <span>-</span>
+                                        <input type="number" class="form-control form-control-sm" id="max-score-filter"
+                                               placeholder="最高分" min="400" max="750">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">年份选择</label>
+                                    <select class="form-select form-select-sm" id="year-filter" multiple>
+                                        <option value="2023" selected>2023年</option>
+                                        <option value="2024" selected>2024年</option>
+                                        <option value="2025" selected>2025年</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">排序方式</label>
+                                    <select class="form-select form-select-sm" id="sort-filter">
+                                        <option value="score">按平均分</option>
+                                        <option value="rank">按平均位次</option>
+                                        <option value="growth">按增长率</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 已选专业列表 -->
+                    <div class="card mb-4" id="selected-majors-section" style="display: none;">
+                        <div class="card-body p-3">
+                            <h6 class="mb-3"><i class="bi bi-check-circle"></i> 已选专业</h6>
+                            <div class="row g-2" id="selected-majors-container"></div>
+                        </div>
+                    </div>
+
+                    <!-- 专业对比结果 -->
+                    <div id="major-compare-result" style="display: none;">
+                        <!-- 关键指标卡片 -->
+                        <div class="row g-3 mb-4" id="major-metrics-cards">
+                        </div>
+
+                        <!-- 多维度对比雷达图 -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="bi bi-pie-chart"></i> 多维度对比</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container" style="position: relative; height:450px;">
+                                    <canvas id="majorRadarChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 时间趋势对比 -->
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-header">
+                                        <h6 class="mb-0"><i class="bi bi-graph-up"></i> 分数趋势</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="chart-container" style="position: relative; height:350px;">
+                                            <canvas id="majorScoreTrendChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-header">
+                                        <h6 class="mb-0"><i class="bi bi-bar-chart"></i> 位次趋势</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="chart-container" style="position: relative; height:350px;">
+                                            <canvas id="majorRankTrendChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 专业详情对比表 -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="bi bi-list-ul"></i> 专业详细数据</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>专业</th>
+                                                <th>平均分</th>
+                                                <th>最低分</th>
+                                                <th>最高分</th>
+                                                <th>平均位次</th>
+                                                <th>开设学校数</th>
+                                                <th>分数变化</th>
+                                                <th>趋势</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="major-compare-tbody">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+let selectedSchools = [];
+let compareChart = null;
+let rankCompareChart = null;
+let searchTimeout;
+
+// 专业对比相关变量
+let selectedMajors = [];
+let majorRadarChart = null;
+let majorScoreTrendChart = null;
+let majorRankTrendChart = null;
+let majorSearchTimeout;
+
+// 搜索建议
+document.getElementById('school-search').addEventListener('input', function(e) {
+    clearTimeout(searchTimeout);
+    const keyword = e.target.value.trim();
+
+    if (keyword.length < 1) {
+        document.getElementById('school-suggestions').style.display = 'none';
+        return;
+    }
+
+    searchTimeout = setTimeout(async () => {
+        try {
+            const response = await fetch(`/api/history/schools?keyword=${keyword}`);
+            const schools = await response.json();
+
+            const suggestionsDiv = document.getElementById('school-suggestions');
+            suggestionsDiv.innerHTML = '';
+
+            // 过滤已选学校
+            const availableSchools = schools.filter(s =>
+                !selectedSchools.find(sel => sel.code === s.code)
+            );
+
+            if (availableSchools.length > 0) {
+                availableSchools.slice(0, 10).forEach(school => {
+                    const item = document.createElement('a');
+                    item.className = 'dropdown-item';
+                    item.href = '#';
+                    item.textContent = school.name;
+                    item.onclick = (e) => {
+                        e.preventDefault();
+                        addSchool(school);
+                    };
+                    suggestionsDiv.appendChild(item);
+                });
+                suggestionsDiv.style.display = 'block';
+            } else {
+                suggestionsDiv.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('搜索失败:', error);
+        }
+    }, 300);
+});
+
+// 回车添加学校
+document.getElementById('school-search').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        const keyword = e.target.value.trim();
+        if (keyword) {
+            // 如果输入的是学校代码
+            if (/^\d+$/.test(keyword)) {
+                addSchoolByCode(keyword);
+            } else {
+                // 如果输入的是名称,选择第一个匹配的
+                addSchoolByName(keyword);
+            }
+        }
+    }
+});
+
+// 通过代码添加学校
+async function addSchoolByCode(code) {
+    if (selectedSchools.length >= 10) {
+        alert('最多只能选择10所学校');
+        return;
+    }
+
+    // 检查是否已添加
+    if (selectedSchools.find(s => s.code === code)) {
+        alert('该学校已添加');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/history/school/${code}`);
+        const data = await response.json();
+
+        if (data.error) {
+            alert(data.error);
+            return;
+        }
+
+        addSchool({
+            code: data.school.code,
+            name: data.school.name
+        });
+
+        document.getElementById('school-search').value = '';
+    } catch (error) {
+        console.error('添加学校失败:', error);
+        alert('添加学校失败');
+    }
+}
+
+// 通过名称添加学校
+async function addSchoolByName(name) {
+    try {
+        const response = await fetch(`/api/history/schools?keyword=${name}`);
+        const schools = await response.json();
+
+        if (schools.length === 0) {
+            alert('未找到匹配的学校');
+            return;
+        }
+
+        addSchool(schools[0]);
+        document.getElementById('school-search').value = '';
+    } catch (error) {
+        console.error('添加学校失败:', error);
+    }
+}
+
+// 添加学校
+function addSchool(school) {
+    if (selectedSchools.length >= 10) {
+        alert('最多只能选择10所学校');
+        return;
+    }
+
+    if (selectedSchools.find(s => s.code === school.code)) {
+        alert('该学校已添加');
+        return;
+    }
+
+    selectedSchools.push(school);
+    updateSelectedSchools();
+}
+
+// 移除学校
+function removeSchool(code) {
+    selectedSchools = selectedSchools.filter(s => s.code !== code);
+    updateSelectedSchools();
+}
+
+// 清空选择
+function clearSelection() {
+    selectedSchools = [];
+    updateSelectedSchools();
+}
+
+// 更新已选学校显示
+function updateSelectedSchools() {
+    const container = document.getElementById('selected-schools-container');
+    const section = document.getElementById('selected-schools-section');
+    const count = document.getElementById('selected-count');
+    const clearBtn = document.getElementById('clear-btn');
+    const compareBtn = document.getElementById('compare-btn');
+
+    container.innerHTML = '';
+    count.textContent = selectedSchools.length;
+
+    selectedSchools.forEach((school, index) => {
+        const badge = `
+            <div class="col-6 col-md-4">
+                <span class="badge bg-info text-wrap fs-6 d-flex justify-content-between align-items-center">
+                    <span>${index + 1}. ${school.name}</span>
+                    <i class="bi bi-x-circle ms-2 cursor-pointer" onclick="removeSchool('${school.code}')"></i>
+                </span>
+            </div>
+        `;
+        container.innerHTML += badge;
+    });
+
+    // 显示/隐藏区域
+    section.style.display = selectedSchools.length > 0 ? 'block' : 'none';
+
+    // 启用/禁用按钮
+    clearBtn.disabled = selectedSchools.length === 0;
+    compareBtn.disabled = selectedSchools.length < 2;
+}
+
+// 执行对比
+async function doCompare() {
+    if (selectedSchools.length < 2) {
+        alert('请至少选择2所学校进行对比');
+        return;
+    }
+
+    try {
+        const codes = selectedSchools.map(s => s.code).join(',');
+        console.log('对比学校代码:', codes);
+
+        const response = await fetch(`/api/history/compare?codes=${codes}`);
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || '请求失败');
+        }
+
+        const comparison = await response.json();
+        console.log('对比结果:', comparison);
+
+        if (!comparison.schools || comparison.schools.length === 0) {
+            alert('未获取到对比数据');
+            return;
+        }
+
+        // 只对比前2所学校
+        compareSchools(comparison.schools.slice(0, 2));
+    } catch (error) {
+        console.error('对比失败:', error);
+        alert('对比失败: ' + error.message);
+    }
+}
+
+// 对比学校
+function compareSchools(schools) {
+    // 更新表头
+    document.getElementById('school1-header').textContent = schools[0].name;
+    document.getElementById('school2-header').textContent = schools[1].name;
+
+    // 年度对比表格
+    const yearlyBody = document.getElementById('yearly-compare-tbody');
+    yearlyBody.innerHTML = '';
+
+    const years = ['2023', '2024', '2025'];
+
+    years.forEach(year => {
+        const school1Data = schools[0].years[year];
+        const school2Data = schools[1].years[year];
+
+        const row = `
+            <tr>
+                <td><strong>${year}年</strong></td>
+                <td>${school1Data ? `
+                    <div>最低分: ${school1Data.min_score}</div>
+                    <div>最高分: ${school1Data.max_score}</div>
+                    <div>平均分: ${parseFloat(school1Data.avg_score).toFixed(1)}</div>
+                    <div class="text-muted small">平均位次: ${formatNumber(Math.round(school1Data.avg_rank))}</div>
+                    <div class="text-muted small">专业数: ${school1Data.total_majors}</div>
+                ` : '-'}</td>
+                <td>${school2Data ? `
+                    <div>最低分: ${school2Data.min_score}</div>
+                    <div>最高分: ${school2Data.max_score}</div>
+                    <div>平均分: ${parseFloat(school2Data.avg_score).toFixed(1)}</div>
+                    <div class="text-muted small">平均位次: ${formatNumber(Math.round(school2Data.avg_rank))}</div>
+                    <div class="text-muted small">专业数: ${school2Data.total_majors}</div>
+                ` : '-'}</td>
+            </tr>
+        `;
+        yearlyBody.innerHTML += row;
+    });
+
+    // 更新趋势对比
+    const trendBody = document.getElementById('trend-compare-tbody');
+    trendBody.innerHTML = '';
+
+    schools.forEach((school, index) => {
+        if (school.trend) {
+            const trendClass = {
+                '上升': 'text-success',
+                '下降': 'text-danger',
+                '稳定': 'text-primary',
+                '波动': 'text-warning'
+            }[school.trend.trend] || '';
+
+            const stabilityPercent = Math.round(school.trend.stability * 100);
+
+            // 格式化分数和位次
+            const scoreTrend = school.trend.score_trend.map(s => parseFloat(s).toFixed(1)).join(' → ');
+            const rankTrend = school.trend.rank_trend ? school.trend.rank_trend.map(r => formatNumber(Math.round(r))).join(' → ') : '-';
+
+            // 格式化位次变化（负数表示提升）
+            let rankChangeText = '-';
+            if (school.trend.rank_change !== 0) {
+                const absRankChange = Math.abs(Math.round(school.trend.rank_change));
+                if (school.trend.rank_change < 0) {
+                    rankChangeText = `<span class="text-success">↑提升${formatNumber(absRankChange)}位</span>`;
+                } else {
+                    rankChangeText = `<span class="text-danger">↓下降${formatNumber(absRankChange)}位</span>`;
+                }
+            } else {
+                rankChangeText = '<span class="text-muted">持平</span>';
+            }
+
+            const row = `
+                <tr>
+                    <td><strong>${school.name}</strong></td>
+                    <td>${scoreTrend}</td>
+                    <td class="${school.trend.score_change > 0 ? 'text-success' : school.trend.score_change < 0 ? 'text-danger' : ''}">
+                        ${school.trend.score_change > 0 ? '+' : ''}${school.trend.score_change}
+                    </td>
+                    <td>${rankTrend}</td>
+                    <td>${rankChangeText}</td>
+                    <td>${school.trend.score_growth_rate}%</td>
+                    <td>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar" role="progressbar" style="width: ${stabilityPercent}%">
+                                ${stabilityPercent}%
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            trendBody.innerHTML += row;
+        }
+    });
+
+    // 更新对比图表
+    updateCompareChart(schools);
+    updateRankChart(schools);
+
+    // 显示结果区域
+    document.getElementById('compare-result-section').style.display = 'block';
+    document.getElementById('compare-result-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+// 更新对比图表
+function updateCompareChart(schools) {
+    const ctx = document.getElementById('scoreCompareChart').getContext('2d');
+
+    if (compareChart) {
+        compareChart.destroy();
+    }
+
+    const colors = ['rgb(102, 126, 234)', 'rgb(245, 87, 108)', 'rgb(0, 242, 254)', 'rgb(67, 233, 123)'];
+
+    const datasets = schools.map((school, index) => {
+        const years = Object.keys(school.years).sort();
+        const scores = years.map(year => school.years[year].avg_score);
+
+        return {
+            label: school.name,
+            data: scores,
+            borderColor: colors[index % colors.length],
+            backgroundColor: colors[index % colors.length].replace('rgb', 'rgba').replace(')', ', 0.1)'),
+            fill: false,
+            tension: 0.3,
+            pointRadius: 6,
+            pointHoverRadius: 8
+        };
+    });
+
+    const allYears = [...new Set(
+        schools.flatMap(school => Object.keys(school.years))
+    )].sort();
+
+    compareChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: allYears.map(y => y + '年'),
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: '平均分数'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// 更新位次对比图表
+function updateRankChart(schools) {
+    const ctx = document.getElementById('rankCompareChart').getContext('2d');
+
+    if (rankCompareChart) {
+        rankCompareChart.destroy();
+    }
+
+    const colors = ['rgb(102, 126, 234)', 'rgb(245, 87, 108)', 'rgb(0, 242, 254)', 'rgb(67, 233, 123)'];
+
+    const datasets = schools.map((school, index) => {
+        if (!school.trend || !school.trend.rank_trend || school.trend.rank_trend.length === 0) {
+            return null;
+        }
+
+        return {
+            label: school.name,
+            data: school.trend.rank_trend.map(r => Math.round(r)),
+            borderColor: colors[index % colors.length],
+            backgroundColor: colors[index % colors.length].replace('rgb', 'rgba').replace(')', ', 0.1)'),
+            fill: false,
+            tension: 0.3,
+            pointRadius: 6,
+            pointHoverRadius: 8
+        };
+    }).filter(d => d !== null);
+
+    if (datasets.length === 0) {
+        return;
+    }
+
+    const years = ['2023年', '2024年', '2025年'];
+
+    rankCompareChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: years,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                }
+            },
+            scales: {
+                y: {
+                    reverse: true,  // 位次越小越好，所以反转y轴
+                    title: {
+                        display: true,
+                        text: '平均位次'
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return formatNumber(value);
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// 隐藏结果
+function hideResult() {
+    document.getElementById('compare-result-section').style.display = 'none';
+    if (compareChart) {
+        compareChart.destroy();
+        compareChart = null;
+    }
+    if (rankCompareChart) {
+        rankCompareChart.destroy();
+        rankCompareChart = null;
+    }
+}
+
+// 页面加载
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('school-search').focus();
+});
+</script>
+{% endblock %}

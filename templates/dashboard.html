@@ -1,0 +1,357 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2>
+            <i class="bi bi-speedometer2"></i> 数据看板
+        </h2>
+        <p class="text-muted">全面了解招生数据的整体情况</p>
+    </div>
+</div>
+
+<!-- 筛选条件 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card p-3">
+            <div class="row g-3 align-items-end">
+                <div class="col-6 col-md-3">
+                    <label class="form-label">最低位次</label>
+                    <input type="number" class="form-control" id="min-rank"
+                           placeholder="例如: 10000" min="1" max="120000">
+                </div>
+                <div class="col-6 col-md-3">
+                    <label class="form-label">最高位次</label>
+                    <input type="number" class="form-control" id="max-rank"
+                           placeholder="例如: 20000" min="1" max="120000">
+                </div>
+                <div class="col-6 col-md-3">
+                    <label class="form-label">最低分数</label>
+                    <input type="number" class="form-control" id="min-score"
+                           placeholder="例如: 500" min="367" max="695">
+                </div>
+                <div class="col-6 col-md-3">
+                    <label class="form-label">最高分数</label>
+                    <input type="number" class="form-control" id="max-score"
+                           placeholder="例如: 600" min="367" max="695">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <button class="btn btn-primary" id="apply-filter-btn">
+                        <i class="bi bi-funnel"></i> 应用筛选
+                    </button>
+                    <button class="btn btn-secondary" id="reset-filter-btn">
+                        <i class="bi bi-arrow-counterclockwise"></i> 重置筛选
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 统计概览 -->
+<div class="row g-4 mb-5">
+    <div class="col-6 col-md-3">
+        <div class="card stat-card text-center py-3">
+            <i class="bi bi-file-earmark-text fs-1"></i>
+            <div class="stat-value fs-4" id="total-records">-</div>
+            <div class="stat-label">数据记录</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card text-center py-3" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <i class="bi bi-building fs-1"></i>
+            <div class="stat-value fs-4" id="universities-count">-</div>
+            <div class="stat-label">院校数量</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card text-center py-3" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <i class="bi bi-book fs-1"></i>
+            <div class="stat-value fs-4" id="majors-count">-</div>
+            <div class="stat-label">专业数量</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card text-center py-3" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+            <i class="bi bi-trophy fs-1"></i>
+            <div class="stat-value fs-4" id="avg-score">-</div>
+            <div class="stat-label">平均分</div>
+        </div>
+    </div>
+</div>
+
+<!-- 分数范围信息 -->
+<div class="row g-4 mb-5">
+    <div class="col-6 col-md-3">
+        <div class="card text-center py-3">
+            <h6 class="text-muted mb-2">最低分</h6>
+            <h4 class="text-danger" id="display-min-score">-</h4>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card text-center py-3">
+            <h6 class="text-muted mb-2">最高分</h6>
+            <h4 class="text-success" id="display-max-score">-</h4>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card text-center py-3">
+            <h6 class="text-muted mb-2">中位数</h6>
+            <h4 class="text-primary" id="display-median-score">-</h4>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card text-center py-3">
+            <h6 class="text-muted mb-2">标准差</h6>
+            <h4 class="text-warning" id="display-std-score">-</h4>
+        </div>
+    </div>
+</div>
+
+<!-- 图表区域 -->
+<div class="row g-4 mb-5">
+    <div class="col-12 col-lg-6">
+        <div class="chart-container">
+            <h5 class="mb-4"><i class="bi bi-bar-chart"></i> 分数分布</h5>
+            <div id="score-distribution-chart"></div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-6">
+        <div class="chart-container">
+            <h5 class="mb-4"><i class="bi bi-line-chart"></i> 位次分布</h5>
+            <div id="rank-distribution-chart"></div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-12 col-lg-6">
+        <div class="chart-container">
+            <h5 class="mb-4"><i class="bi bi-building"></i> 热门院校排行（前15名）</h5>
+            <div id="top-universities-chart"></div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-6">
+        <div class="chart-container">
+            <h5 class="mb-4"><i class="bi bi-book"></i> 热门专业排行（前15名）</h5>
+            <div id="top-majors-chart"></div>
+        </div>
+    </div>
+</div>
+
+<!-- 分数雷达图 -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="chart-container">
+            <h5 class="mb-4"><i class="bi bi-radar"></i> 分数分布雷达图</h5>
+            <div id="radar-chart"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentFilters = {
+    min_rank: null,
+    max_rank: null,
+    min_score: null,
+    max_score: null
+};
+
+async function loadDashboard() {
+    console.log('开始加载仪表板数据...');
+    await refreshDashboard();
+    console.log('仪表板数据加载完成');
+}
+
+async function refreshDashboard() {
+    // 构建查询参数
+    const params = new URLSearchParams();
+    if (currentFilters.min_score) params.append('min_score', currentFilters.min_score);
+    if (currentFilters.max_score) params.append('max_score', currentFilters.max_score);
+    if (currentFilters.min_rank) params.append('min_rank', currentFilters.min_rank);
+    if (currentFilters.max_rank) params.append('max_rank', currentFilters.max_rank);
+
+    // 加载基础统计（应用筛选条件）
+    const stats = await fetchAPI(`/api/statistics?${params.toString()}`);
+    console.log('基础统计:', stats);
+    if (stats) {
+        document.getElementById('total-records').textContent = formatNumber(stats.total_records || 0);
+        document.getElementById('universities-count').textContent = formatNumber(stats.universities_count || 0);
+        document.getElementById('majors-count').textContent = formatNumber(stats.majors_count || 0);
+
+        console.log('score_range:', stats.score_range);
+        if (stats.score_range) {
+            console.log('min:', stats.score_range.min, 'max:', stats.score_range.max, 'mean:', stats.score_range.mean);
+
+            const avgScoreEl = document.getElementById('avg-score');
+            const minScoreEl = document.getElementById('display-min-score');
+            const maxScoreEl = document.getElementById('display-max-score');
+            const medianScoreEl = document.getElementById('display-median-score');
+            const stdScoreEl = document.getElementById('display-std-score');
+
+            if (avgScoreEl) avgScoreEl.textContent = stats.score_range.mean ? stats.score_range.mean.toFixed(1) : '0';
+            if (minScoreEl) minScoreEl.textContent = stats.score_range.min !== undefined && stats.score_range.min !== null ? stats.score_range.min : '0';
+            if (maxScoreEl) maxScoreEl.textContent = stats.score_range.max !== undefined && stats.score_range.max !== null ? stats.score_range.max : '0';
+            if (medianScoreEl) medianScoreEl.textContent = stats.score_range.median ? stats.score_range.median.toFixed(0) : '0';
+
+            // 计算标准差
+            const std = Math.sqrt(Math.pow((stats.score_range.max || 0) - (stats.score_range.mean || 0), 2) * 0.25);
+            if (stdScoreEl) stdScoreEl.textContent = std.toFixed(1);
+        } else {
+            console.error('score_range 不存在');
+        }
+    } else {
+        console.error('无法加载基础统计数据');
+    }
+
+    // 加载分数分布（后端筛选）
+    const scoreDist = await fetchAPI(`/api/score-distribution?${params.toString()}`);
+    console.log('分数分布:', scoreDist);
+    if (scoreDist && scoreDist.scores && scoreDist.scores.length > 0) {
+        // 使用新的 updateChart 函数，直接传递筛选参数
+        const scoreChart = await fetchAPI(`/api/chart/score_distribution?${params.toString()}`);
+        updateChart('score-distribution-chart', scoreChart);
+    } else {
+        // 如果没有数据，清空图表
+        updateChart('score-distribution-chart', JSON.stringify([]));
+    }
+
+    // 加载位次分布（后端筛选）
+    const rankDist = await fetchAPI(`/api/rank-distribution?${params.toString()}`);
+    console.log('位次分布:', rankDist);
+    if (rankDist && rankDist.counts && rankDist.counts.length > 0) {
+        const rankChart = await fetchAPI(`/api/chart/rank_distribution?${params.toString()}`);
+        updateChart('rank-distribution-chart', rankChart);
+    } else {
+        updateChart('rank-distribution-chart', JSON.stringify([]));
+    }
+
+    // 加载热门院校（后端筛选）
+    const topUnis = await fetchAPI(`/api/top-universities?limit=15&${params.toString()}`);
+    console.log('热门院校:', topUnis);
+    if (topUnis && topUnis.length > 0) {
+        const uniChart = await fetchAPI(`/api/chart/top_universities?limit=15&${params.toString()}`);
+        updateChart('top-universities-chart', uniChart);
+    } else {
+        updateChart('top-universities-chart', JSON.stringify([]));
+    }
+
+    // 加载热门专业（后端筛选）
+    const topMajors = await fetchAPI(`/api/top-majors?limit=15&${params.toString()}`);
+    console.log('热门专业:', topMajors);
+    if (topMajors && topMajors.length > 0) {
+        const majorChart = await fetchAPI(`/api/chart/top_majors?limit=15&${params.toString()}`);
+        updateChart('top-majors-chart', majorChart);
+    } else {
+        updateChart('top-majors-chart', JSON.stringify([]));
+    }
+
+    // 加载雷达图（根据筛选条件）
+    const radarChart = await fetchAPI(`/api/chart/score_radar?${params.toString()}`);
+    updateChart('radar-chart', radarChart);
+}
+
+// 应用筛选
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('apply-filter-btn').addEventListener('click', async function() {
+        // 显示加载状态
+        const btn = this;
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 加载中...';
+
+        currentFilters.min_rank = parseInt(document.getElementById('min-rank').value) || null;
+        currentFilters.max_rank = parseInt(document.getElementById('max-rank').value) || null;
+        currentFilters.min_score = parseInt(document.getElementById('min-score').value) || null;
+        currentFilters.max_score = parseInt(document.getElementById('max-score').value) || null;
+
+        await refreshDashboard();
+
+        // 恢复按钮状态
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    });
+
+    // 重置筛选
+    document.getElementById('reset-filter-btn').addEventListener('click', async function() {
+        // 显示加载状态
+        const btn = this;
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 重置中...';
+
+        document.getElementById('min-rank').value = '';
+        document.getElementById('max-rank').value = '';
+        document.getElementById('min-score').value = '';
+        document.getElementById('max-score').value = '';
+        currentFilters = {
+            min_rank: null,
+            max_rank: null,
+            min_score: null,
+            max_score: null
+        };
+        await refreshDashboard();
+
+        // 恢复按钮状态
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    });
+
+    // 页面加载完成后执行
+    loadDashboard();
+});
+
+// 响应式图表调整
+window.addEventListener('resize', function() {
+    try {
+        Plotly.Plots.resize('score-distribution-chart');
+    } catch(e) {}
+    try {
+        Plotly.Plots.resize('rank-distribution-chart');
+    } catch(e) {}
+    try {
+        Plotly.Plots.resize('top-universities-chart');
+    } catch(e) {}
+    try {
+        Plotly.Plots.resize('top-majors-chart');
+    } catch(e) {}
+    try {
+        Plotly.Plots.resize('radar-chart');
+    } catch(e) {}
+});
+
+// 优化后的图表渲染函数（支持更新现有图表）
+async function updateChart(containerId, chartData) {
+    const container = document.getElementById(containerId);
+    if (!container) {
+        console.error(`图表容器 ${containerId} 不存在`);
+        return;
+    }
+
+    try {
+        // chartData 已经是 JSON 字符串,需要解析为对象
+        const parsedData = JSON.parse(chartData);
+        const layout = {
+            responsive: true,
+            displayModeBar: false
+        };
+
+        // 检查是否已存在图表
+        if (container.data && container.data.length > 0) {
+            // 更新现有图表
+            Plotly.react(containerId, parsedData, layout);
+        } else {
+            // 创建新图表
+            Plotly.newPlot(containerId, parsedData, layout);
+        }
+    } catch (error) {
+        console.error(`图表 ${containerId} 渲染失败:`, error);
+        console.error('图表数据:', chartData);
+    }
+}
+</script>
+{% endblock %}

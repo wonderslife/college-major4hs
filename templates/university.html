@@ -1,0 +1,510 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2>
+            <i class="bi bi-building"></i> 院校分析
+        </h2>
+        <p class="text-muted">查看各院校的投档分数线和专业设置情况</p>
+    </div>
+</div>
+
+<!-- 搜索和筛选 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card p-3">
+            <div class="row g-3">
+                <div class="col-12 col-md-3">
+                    <input type="text" class="form-control" id="uni-search"
+                           placeholder="搜索院校名称...">
+                </div>
+                <div class="col-6 col-md-2">
+                    <select class="form-select" id="score-filter">
+                        <option value="">所有分数段</option>
+                        <option value="650">650分以上</option>
+                        <option value="600">600-649分</option>
+                        <option value="550">550-599分</option>
+                        <option value="500">500-549分</option>
+                        <option value="450">450-499分</option>
+                        <option value="0">450分以下</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2">
+                    <select class="form-select" id="postgraduate-filter">
+                        <option value="">所有保研率</option>
+                        <option value="high">50%以上</option>
+                        <option value="medium">20%-50%</option>
+                        <option value="low">20%以下</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="number" class="form-control" id="min-rank"
+                           placeholder="最低位次" min="1" max="120000">
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="number" class="form-control" id="max-rank"
+                           placeholder="最高位次" min="1" max="120000">
+                </div>
+                <div class="col-12 col-md-1">
+                    <button class="btn btn-primary w-100" id="filter-btn">
+                        <i class="bi bi-funnel"></i> 筛选
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 院校列表 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="data-table table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>排名</th>
+                        <th>院校名称</th>
+                        <th>主管部门</th>
+                        <th>城市</th>
+                        <th>最低分</th>
+                        <th>最高分</th>
+                        <th>平均分</th>
+                        <th>专业数量</th>
+                        <th>保研率</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="university-list">
+                    <tr>
+                        <td colspan="10" class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">加载中...</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 分页 -->
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center" id="pagination">
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- 院校详情模态框 -->
+<div class="modal fade" id="universityModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">院校详情</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">加载中...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="export-btn">
+                    <i class="bi bi-download"></i> 导出数据
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentPage = 1;
+let perPage = 20;
+let currentMinRank = null;
+let currentMaxRank = null;
+
+// 定义城市分组
+const tier1Cities = ['北京', '上海', '广州', '深圳'];
+const tier2Cities = ['杭州', '成都', '南京', '武汉', '苏州', '重庆', '天津'];
+
+// 根据城市获取徽章颜色
+function getCityBadgeColor(city) {
+    if (!city) return 'bg-secondary';
+    if (tier1Cities.includes(city)) return 'bg-danger';
+    if (tier2Cities.includes(city)) return 'bg-warning text-dark';
+    return 'bg-secondary';
+}
+
+// 学科评估结果颜色映射
+function getEvaluationBadgeColor(result) {
+    const colorMap = {
+        'A+': 'bg-danger',
+        'A': 'bg-danger',
+        'A-': 'bg-danger',
+        'B+': 'bg-warning text-dark',
+        'B': 'bg-warning text-dark',
+        'B-': 'bg-warning text-dark',
+        'C+': 'bg-info text-dark',
+        'C': 'bg-info text-dark',
+        'C-': 'bg-info text-dark'
+    };
+    return colorMap[result] || 'bg-secondary';
+}
+
+// 保研率颜色映射
+function getPostgraduateBadgeColor(rate) {
+    if (rate >= 50) {
+        return 'bg-success';  // 50%以上：绿色
+    } else if (rate < 20) {
+        return 'bg-warning text-dark';  // 20%以下：橙色
+    }
+    return 'bg-primary';  // 20%-50%：蓝色
+}
+
+async function loadUniversities(page = 1) {
+    const search = document.getElementById('uni-search').value;
+    const scoreFilter = document.getElementById('score-filter').value;
+    const postgraduateFilter = document.getElementById('postgraduate-filter').value;
+    currentMinRank = parseInt(document.getElementById('min-rank').value) || null;
+    currentMaxRank = parseInt(document.getElementById('max-rank').value) || null;
+
+    let url = `/api/top-universities?limit=1000`;
+
+    const data = await fetchAPI(url);
+    if (!data) return;
+
+    // 客户端筛选
+    let filtered = data;
+
+    // 先按名称筛选
+    if (search) {
+        filtered = filtered.filter(u => u.name.toLowerCase().includes(search.toLowerCase()));
+    }
+
+    // 按分数筛选
+    if (scoreFilter) {
+        const minScore = parseInt(scoreFilter);
+        if (minScore >= 650) {
+            // 650分以上：最低分 >= 650
+            filtered = filtered.filter(u => u.min_score >= 650);
+        } else if (minScore >= 600) {
+            // 600-649分：最低分 >= 600 && 最低分 < 650
+            filtered = filtered.filter(u => u.min_score >= 600 && u.min_score < 650);
+        } else if (minScore >= 550) {
+            // 550-599分：最低分 >= 550 && 最低分 < 600
+            filtered = filtered.filter(u => u.min_score >= 550 && u.min_score < 600);
+        } else if (minScore >= 500) {
+            // 500-549分：最低分 >= 500 && 最低分 < 550
+            filtered = filtered.filter(u => u.min_score >= 500 && u.min_score < 550);
+        } else if (minScore >= 450) {
+            // 450-499分：最低分 >= 450 && 最低分 < 500
+            filtered = filtered.filter(u => u.min_score >= 450 && u.min_score < 500);
+        } else {
+            // 450分以下：最低分 < 450
+            filtered = filtered.filter(u => u.min_score < 450);
+        }
+    }
+
+    // 按保研率筛选
+    if (postgraduateFilter) {
+        filtered = filtered.filter(u => {
+            if (!u.postgraduate_info || u.postgraduate_info.rate === null) return false;
+            const rate = u.postgraduate_info.rate;
+            if (postgraduateFilter === 'high') return rate >= 50;
+            if (postgraduateFilter === 'medium') return rate >= 20 && rate < 50;
+            if (postgraduateFilter === 'low') return rate < 20;
+            return true;
+        });
+    }
+
+    // 按位次筛选：只显示有专业符合位次范围的院校
+    if (currentMinRank !== null || currentMaxRank !== null) {
+        filtered = filtered.filter(u => {
+            // 检查该校的位次范围是否与筛选范围有交集
+            const uniMinRank = u.min_rank;
+            const uniMaxRank = u.max_rank;
+
+            if (uniMinRank === undefined || uniMinRank === null) return false;
+            if (uniMaxRank === undefined || uniMaxRank === null) return false;
+
+            // 如果只设置了最低位次
+            if (currentMinRank !== null && currentMaxRank === null) {
+                // 只要院校最高位次 >= 筛选的最低位次即可
+                return uniMaxRank >= currentMinRank;
+            }
+
+            // 如果只设置了最高位次
+            if (currentMinRank === null && currentMaxRank !== null) {
+                // 只要院校最低位次 <= 筛选的最高位次即可
+                return uniMinRank <= currentMaxRank;
+            }
+
+            // 如果设置了范围
+            if (currentMinRank !== null && currentMaxRank !== null) {
+                // 只要院校位次范围与筛选范围有交集即可
+                // 交集条件：!(uniMaxRank < currentMinRank || uniMinRank > currentMaxRank)
+                return !(uniMaxRank < currentMinRank || uniMinRank > currentMaxRank);
+            }
+
+            return true;
+        });
+    }
+
+    // 分页
+    const total = filtered.length;
+    const totalPages = Math.ceil(total / perPage);
+    const start = (page - 1) * perPage;
+    const pageData = filtered.slice(start, start + perPage);
+
+    // 渲染列表
+    const tbody = document.getElementById('university-list');
+    tbody.innerHTML = '';
+
+    pageData.forEach((uni, index) => {
+        const row = document.createElement('tr');
+        const tags = uni.tags || {};
+
+        // 生成标签 HTML
+        let tagsHtml = '';
+        if (tags.is_985) {
+            tagsHtml += '<span class="badge bg-danger me-1">985</span>';
+        }
+        if (tags.is_211) {
+            tagsHtml += '<span class="badge bg-warning text-dark me-1">211</span>';
+        }
+        if (tags.is_double_first_class && !tags.is_985) {
+            tagsHtml += '<span class="badge bg-success me-1">双一流</span>';
+        }
+
+        // 中外合作办学标记
+        if (uni.has_foreign_cooperation) {
+            tagsHtml += '<span class="badge bg-info text-dark me-1">中外合作</span>';
+        }
+
+        // 院校名称带链接
+        let nameHtml = uni.detail_link
+            ? `<a href="${uni.detail_link}" target="_blank" class="text-decoration-none" title="点击查看学校详情"><strong>${uni.name}</strong> <i class="bi bi-box-arrow-up-right small"></i></a>`
+            : `<strong>${uni.name}</strong>`;
+
+        // 保研率显示
+        let postgraduateHtml = '';
+        if (uni.postgraduate_info && uni.postgraduate_info.rate !== null) {
+            const rate = uni.postgraduate_info.rate;
+            const count = uni.postgraduate_info.count;
+            const badgeColor = getPostgraduateBadgeColor(rate);
+            postgraduateHtml = `<span class="badge ${badgeColor} me-1" title="保研人数: ${count}">${rate.toFixed(2)}%</span>`;
+        }
+
+        row.innerHTML = `
+            <td>${start + index + 1}</td>
+            <td>
+                ${nameHtml}
+                ${tagsHtml ? `<div class="mt-1">${tagsHtml}</div>` : ''}
+            </td>
+            <td><small class="text-muted">${uni.department || '未知'}</small></td>
+            <td><span class="badge ${getCityBadgeColor(uni.city)}">${uni.city || '未知'}</span></td>
+            <td class="text-danger">${uni.min_score}</td>
+            <td class="text-success">${uni.max_score}</td>
+            <td class="text-primary">${uni.avg_score}</td>
+            <td>${uni.major_count}</td>
+            <td>${postgraduateHtml || '<span class="text-muted">-</span>'}</td>
+            <td class="text-center">
+                <button class="btn btn-sm btn-primary" onclick="showUniversityDetail('${uni.name}')">
+                    <i class="bi bi-eye"></i> 查看
+                </button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+
+    // 渲染分页
+    renderPagination(page, totalPages);
+}
+
+function renderPagination(page, totalPages) {
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
+
+    const prevClass = page === 1 ? 'disabled' : '';
+    const nextClass = page === totalPages ? 'disabled' : '';
+
+    pagination.innerHTML = `
+        <li class="page-item ${prevClass}">
+            <a class="page-link" href="#" onclick="loadUniversities(1); return false;">首页</a>
+        </li>
+        <li class="page-item ${prevClass}">
+            <a class="page-link" href="#" onclick="loadUniversities(${page - 1}); return false;">上一页</a>
+        </li>
+        <li class="page-item active">
+            <span class="page-link">${page} / ${totalPages}</span>
+        </li>
+        <li class="page-item ${nextClass}">
+            <a class="page-link" href="#" onclick="loadUniversities(${page + 1}); return false;">下一页</a>
+        </li>
+        <li class="page-item ${nextClass}">
+            <a class="page-link" href="#" onclick="loadUniversities(${totalPages}); return false;">末页</a>
+        </li>
+    `;
+}
+
+async function showUniversityDetail(name) {
+    document.getElementById('modalTitle').textContent = name;
+    document.getElementById('modalContent').innerHTML = '<div class="text-center"><div class="spinner-border"></div></div>';
+
+    const modal = new bootstrap.Modal(document.getElementById('universityModal'));
+    modal.show();
+
+    // 构建查询参数
+    const params = new URLSearchParams();
+    if (currentMinRank !== null) params.append('min_rank', currentMinRank);
+    if (currentMaxRank !== null) params.append('max_rank', currentMaxRank);
+
+    const detail = await fetchAPI(`/api/university/${encodeURIComponent(name)}?${params.toString()}`);
+    if (detail && !detail.error) {
+        // 保研率显示
+        let postgraduateHtml = '';
+        if (detail.graduate_rate !== null && detail.graduate_rate !== undefined && detail.graduate_rate !== '') {
+            const rate = parseFloat(detail.graduate_rate);
+            const count = detail.graduate_count || 0;
+            const badgeColor = getPostgraduateBadgeColor(rate);
+            postgraduateHtml = `
+                <div>
+                    <h6 class="text-muted mb-1">保研率</h6>
+                    <h5 class="badge ${badgeColor}">${rate.toFixed(2)}%</h5>
+                    <small class="text-muted">(${count}人)</small>
+                </div>
+            `;
+        }
+
+        let html = `
+            <div class="row mb-3">
+                <div class="col-12">
+                    <div class="card py-2">
+                        <div class="d-flex justify-content-around text-center flex-wrap">
+                            <div>
+                                <h6 class="text-muted mb-1">主管部门</h6>
+                                <h5><small class="text-muted">${detail.department || detail.authority || '未知'}</small></h5>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-1">所在城市</h6>
+                                <h5><span class="badge ${getCityBadgeColor(detail.city || detail.region)}">${detail.city || detail.region || '未知'}</span></h5>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-1">专业总数</h6>
+                                <h5 class="text-primary">${detail.major_count || detail.total_majors || 0}</h5>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-1">最低分</h6>
+                                <h5 class="text-danger">${detail.min_score}</h5>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-1">最高分</h6>
+                                <h5 class="text-success">${detail.max_score}</h5>
+                            </div>
+                            <div>
+                                <h6 class="text-muted mb-1">平均分</h6>
+                                <h5 class="text-primary">${detail.avg_score}</h5>
+                            </div>
+                            ${postgraduateHtml}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h6>专业列表：</h6>
+            <div class="table-responsive">
+                <table class="table table-sm table-striped">
+                    <thead>
+                        <tr>
+                            <th>专业名称</th>
+                            <th>投档分</th>
+                            <th>位次</th>
+                            <th>学科评估</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        detail.majors.forEach(major => {
+            // 生成学科评估徽章
+            let evaluationBadges = '';
+            if (major.evaluations && major.evaluations.length > 0) {
+                major.evaluations.forEach(eva => {
+                    const badgeColor = getEvaluationBadgeColor(eva.评估结果);
+                    evaluationBadges += `<span class="badge ${badgeColor} me-1" title="${eva.学科名称}">${eva.评估结果}</span>`;
+                });
+            } else {
+                evaluationBadges = '<span class="text-muted small">无评估数据</span>';
+            }
+
+            html += `
+                <tr>
+                    <td>${major.name || major.major}</td>
+                    <td>${major.score}</td>
+                    <td>${formatNumber(major.rank)}</td>
+                    <td>${evaluationBadges}</td>
+                </tr>
+            `;
+        });
+        
+        html += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        document.getElementById('modalContent').innerHTML = html;
+    }
+}
+
+// 筛选按钮
+document.getElementById('filter-btn').addEventListener('click', () => {
+    loadUniversities(1);
+});
+
+// 回车键触发筛选
+['uni-search', 'score-filter', 'postgraduate-filter', 'min-rank', 'max-rank'].forEach(id => {
+    document.getElementById(id).addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            loadUniversities(1);
+        }
+    });
+});
+
+// 页面加载时执行
+window.addEventListener('DOMContentLoaded', function() {
+    // 检查是否有从志愿表传递过来的学校信息
+    const schoolInfoStr = sessionStorage.getItem('selectedSchoolInfo');
+    if (schoolInfoStr) {
+        try {
+            const schoolInfo = JSON.parse(schoolInfoStr);
+            // 自动填充搜索框
+            const searchInput = document.getElementById('uni-search');
+            if (searchInput && schoolInfo.schoolName) {
+                searchInput.value = schoolInfo.schoolName;
+                console.log('自动搜索学校:', schoolInfo.schoolName);
+            }
+        } catch (e) {
+            console.error('解析学校信息失败:', e);
+        }
+        // 清除sessionStorage，避免影响后续操作
+        sessionStorage.removeItem('selectedSchoolInfo');
+    }
+    
+    // 加载院校列表
+    loadUniversities(1);
+});
+</script>
+{% endblock %}
+
+

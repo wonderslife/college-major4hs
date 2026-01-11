@@ -1,0 +1,713 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2>
+            <i class="bi bi-clock-history"></i> 历史录取分析
+        </h2>
+        <p class="text-muted">基于2023-2025三年专业投档数据,分析录取趋势和变化</p>
+    </div>
+</div>
+
+<!-- 搜索区域 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card p-3">
+            <div class="row g-3">
+                <div class="col-md-4 position-relative" style="z-index: 1001;">
+                    <label class="form-label">搜索学校</label>
+                    <input type="text" class="form-control" id="school-search"
+                           placeholder="输入学校名称或编号">
+                    <div id="school-suggestions" class="dropdown-menu position-absolute w-100" style="z-index: 1001;"></div>
+                </div>
+                <div class="col-md-4 position-relative" style="z-index: 1001;">
+                    <label class="form-label">搜索专业</label>
+                    <input type="text" class="form-control" id="major-search"
+                           placeholder="输入专业名称">
+                    <div id="major-suggestions" class="dropdown-menu position-absolute w-100" style="z-index: 1001;"></div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">院校类型筛选</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="filter-985">
+                            <label class="form-check-label" for="filter-985">985</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="filter-211">
+                            <label class="form-check-label" for="filter-211">211</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="filter-double-first-class">
+                            <label class="form-check-label" for="filter-double-first-class">双一流</label>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-secondary ms-auto" onclick="clearFilters()">
+                            <i class="bi bi-x"></i> 清除筛选
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 功能入口 -->
+<div class="row g-4 mb-4" style="position: relative; z-index: 1;">
+    <div class="col-md-4">
+        <div class="card h-100 p-4 cursor-pointer" onclick="window.location.href='/history/compare'" style="position: relative; z-index: 1;">
+            <div class="card-body text-center">
+                <div class="icon-circle mb-3">
+                    <i class="bi bi-arrows-collapse" style="font-size: 3rem; color: #667eea;"></i>
+                </div>
+                <h5 class="card-title">对比分析</h5>
+                <p class="card-text text-muted">
+                    对比多所学校的分数、位次和趋势变化
+                </p>
+                <button class="btn btn-outline-primary">
+                    开始对比 <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 p-4" style="position: relative; z-index: 1;">
+            <div class="card-body text-center">
+                <div class="icon-circle mb-3">
+                    <i class="bi bi-graph-up-arrow" style="font-size: 3rem; color: #f5576c;"></i>
+                </div>
+                <h5 class="card-title">趋势排行</h5>
+                <p class="card-text text-muted">
+                    查看分数变化、位次变化等排行
+                </p>
+                <button class="btn btn-outline-primary" onclick="showTrendRanking()">
+                    查看排行 <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 p-4" style="position: relative; z-index: 1;">
+            <div class="card-body text-center">
+                <div class="icon-circle mb-3">
+                    <i class="bi bi-pie-chart" style="font-size: 3rem; color: #00f2fe;"></i>
+                </div>
+                <h5 class="card-title">统计概览</h5>
+                <p class="card-text text-muted">
+                    查看整体统计数据和分布情况
+                </p>
+                <button class="btn btn-outline-primary" onclick="showStatistics()">
+                    查看统计 <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 统计概览 -->
+<div class="row g-4 mb-4" id="statistics-section" style="display: none; position: relative; z-index: 1;">
+    <div class="col-12">
+        <h4 class="mb-3">
+            <i class="bi bi-bar-chart"></i> 统计概览
+        </h4>
+    </div>
+    <div class="col-6 col-sm-6 col-md-3">
+        <div class="card stat-card text-center py-4">
+            <i class="bi bi-building fs-2 mb-2"></i>
+            <div class="stat-value fs-4" id="total-schools">-</div>
+            <div class="stat-label">总学校数</div>
+        </div>
+    </div>
+    <div class="col-6 col-sm-6 col-md-3">
+        <div class="card stat-card text-center py-4" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <i class="bi bi-book fs-2 mb-2"></i>
+            <div class="stat-value fs-4" id="total-majors">-</div>
+            <div class="stat-label">总专业数</div>
+        </div>
+    </div>
+    <div class="col-6 col-sm-6 col-md-3">
+        <div class="card stat-card text-center py-4" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <i class="bi bi-calendar-check fs-2 mb-2"></i>
+            <div class="stat-value fs-4">3</div>
+            <div class="stat-label">历史年份</div>
+        </div>
+    </div>
+    <div class="col-6 col-sm-6 col-md-3">
+        <div class="card stat-card text-center py-4" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+            <i class="bi bi-graph-up fs-2 mb-2"></i>
+            <div class="stat-value fs-4" id="complete-data-schools">-</div>
+            <div class="stat-label">完整数据学校</div>
+        </div>
+    </div>
+</div>
+
+<!-- 趋势排行 -->
+<div class="row mb-4" id="trend-ranking-section" style="display: none; position: relative; z-index: 1;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <h5 class="mb-0">
+                    <i class="bi bi-trophy"></i> 趋势排行
+                </h5>
+                <div class="d-flex flex-wrap gap-2">
+                    <div class="btn-group" role="group">
+                        <input type="radio" class="btn-check" name="trend-type-group" id="type-score" value="score" checked>
+                        <label class="btn btn-outline-primary btn-sm" for="type-score">
+                            <i class="bi bi-graph-up"></i> 分数排行
+                        </label>
+                        <input type="radio" class="btn-check" name="trend-type-group" id="type-rank" value="rank">
+                        <label class="btn btn-outline-primary btn-sm" for="type-rank">
+                            <i class="bi bi-sort-numeric-down"></i> 位次排行
+                        </label>
+                    </div>
+                    <select class="form-select form-select-sm d-inline-block" id="trend-direction" style="width: auto;">
+                        <option value="desc">降序</option>
+                        <option value="asc">升序</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>排名</th>
+                                <th>学校名称</th>
+                                <th>2023年</th>
+                                <th>2024年</th>
+                                <th>2025年</th>
+                                <th>变化</th>
+                                <th>趋势</th>
+                                <th>稳定性</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trend-ranking-tbody">
+                            <tr>
+                                <td colspan="8" class="text-center">加载中...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 热门学校 -->
+<div class="row mb-4" style="position: relative; z-index: 1;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-fire"></i> 位次波动最大的学校
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3" id="hot-schools-container">
+                    <div class="col-12 text-center">加载中...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// 加载统计数据
+async function showStatistics() {
+    const section = document.getElementById('statistics-section');
+    section.style.display = section.style.display === 'none' ? 'block' : 'none';
+
+    if (section.style.display === 'block') {
+        loadStatistics();
+    }
+}
+
+async function loadStatistics() {
+    try {
+        const response = await fetch('/api/history/schools');
+        const schools = await response.json();
+
+        let completeCount = 0;
+        schools.forEach(s => {
+            if (s.years_count === 3) completeCount++;
+        });
+
+        document.getElementById('total-schools').textContent = schools.length;
+
+        // 获取专业总数
+        const majorsResponse = await fetch('/api/history/majors');
+        const majors = await majorsResponse.json();
+        document.getElementById('total-majors').textContent = majors.length;
+        document.getElementById('complete-data-schools').textContent = completeCount;
+
+    } catch (error) {
+        console.error('加载统计数据失败:', error);
+    }
+}
+
+// 加载趋势排行
+async function showTrendRanking() {
+    const section = document.getElementById('trend-ranking-section');
+    section.style.display = section.style.display === 'none' ? 'block' : 'none';
+
+    if (section.style.display === 'block') {
+        loadTrendRanking();
+    }
+}
+
+async function loadTrendRanking() {
+    try {
+        const typeInput = document.querySelector('input[name="trend-type-group"]:checked');
+        const type = typeInput ? typeInput.value : 'score';
+        const direction = document.getElementById('trend-direction').value;
+        const filters = getCurrentFilters();
+
+        // 更新表头
+        const yearColumns = document.querySelectorAll('#trend-ranking-section th');
+        if (yearColumns.length >= 6) {
+            yearColumns[2].textContent = `2023年${type === 'rank' ? '位次' : '分数'}`;
+            yearColumns[3].textContent = `2024年${type === 'rank' ? '位次' : '分数'}`;
+            yearColumns[4].textContent = `2025年${type === 'rank' ? '位次' : '分数'}`;
+            yearColumns[5].textContent = `变化(${type === 'rank' ? '位次' : '分数'})`;
+        }
+
+        const queryParams = new URLSearchParams({
+            type: type,
+            direction: direction,
+            limit: '20',
+            is_985: filters.is_985.toString(),
+            is_211: filters.is_211.toString(),
+            is_double_first_class: filters.is_double_first_class.toString()
+        });
+
+        const response = await fetch(`/api/history/trend?${queryParams}`);
+        const data = await response.json();
+
+        const tbody = document.getElementById('trend-ranking-tbody');
+        tbody.innerHTML = '';
+
+        // 安全格式化数字函数
+        const safeFormatNumber = (num) => {
+            if (num === undefined || num === null || isNaN(num)) return '-';
+            return formatNumber(num);
+        };
+
+        data.forEach((item, index) => {
+            const trendClass = {
+                '上升': 'text-success',
+                '下降': 'text-danger',
+                '稳定': 'text-primary',
+                '波动': 'text-warning'
+            }[item.trend] || '';
+
+            // 生成标签HTML
+            let tagsHtml = '';
+            if (item.tags) {
+                if (item.tags.is_985) {
+                    tagsHtml += '<span class="badge bg-danger me-1">985</span>';
+                }
+                if (item.tags.is_211) {
+                    tagsHtml += '<span class="badge bg-warning text-dark me-1">211</span>';
+                }
+                if (item.tags.is_double_first_class && !item.tags.is_985 && !item.tags.is_211) {
+                    tagsHtml += '<span class="badge bg-success me-1">双一流</span>';
+                }
+            }
+
+            const stabilityPercent = Math.round(item.stability * 100);
+
+            // 根据type决定显示分数还是位次
+            const displayTrend = type === 'rank' ? item.rank_trend : item.score_trend;
+            const displayChange = type === 'rank' ? item.rank_change : item.score_change;
+
+            // 格式化变化值
+            let changeDisplay = '-';
+            if (displayChange !== undefined && displayChange !== null && !isNaN(displayChange)) {
+                if (type === 'rank') {
+                    // 位次变化：负值表示提升，正值表示下降
+                    const absChange = Math.abs(Math.round(displayChange));
+                    if (displayChange < 0) {
+                        changeDisplay = `<span class="text-success">↑提升${formatNumber(absChange)}位</span>`;
+                    } else if (displayChange > 0) {
+                        changeDisplay = `<span class="text-danger">↓下降${formatNumber(absChange)}位</span>`;
+                    } else {
+                        changeDisplay = '<span class="text-muted">持平</span>';
+                    }
+                } else {
+                    // 分数变化
+                    const changeClass = displayChange > 0 ? 'text-success' : displayChange < 0 ? 'text-danger' : '';
+                    const changeText = displayChange > 0 ? '+' : '';
+                    changeDisplay = `<span class="${changeClass}">${changeText}${displayChange}</span>`;
+                }
+            }
+
+            const row = `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>
+                        <a href="/history/school/${item.code}" class="text-decoration-none">
+                            ${item.name}
+                        </a>
+                        <div class="mt-1">${tagsHtml}</div>
+                    </td>
+                    <td>${type === 'rank' ? safeFormatNumber(displayTrend[0]) : (displayTrend[0]?.toFixed(1) || '-')}</td>
+                    <td>${type === 'rank' ? safeFormatNumber(displayTrend[1]) : (displayTrend[1]?.toFixed(1) || '-')}</td>
+                    <td>${type === 'rank' ? safeFormatNumber(displayTrend[2]) : (displayTrend[2]?.toFixed(1) || '-')}</td>
+                    <td>${changeDisplay}</td>
+                    <td class="${trendClass}">${item.trend}</td>
+                    <td>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar" role="progressbar"
+                                 style="width: ${stabilityPercent}%">
+                                ${stabilityPercent}%
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+
+    } catch (error) {
+        console.error('加载趋势排行失败:', error);
+    }
+}
+
+// 搜索建议
+let schoolSearchTimeout;
+let majorSearchTimeout;
+let currentSchoolSuggestionIndex = -1;
+let currentMajorSuggestionIndex = -1;
+
+// 通用搜索建议生成函数
+function generateSuggestions(inputElement, suggestionsElement, data, createItemCallback) {
+    suggestionsElement.innerHTML = '';
+    if (data.length > 0) {
+        data.slice(0, 10).forEach(item => {
+            const suggestionItem = createItemCallback(item);
+            suggestionItem.className = 'dropdown-item';
+            suggestionItem.addEventListener('mouseenter', function() {
+                // 鼠标悬停时更新当前选中索引
+                const items = suggestionsElement.querySelectorAll('.dropdown-item');
+                items.forEach((el, i) => {
+                    el.classList.remove('active');
+                    if (el === this) {
+                        if (inputElement.id === 'school-search') {
+                            currentSchoolSuggestionIndex = i;
+                        } else {
+                            currentMajorSuggestionIndex = i;
+                        }
+                    }
+                });
+                this.classList.add('active');
+            });
+            suggestionsElement.appendChild(suggestionItem);
+        });
+        suggestionsElement.style.display = 'block';
+    } else {
+        suggestionsElement.style.display = 'none';
+    }
+}
+
+// 通用键盘事件处理函数
+function handleKeyboardNavigation(e, inputElement, suggestionsElement, currentIndex, setCurrentIndex) {
+    const suggestions = suggestionsElement.querySelectorAll('.dropdown-item');
+    if (suggestions.length === 0) return;
+
+    switch(e.key) {
+        case 'ArrowDown':
+            e.preventDefault();
+            // 移除上一个选中项的高亮
+            if (currentIndex >= 0 && suggestions[currentIndex]) {
+                suggestions[currentIndex].classList.remove('active');
+            }
+            // 更新索引
+            currentIndex = (currentIndex + 1) % suggestions.length;
+            setCurrentIndex(currentIndex);
+            // 高亮当前项
+            suggestions[currentIndex].classList.add('active');
+            // 滚动到可视区域
+            suggestions[currentIndex].scrollIntoView({ block: 'nearest' });
+            break;
+        case 'ArrowUp':
+            e.preventDefault();
+            // 移除上一个选中项的高亮
+            if (currentIndex >= 0 && suggestions[currentIndex]) {
+                suggestions[currentIndex].classList.remove('active');
+            }
+            // 更新索引
+            currentIndex = (currentIndex - 1 + suggestions.length) % suggestions.length;
+            setCurrentIndex(currentIndex);
+            // 高亮当前项
+            suggestions[currentIndex].classList.add('active');
+            // 滚动到可视区域
+            suggestions[currentIndex].scrollIntoView({ block: 'nearest' });
+            break;
+        case 'Enter':
+            e.preventDefault();
+            if (currentIndex >= 0 && suggestions[currentIndex]) {
+                // 触发点击事件
+                suggestions[currentIndex].click();
+            }
+            break;
+        case 'Escape':
+            // 隐藏建议列表
+            suggestionsElement.style.display = 'none';
+            setCurrentIndex(-1);
+            break;
+    }
+}
+
+// 学校搜索
+document.getElementById('school-search').addEventListener('input', function(e) {
+    clearTimeout(schoolSearchTimeout);
+    const keyword = e.target.value.trim();
+    currentSchoolSuggestionIndex = -1;
+
+    if (keyword.length < 1) {
+        document.getElementById('school-suggestions').style.display = 'none';
+        return;
+    }
+
+    schoolSearchTimeout = setTimeout(async () => {
+        try {
+            const response = await fetch(`/api/history/schools?keyword=${keyword}`);
+            const schools = await response.json();
+
+            generateSuggestions(
+                this,
+                document.getElementById('school-suggestions'),
+                schools,
+                (school) => {
+                    const item = document.createElement('a');
+                    item.href = `/history/school/${school.code}`;
+                    item.textContent = school.name;
+                    return item;
+                }
+            );
+        } catch (error) {
+            console.error('搜索失败:', error);
+        }
+    }, 300);
+});
+
+// 学校搜索键盘事件
+document.getElementById('school-search').addEventListener('keydown', function(e) {
+    handleKeyboardNavigation(
+        e,
+        this,
+        document.getElementById('school-suggestions'),
+        currentSchoolSuggestionIndex,
+        (index) => { currentSchoolSuggestionIndex = index; }
+    );
+});
+
+// 专业搜索
+document.getElementById('major-search').addEventListener('input', function(e) {
+    clearTimeout(majorSearchTimeout);
+    const keyword = e.target.value.trim();
+    currentMajorSuggestionIndex = -1;
+
+    if (keyword.length < 1) {
+        document.getElementById('major-suggestions').style.display = 'none';
+        return;
+    }
+
+    majorSearchTimeout = setTimeout(async () => {
+        try {
+            const response = await fetch(`/api/history/majors?keyword=${keyword}`);
+            const majors = await response.json();
+
+            generateSuggestions(
+                this,
+                document.getElementById('major-suggestions'),
+                majors,
+                (major) => {
+                    const item = document.createElement('a');
+                    item.href = `/history/major?name=${encodeURIComponent(major)}`;
+                    item.textContent = major;
+                    return item;
+                }
+            );
+        } catch (error) {
+            console.error('搜索失败:', error);
+        }
+    }, 300);
+});
+
+// 专业搜索键盘事件
+document.getElementById('major-search').addEventListener('keydown', function(e) {
+    handleKeyboardNavigation(
+        e,
+        this,
+        document.getElementById('major-suggestions'),
+        currentMajorSuggestionIndex,
+        (index) => { currentMajorSuggestionIndex = index; }
+    );
+});
+
+// 点击页面其他区域隐藏搜索建议
+document.addEventListener('click', function(e) {
+    const schoolSearch = document.getElementById('school-search');
+    const schoolSuggestions = document.getElementById('school-suggestions');
+    const majorSearch = document.getElementById('major-search');
+    const majorSuggestions = document.getElementById('major-suggestions');
+    
+    if (!schoolSearch.contains(e.target) && !schoolSuggestions.contains(e.target)) {
+        schoolSuggestions.style.display = 'none';
+        currentSchoolSuggestionIndex = -1;
+    }
+    
+    if (!majorSearch.contains(e.target) && !majorSuggestions.contains(e.target)) {
+        majorSuggestions.style.display = 'none';
+        currentMajorSuggestionIndex = -1;
+    }
+});
+
+// 加载热门学校
+async function loadHotSchools() {
+    try {
+        // 加载位次变化最大的学校
+        const filters = getCurrentFilters();
+        const queryParams = new URLSearchParams({
+            type: 'rank',
+            direction: 'asc',
+            limit: '6',
+            is_985: filters.is_985.toString(),
+            is_211: filters.is_211.toString(),
+            is_double_first_class: filters.is_double_first_class.toString()
+        });
+        const response = await fetch(`/api/history/trend?${queryParams}`);
+        const data = await response.json();
+
+        const container = document.getElementById('hot-schools-container');
+        container.innerHTML = '';
+
+        data.forEach(item => {
+            const trendClass = {
+                '上升': 'success',
+                '下降': 'danger',
+                '稳定': 'primary',
+                '波动': 'warning'
+            }[item.trend] || 'secondary';
+
+            // 生成标签HTML
+            let tagsHtml = '';
+            if (item.tags) {
+                if (item.tags.is_985) {
+                    tagsHtml += '<span class="badge bg-danger me-1">985</span>';
+                }
+                if (item.tags.is_211) {
+                    tagsHtml += '<span class="badge bg-warning text-dark me-1">211</span>';
+                }
+                if (item.tags.is_double_first_class && !item.tags.is_985 && !item.tags.is_211) {
+                    tagsHtml += '<span class="badge bg-success me-1">双一流</span>';
+                }
+            }
+
+            // 安全格式化数字函数
+            const safeFormatNumber = (num) => {
+                if (num === undefined || num === null || isNaN(num)) return '-';
+                return formatNumber(num);
+            };
+
+            // 格式化位次变化
+            const rankChangeValue = item.rank_change;
+            let rankChangeBadge = '';
+            if (rankChangeValue !== undefined && rankChangeValue !== null && !isNaN(rankChangeValue)) {
+                const absChange = Math.abs(Math.round(rankChangeValue));
+                if (rankChangeValue < 0) {
+                    rankChangeBadge = `<span class="badge bg-success">↑提升${formatNumber(absChange)}位</span>`;
+                } else if (rankChangeValue > 0) {
+                    rankChangeBadge = `<span class="badge bg-danger">↓下降${formatNumber(absChange)}位</span>`;
+                } else {
+                    rankChangeBadge = `<span class="badge bg-secondary">持平</span>`;
+                }
+            } else {
+                rankChangeBadge = `<span class="badge bg-secondary">-</span>`;
+            }
+
+            const card = `
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <a href="/history/school/${item.code}" class="text-decoration-none">
+                                    ${item.name}
+                                </a>
+                            </h6>
+                            ${tagsHtml ? `<div class="mb-1">${tagsHtml}</div>` : ''}
+                            <p class="card-text small text-muted mb-1">
+                                2023: ${safeFormatNumber(item.rank_trend[0])} |
+                                2024: ${safeFormatNumber(item.rank_trend[1])} |
+                                2025: ${safeFormatNumber(item.rank_trend[2])}
+                            </p>
+                            <p class="mb-0">
+                                <span class="badge bg-${trendClass}">${item.trend}</span>
+                                ${rankChangeBadge}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += card;
+        });
+    } catch (error) {
+        console.error('加载热门学校失败:', error);
+    }
+}
+
+// 获取当前筛选条件
+function getCurrentFilters() {
+    return {
+        is_985: document.getElementById('filter-985').checked,
+        is_211: document.getElementById('filter-211').checked,
+        is_double_first_class: document.getElementById('filter-double-first-class').checked
+    };
+}
+
+// 清除筛选条件
+function clearFilters() {
+    document.getElementById('filter-985').checked = false;
+    document.getElementById('filter-211').checked = false;
+    document.getElementById('filter-double-first-class').checked = false;
+    applyFilters();
+}
+
+// 应用筛选条件
+function applyFilters() {
+    loadHotSchools();
+    loadStatistics();
+    if (document.getElementById('trend-ranking-section').style.display === 'block') {
+        loadTrendRanking();
+    }
+}
+
+// 为筛选复选框添加事件监听
+function initFilters() {
+    const filterCheckboxes = ['filter-985', 'filter-211', 'filter-double-first-class'];
+    filterCheckboxes.forEach(id => {
+        document.getElementById(id).addEventListener('change', applyFilters);
+    });
+}
+
+// 页面加载时初始化
+document.addEventListener('DOMContentLoaded', function() {
+    loadHotSchools();
+    loadStatistics();
+
+    // 监听排序变化
+    document.querySelectorAll('input[name="trend-type-group"]').forEach(input => {
+        input.addEventListener('change', loadTrendRanking);
+    });
+    document.getElementById('trend-direction').addEventListener('change', loadTrendRanking);
+
+    // 初始化筛选器
+    initFilters();
+});
+</script>
+{% endblock %}

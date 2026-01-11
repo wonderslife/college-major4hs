@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据加载测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+        .data-display {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>数据加载测试页面</h1>
+
+    <div class="test-section">
+        <h2>1. 健康检查</h2>
+        <div id="health-result">测试中...</div>
+        <div class="data-display" id="health-data"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. 基础统计</h2>
+        <div id="stats-result">测试中...</div>
+        <div class="data-display" id="stats-data"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. 分数分布</h2>
+        <div id="score-dist-result">测试中...</div>
+        <div class="data-display" id="score-dist-data"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. 位次分布</h2>
+        <div id="rank-dist-result">测试中...</div>
+        <div class="data-display" id="rank-dist-data"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. 热门院校</h2>
+        <div id="top-unis-result">测试中...</div>
+        <div class="data-display" id="top-unis-data"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>6. 热门专业</h2>
+        <div id="top-majors-result">测试中...</div>
+        <div class="data-display" id="top-majors-data"></div>
+    </div>
+
+    <script>
+        async function testAPI(url, resultId, dataId) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                document.getElementById(resultId).innerHTML = '<span class="success">✓ 成功</span>';
+                document.getElementById(dataId).textContent = JSON.stringify(data, null, 2);
+                return data;
+            } catch (error) {
+                document.getElementById(resultId).innerHTML = `<span class="error">✗ 失败: ${error.message}</span>`;
+                document.getElementById(dataId).textContent = '';
+                return null;
+            }
+        }
+
+        // 运行所有测试
+        async function runAllTests() {
+            await testAPI('/health', 'health-result', 'health-data');
+            await testAPI('/api/statistics', 'stats-result', 'stats-data');
+            await testAPI('/api/score-distribution', 'score-dist-result', 'score-dist-data');
+            await testAPI('/api/rank-distribution', 'rank-dist-result', 'rank-dist-data');
+            await testAPI('/api/top-universities?limit=5', 'top-unis-result', 'top-unis-data');
+            await testAPI('/api/top-majors?limit=5', 'top-majors-result', 'top-majors-data');
+        }
+
+        // 页面加载时运行测试
+        window.onload = runAllTests;
+    </script>
+</body>
+</html>

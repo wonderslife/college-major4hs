@@ -1,0 +1,1499 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- 左侧：输入和统计 -->
+        <div class="col-lg-4">
+            <!-- 方案列表卡片 -->
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="bi bi-collection"></i> 方案列表</h5>
+                </div>
+                <div class="card-body">
+                    <div id="plan-list">
+                        <p class="text-muted text-center small">加载中...</p>
+                    </div>
+                    <button class="btn btn-primary w-100 mt-2" onclick="openCompareModal()">
+                        <i class="bi bi-bar-chart"></i> 对比方案
+                    </button>
+                </div>
+            </div>
+
+            <!-- 考生信息卡片 -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-person"></i> 考生信息</h5>
+                </div>
+                <div class="card-body">
+                    <div>
+                        <div class="mb-3">
+                            <label class="form-label">高考分数</label>
+                            <input type="number" class="form-control" id="student-score" 
+                                   placeholder="输入高考分数" min="300" max="750">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">位次</label>
+                            <input type="number" class="form-control" id="student-rank" 
+                                   placeholder="输入位次" min="1">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">文理科</label>
+                            <select class="form-select" id="subject-type">
+                                <option value="理科">理科</option>
+                                <option value="文科">文科</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 方案统计卡片 -->
+            <div class="card mb-4" id="statistics-card" style="display: none;">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-bar-chart"></i> 方案统计</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-4 mb-3">
+                            <div class="p-3 bg-light rounded">
+                                <h6 class="mb-1 text-muted">总志愿</h6>
+                                <div class="h4 mb-0" id="total-count">0</div>
+                            </div>
+                        </div>
+                        <div class="col-4 mb-3">
+                            <div class="p-3 bg-danger bg-opacity-10 rounded">
+                                <h6 class="mb-1 text-muted">冲</h6>
+                                <div class="h4 mb-0" id="冲-count">0</div>
+                            </div>
+                        </div>
+                        <div class="col-4 mb-3">
+                            <div class="p-3 bg-warning bg-opacity-10 rounded">
+                                <h6 class="mb-1 text-muted">稳</h6>
+                                <div class="h4 mb-0" id="稳-count">0</div>
+                            </div>
+                        </div>
+                        <div class="col-4 mb-3">
+                            <div class="p-3 bg-success bg-opacity-10 rounded">
+                                <h6 class="mb-1 text-muted">保</h6>
+                                <div class="h4 mb-0" id="保-count">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="text-center">
+                        <h6 class="mb-2">平均录取概率</h6>
+                        <div class="h3" id="avg-probability">0%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 风险评估卡片 -->
+            <div class="card mb-4" id="risk-assessment-card" style="display: none;">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0"><i class="bi bi-shield-exclamation"></i> 风险评估</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="mb-0">总体风险等级</h6>
+                            <span class="badge" id="overall-risk-badge">低</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <h6 class="mb-2"><i class="bi bi-lightbulb"></i> 优化建议</h6>
+                        <div id="risk-suggestions">
+                            <p class="text-muted small">添加志愿后可查看风险评估和建议</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 方案操作卡片 -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-gear"></i> 方案管理</h5>
+                </div>
+                <div class="card-body">
+                    <button class="btn btn-outline-primary w-100 mb-2" onclick="createNewPlan()">
+                        <i class="bi bi-plus"></i> 新建方案
+                    </button>
+                    <button class="btn btn-outline-success w-100 mb-2" onclick="exportPlan('excel')">
+                        <i class="bi bi-file-earmark-excel"></i> 导出Excel
+                    </button>
+                    <button class="btn btn-outline-info w-100 mb-2" onclick="exportPlan('pdf')">
+                        <i class="bi bi-file-earmark-pdf"></i> 导出PDF
+                    </button>
+                    <button class="btn btn-outline-danger w-100" onclick="clearPlan()">
+                        <i class="bi bi-trash"></i> 清空志愿
+                    </button>
+                </div>
+            </div>
+
+            <!-- 可视化分析卡片 -->
+            <div class="card mb-4" id="visualization-card" style="display: none;">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-graph-up"></i> 数据可视化</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="mb-2">录取概率分布</h6>
+                        <canvas id="probability-chart" height="200"></canvas>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="mb-2">风险等级分布</h6>
+                        <canvas id="risk-chart" height="200"></canvas>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="mb-2">地域分布</h6>
+                        <canvas id="location-chart" height="200"></canvas>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="mb-2">学校层次分布</h6>
+                        <canvas id="school-type-chart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 智能推荐卡片 -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-magic"></i> 智能推荐</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">地区偏好</label>
+                        <select class="form-select" id="pref-locations" multiple style="height: 100px;">
+                            <option value="北京">北京</option>
+                            <option value="上海">上海</option>
+                            <option value="辽宁">辽宁</option>
+                            <option value="江苏">江苏</option>
+                            <option value="浙江">浙江</option>
+                            <option value="广东">广东</option>
+                            <option value="湖北">湖北</option>
+                            <option value="四川">四川</option>
+                            <option value="陕西">陕西</option>
+                        </select>
+                        <small class="text-muted">按住Ctrl可多选</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">专业偏好</label>
+                        <select class="form-select" id="pref-majors" multiple style="height: 100px;">
+                            <option value="计算机">计算机</option>
+                            <option value="人工智能">人工智能</option>
+                            <option value="电子信息">电子信息</option>
+                            <option value="经济学">经济学</option>
+                            <option value="金融学">金融学</option>
+                            <option value="机械工程">机械工程</option>
+                            <option value="自动化">自动化</option>
+                        </select>
+                        <small class="text-muted">按住Ctrl可多选</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">学校类型</label>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="pref-985" value="985" checked>
+                            <label class="form-check-label" for="pref-985">985院校</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="pref-211" value="211" checked>
+                            <label class="form-check-label" for="pref-211">211院校</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="pref-double-first" value="双一流" checked>
+                            <label class="form-check-label" for="pref-double-first">双一流</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">梯度配置</label>
+                        <div class="row">
+                            <div class="col-4">
+                                <label class="small text-muted">冲</label>
+                                <input type="number" class="form-control" id="pref-chong" value="20" min="0" max="120">
+                            </div>
+                            <div class="col-4">
+                                <label class="small text-muted">稳</label>
+                                <input type="number" class="form-control" id="pref-wen" value="60" min="0" max="120">
+                            </div>
+                            <div class="col-4">
+                                <label class="small text-muted">保</label>
+                                <input type="number" class="form-control" id="pref-bao" value="40" min="0" max="120">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">最低录取概率</label>
+                        <input type="number" class="form-control" id="pref-min-prob" value="30" min="0" max="100" placeholder="0-100">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">推荐算法</label>
+                        <select class="form-select" id="algorithm-select">
+                            <option value="weighted" selected>多因素加权评分（推荐）</option>
+                            <option value="ml">机器学习预测</option>
+                        </select>
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle"></i> 
+                            <span id="algorithm-description">综合考虑位次、分数、学校层次、专业匹配等多个因素</span>
+                        </small>
+                    </div>
+                    <button class="btn btn-success w-100" onclick="generateVolunteers()">
+                        <i class="bi bi-magic"></i> 一键生成120个志愿
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧：志愿列表 -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list-ol"></i> 120个平行志愿
+                        <span class="badge bg-secondary ms-2" id="progress-badge">0/120</span>
+                    </h5>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-primary" onclick="openAddModal()">
+                            <i class="bi bi-plus"></i> 添加志愿
+                        </button>
+                        <button class="btn btn-sm btn-info" onclick="openBatchAddModal()">
+                            <i class="bi bi-plus-lg"></i> 批量添加
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="volunteer-table">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 60px;">拖拽</th>
+                                    <th style="width: 80px;">序号</th>
+                                    <th style="width: 200px;">学校</th>
+                                    <th style="width: 200px;">专业</th>
+                                    <th style="width: 100px;">2025位次</th>
+                                    <th style="width: 100px;">概率</th>
+                                    <th style="width: 80px;">风险</th>
+                                    <th style="width: 80px;">类别</th>
+                                    <th style="width: 200px;">类别依据</th>
+                                    <th style="width: 100px;">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="volunteer-tbody">
+                                <tr>
+                                    <td colspan="10" class="text-center text-muted py-4">
+                                        <i class="bi bi-inbox fs-1"></i>
+                                        <p class="mb-0 mt-2">请先输入考生信息，然后添加志愿</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 添加志愿模态框 -->
+<div class="modal fade" id="addModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">添加志愿</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-volunteer-form">
+                    <div class="mb-3">
+                        <label class="form-label">选择学校</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control" id="school-search" 
+                                   placeholder="输入学校名称或代码" autocomplete="off">
+                            <div id="school-suggestions" class="dropdown-menu w-100 shadow-sm" style="max-height: 300px; overflow-y: auto;"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">选择专业</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control" id="major-search" 
+                                   placeholder="请先选择学校，然后输入专业名称" autocomplete="off" disabled>
+                            <div id="major-suggestions" class="dropdown-menu w-100 shadow-sm" style="max-height: 300px; overflow-y: auto;"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="confirmAddVolunteer()">确认添加</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 批量添加模态框 -->
+<div class="modal fade" id="batchAddModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">批量添加学校</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">选择学校（可多选）</label>
+                    <div class="mb-2">
+                        <input type="text" class="form-control" id="batch-school-search" 
+                               placeholder="搜索学校..." autocomplete="off">
+                    </div>
+                    <div id="batch-school-list" class="border rounded p-3" style="max-height: 400px; overflow-y: auto;">
+                        <p class="text-muted text-center">请输入学校名称进行搜索</p>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">专业名称</label>
+                    <input type="text" class="form-control" id="batch-major-name" 
+                           placeholder="输入专业名称（可选，不填则使用默认专业）">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="confirmBatchAdd()">批量添加</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 方案对比模态框 -->
+<div class="modal fade" id="compareModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">方案对比</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">选择方案进行对比（可多选）</label>
+                    <div id="compare-plan-list" class="border rounded p-3" style="max-height: 300px; overflow-y: auto;">
+                        <p class="text-muted text-center">加载中...</p>
+                    </div>
+                </div>
+                <div id="comparison-result" style="display: none;">
+                    <h6 class="mb-3">对比结果</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered" id="comparison-table">
+                            <thead class="table-light">
+                                <tr id="comparison-header">
+                                    <th>指标</th>
+                                </tr>
+                            </thead>
+                            <tbody id="comparison-body">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="best-plan-badge" class="mt-3"></div>
+                    <div class="mt-3">
+                        <h6>优化建议</h6>
+                        <div id="comparison-suggestions"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="confirmCompare()">开始对比</button>
+                <button type="button" class="btn btn-success" onclick="exportComparison()" id="export-compare-btn" style="display: none;">
+                    <i class="bi bi-download"></i> 导出对比报告
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// 全局变量
+let selectedSchoolCode = '';
+let selectedSchoolName = '';
+let selectedBatchSchools = new Set();
+
+// 算法选择变化时更新描述（统一处理，避免重复）
+document.addEventListener('DOMContentLoaded', function() {
+    const algorithmSelect = document.getElementById('algorithm-select');
+    const descriptionSpan = document.getElementById('algorithm-description');
+    
+    // 算法描述
+    const descriptions = {
+        'weighted': '综合考虑位次、分数、学校层次、专业匹配等多个因素，计算综合得分进行推荐',
+        'ml': '基于机器学习模型预测录取概率，自动学习历史数据中的复杂模式，推荐更精准'
+    };
+    
+    // 初始化显示
+    descriptionSpan.textContent = descriptions[algorithmSelect.value];
+    
+    // 监听变化
+    algorithmSelect.addEventListener('change', function() {
+        descriptionSpan.textContent = descriptions[this.value];
+    });
+});
+
+// 加载志愿列表
+async function loadVolunteers() {
+    try {
+        const response = await fetch('/api/volunteer/volunteers');
+        const result = await response.json();
+
+        if (result.success) {
+            displayVolunteers(result.data);
+            updateStatistics();
+        }
+    } catch (error) {
+        console.error('加载志愿失败：', error);
+    }
+}
+
+// 显示志愿列表
+function displayVolunteers(volunteers) {
+    const tbody = document.getElementById('volunteer-tbody');
+
+    if (!volunteers || volunteers.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="10" class="text-center text-muted py-4">
+                    <i class="bi bi-inbox fs-1"></i>
+                    <p class="mb-0 mt-2">暂无志愿，点击"添加志愿"开始填报</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = volunteers.map(v => {
+        // 生成学校标签HTML
+        let tagsHtml = '';
+        if (v.tags) {
+            if (v.tags.is_985) tagsHtml += '<span class="badge bg-danger me-1">985</span>';
+            if (v.tags.is_211) tagsHtml += '<span class="badge bg-warning me-1">211</span>';
+        }
+        
+        // 生成院校链接
+        const schoolLink = `<a href="/university" target="_blank" onclick="openUniversityAnalysis('${v.school_name}', '${v.major_name}', '${v.avg_rank_2025 || ''}')">${v.school_name}</a>`;
+        
+        return `
+        <tr draggable="true" data-volunteer-id="${v.id}" class="volunteer-row">
+            <td class="drag-handle">
+                <i class="bi bi-grip-vertical text-muted" style="cursor: move;"></i>
+            </td>
+            <td><strong>${v.id}</strong></td>
+            <td>${schoolLink} ${tagsHtml}</td>
+            <td>${v.major_name}</td>
+            <td>${v.avg_rank_2025 || '-'}</td>
+            <td>
+                <span class="badge ${getProbabilityBadgeClass(v.admission_probability)}">
+                    ${v.admission_probability ? v.admission_probability.toFixed(1) + '%' : '-'}
+                </span>
+            </td>
+            <td>
+                <span class="badge ${getRiskBadgeClass(v.risk_level)}">
+                    ${v.risk_level || '-'}
+                </span>
+            </td>
+            <td>
+                <span class="badge ${getCategoryBadgeClass(v.category)}">
+                    ${v.category || '-'}
+                </span>
+            </td>
+            <td>
+                <small class="text-muted">${v.category_basis || '-'}</small>
+            </td>
+            <td>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteVolunteer('${v.id}')">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        </tr>
+        `;
+    }).join('');
+
+    // 初始化拖拽功能
+    initDragAndDrop();
+
+    document.getElementById('progress-badge').textContent = `${volunteers.length}/120`;
+}
+
+// 初始化拖拽排序
+function initDragAndDrop() {
+    const tbody = document.getElementById('volunteer-tbody');
+    const rows = tbody.querySelectorAll('.volunteer-row');
+
+    rows.forEach(row => {
+        row.addEventListener('dragstart', handleDragStart);
+        row.addEventListener('dragend', handleDragEnd);
+        row.addEventListener('dragover', handleDragOver);
+        row.addEventListener('drop', handleDrop);
+    });
+}
+
+let draggedRow = null;
+
+function handleDragStart(e) {
+    draggedRow = this;
+    this.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+}
+
+function handleDragEnd(e) {
+    this.classList.remove('dragging');
+    document.querySelectorAll('.volunteer-row').forEach(row => {
+        row.classList.remove('drag-over');
+    });
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    if (this !== draggedRow) {
+        this.classList.add('drag-over');
+    }
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    if (this === draggedRow) return;
+
+    this.classList.remove('drag-over');
+
+    // 获取当前所有志愿ID
+    const tbody = document.getElementById('volunteer-tbody');
+    const rows = Array.from(tbody.querySelectorAll('.volunteer-row'));
+    const newOrder = rows.map(row => parseInt(row.dataset.volunteerId));
+
+    // 发送新顺序到后端
+    fetch('/api/volunteer/volunteers/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ order: newOrder })
+    })
+    .then(res => res.json())
+    .then(result => {
+        if (result.success) {
+            loadVolunteers();
+        }
+    })
+    .catch(error => {
+        console.error('排序失败：', error);
+    });
+}
+
+// 更新统计
+function updateStatistics() {
+    try {
+        fetch('/api/volunteer/plan/current')
+            .then(res => res.json())
+            .then(result => {
+                if (result.success) {
+                    const stats = result.data.statistics;
+                    document.getElementById('total-count').textContent = stats.total;
+                    document.getElementById('冲-count').textContent = stats.冲;
+                    document.getElementById('稳-count').textContent = stats.稳;
+                    document.getElementById('保-count').textContent = stats.保;
+                    document.getElementById('avg-probability').textContent = stats.avg_probability + '%';
+                    document.getElementById('statistics-card').style.display = 'block';
+
+                    // 同时加载风险评估
+                    updateRiskAssessment();
+
+                    // 加载可视化数据
+                    loadVisualizationData();
+
+                    // 加载方案列表
+                    loadPlanList();
+                }
+            });
+    } catch (error) {
+        console.error('获取统计失败：', error);
+    }
+}
+
+// 加载可视化数据
+async function loadVisualizationData() {
+    try {
+        const response = await fetch('/api/volunteer/analysis/visualization');
+        const result = await response.json();
+
+        if (result.success && result.data) {
+            document.getElementById('visualization-card').style.display = 'block';
+            renderCharts(result.data);
+        } else {
+            // 没有数据时隐藏可视化卡片
+            document.getElementById('visualization-card').style.display = 'none';
+        }
+    } catch (error) {
+        console.error('加载可视化数据失败：', error);
+        // 出错时隐藏可视化卡片
+        document.getElementById('visualization-card').style.display = 'none';
+    }
+}
+
+// 渲染图表
+function renderCharts(data) {
+    // 1. 录取概率分布（柱状图）
+    renderBarChart(
+        'probability-chart',
+        Object.keys(data.probability_distribution),
+        Object.values(data.probability_distribution),
+        '录取概率分布',
+        ['#dc3545', '#fd7e14', '#ffc107', '#20c997', '#0d6efd']
+    );
+
+    // 2. 风险等级分布（饼图）
+    renderPieChart(
+        'risk-chart',
+        Object.keys(data.risk_distribution),
+        Object.values(data.risk_distribution),
+        '风险等级分布'
+    );
+
+    // 3. 地域分布（饼图）
+    renderPieChart(
+        'location-chart',
+        Object.keys(data.location_distribution),
+        Object.values(data.location_distribution),
+        '地域分布'
+    );
+
+    // 4. 学校层次分布（柱状图）
+    renderBarChart(
+        'school-type-chart',
+        Object.keys(data.school_type_distribution),
+        Object.values(data.school_type_distribution),
+        '学校层次分布',
+        ['#dc3545', '#fd7e14', '#0dcaf0', '#6c757d']
+    );
+}
+
+// 渲染柱状图（简化版，使用纯HTML/CSS）
+function renderBarChart(canvasId, labels, values, title, colors) {
+    try {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+        
+        const maxValue = Math.max(...values) || 1;
+
+        // 简单的柱状图实现
+        let html = `<h6>${title}</h6><div class="d-flex align-items-end justify-content-around" style="height: 200px;">`;
+        labels.forEach((label, index) => {
+            const height = (values[index] / maxValue) * 180;
+            const color = colors[index % colors.length];
+            html += `
+                <div class="text-center mx-1" style="width: 50px;">
+                    <div class="bg-primary rounded" style="background-color: ${color}; height: ${height}px; min-height: 10px;"></div>
+                    <div class="small mt-1">${values[index]}</div>
+                    <div class="small text-muted" style="font-size: 10px;">${label}</div>
+                </div>
+            `;
+        });
+
+
+        html += '</div>';
+
+        const parent = canvas.parentElement;
+        if (parent) {
+            parent.innerHTML = html;
+        }
+    } catch (error) {
+        console.error('渲染柱状图失败：', error);
+    }
+}
+
+// 渲染饼图（简化版）
+function renderPieChart(canvasId, labels, values, title) {
+    try {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+        
+        const total = values.reduce((a, b) => a + b, 0) || 1;
+        const colors = ['#0d6efd', '#dc3545', '#198754', '#ffc107', '#0dcaf0', '#6c757d'];
+
+        let html = `<h6>${title}</h6><div class="d-flex flex-wrap">`;
+        labels.forEach((label, index) => {
+            const percentage = ((values[index] / total) * 100).toFixed(1);
+            const color = colors[index % colors.length];
+            html += `
+                <div class="d-flex align-items-center me-3 mb-2">
+                    <span class="badge me-2" style="background-color: ${color};">&nbsp;</span>
+                    <small>${label} (${values[index]})</small>
+                </div>
+            `;
+        });
+
+
+        html += '</div>';
+
+        const parent = canvas.parentElement;
+        if (parent) {
+            parent.innerHTML = html;
+        }
+    } catch (error) {
+        console.error('渲染饼图失败：', error);
+    }
+}
+
+// 加载方案列表
+async function loadPlanList() {
+    try {
+        const response = await fetch('/api/volunteer/plans');
+        const result = await response.json();
+
+        if (result.success && result.data.length > 0) {
+            const planListDiv = document.getElementById('plan-list');
+            planListDiv.innerHTML = result.data.map(plan => `
+                <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
+                    <div>
+                        <strong>${plan.name}</strong>
+                        <span class="badge bg-primary ms-2">${plan.statistics.total}个志愿</span>
+                        <br>
+                        <small class="text-muted">${plan.created_at}</small>
+                    </div>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-primary" onclick="loadPlan('${plan.id}')">加载</button>
+                        <button class="btn btn-outline-danger" onclick="deletePlan('${plan.id}')">删除</button>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            document.getElementById('plan-list').innerHTML = '<p class="text-muted text-center small">暂无方案</p>';
+        }
+    } catch (error) {
+        console.error('加载方案列表失败：', error);
+    }
+}
+
+// 加载指定方案
+async function loadPlan(planId) {
+    try {
+        const response = await fetch(`/api/volunteer/plan/${planId}`);
+        const result = await response.json();
+
+        if (result.success) {
+            const plan = result.data;
+            
+            // 更新考生信息表单
+            if (plan.student_info) {
+                // 提取学生信息（从字符串中解析）
+                const infoStr = plan.student_info;
+                const scoreMatch = infoStr.match(/分数:(\d+)/);
+                const rankMatch = infoStr.match(/位次:(\d+)/);
+                const subjectTypeMatch = infoStr.match(/(文|理)科/);
+                
+                if (scoreMatch) document.getElementById('student-score').value = scoreMatch[1];
+                if (rankMatch) document.getElementById('student-rank').value = rankMatch[1];
+                if (subjectTypeMatch) {
+                    document.getElementById('subject-type').value = subjectTypeMatch[0];
+                }
+            }
+            
+            // 加载志愿列表
+            loadVolunteers();
+            
+            // 刷新方案列表
+            loadPlanList();
+            
+            alert('方案加载成功！');
+        } else {
+            alert(result.message);
+        }
+    } catch (error) {
+        alert('加载失败：' + error.message);
+    }
+}
+
+// 删除方案
+async function deletePlan(planId) {
+    if (!confirm('确认删除此方案？')) return;
+
+    try {
+        const response = await fetch(`/api/volunteer/plan/${planId}`, {
+            method: 'DELETE'
+        });
+
+
+
+        const result = await response.json();
+        if (result.success) {
+            alert('删除成功！');
+            loadPlanList();
+        } else {
+            alert(result.message);
+        }
+    } catch (error) {
+        alert('删除失败：' + error.message);
+    }
+}
+
+// 创建新方案
+function createNewPlan() {
+    const name = prompt('请输入方案名称：', '新方案');
+    if (!name) return;
+
+    const score = prompt('请输入高考分数：', '600');
+    const rank = prompt('请输入位次：', '5000');
+
+    if (!score || !rank) {
+        alert('请填写完整信息');
+        return;
+    }
+
+    const data = {
+        name: name,
+        score: parseInt(score),
+        rank: parseInt(rank),
+        subject_type: '理科'
+    };
+
+    fetch('/api/volunteer/plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(result => {
+        if (result.success) {
+            alert('方案创建成功！');
+            loadVolunteers();
+            loadPlanList();
+        } else {
+            alert(result.message);
+        }
+    })
+    .catch(error => {
+        alert('创建失败：' + error.message);
+    });
+
+
+}
+
+// 打开对比模态框
+async function openCompareModal() {
+    const modal = new bootstrap.Modal(document.getElementById('compareModal'));
+    modal.show();
+
+    // 加载方案列表用于对比
+    try {
+        const response = await fetch('/api/volunteer/plans');
+        const result = await response.json();
+
+        if (result.success && result.data.length > 0) {
+            const compareListDiv = document.getElementById('compare-plan-list');
+            compareListDiv.innerHTML = result.data.map(plan => `
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="compare-plan-${plan.id}" value="${plan.id}">
+                    <label class="form-check-label" for="compare-plan-${plan.id}">
+                        <strong>${plan.name}</strong>
+                        <small class="text-muted ms-2">${plan.created_at}</small>
+                        <small class="text-muted ms-2">志愿数: ${plan.statistics.total}</small>
+                    </label>
+                </div>
+            `).join('');
+        } else {
+            document.getElementById('compare-plan-list').innerHTML = '<p class="text-muted text-center">暂无方案可对比</p>';
+        }
+    } catch (error) {
+        console.error('加载方案失败：', error);
+    }
+
+    // 重置对比结果
+    document.getElementById('comparison-result').style.display = 'none';
+    document.getElementById('export-compare-btn').style.display = 'none';
+}
+
+// 确认对比
+async function confirmCompare() {
+    const checkboxes = document.querySelectorAll('#compare-plan-list input[type="checkbox"]:checked');
+
+    if (checkboxes.length < 2) {
+        alert('请至少选择2个方案进行对比');
+        return;
+    }
+
+    const planIds = Array.from(checkboxes).map(cb => cb.value);
+
+    try {
+        const response = await fetch('/api/volunteer/compare', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ plan_ids: planIds })
+        });
+
+
+
+        const result = await response.json();
+
+        if (result.success) {
+            displayComparisonResult(result.data);
+            document.getElementById('export-compare-btn').style.display = 'inline-block';
+        } else {
+            alert(result.message);
+        }
+    } catch (error) {
+        alert('对比失败：' + error.message);
+    }
+}
+
+// 显示对比结果
+function displayComparisonResult(data) {
+    // 显示对比表格
+    const headerRow = document.getElementById('comparison-header');
+    const tbody = document.getElementById('comparison-body');
+
+    headerRow.innerHTML = '<th>指标</th>';
+    data.comparison_table.plans.forEach((plan, index) => {
+        headerRow.innerHTML += `<th>方案${index + 1}</th>`;
+    });
+
+
+
+    tbody.innerHTML = data.comparison_table.metrics.map((metric, rowIndex) => `
+        <tr>
+            <td><strong>${metric}</strong></td>
+            ${data.comparison_table.plans.map(plan => `<td>${plan[rowIndex]}</td>`).join('')}
+        </tr>
+    `).join('');
+
+    // 显示最优方案
+    const bestBadge = document.getElementById('best-plan-badge');
+    bestBadge.innerHTML = `<div class="alert alert-success"><strong>🏆 最优方案：${data.best_plan_name}</strong></div>`;
+
+    // 显示优化建议
+    const suggestionsDiv = document.getElementById('comparison-suggestions');
+    if (data.suggestions.length === 0) {
+        suggestionsDiv.innerHTML = '<div class="alert alert-info mb-0">所有方案配置合理，无需特别优化</div>';
+    } else {
+        suggestionsDiv.innerHTML = data.suggestions.map(s => `
+            <div class="alert alert-warning mb-2 p-2">
+                ${s}
+            </div>
+        `).join('');
+    }
+
+    document.getElementById('comparison-result').style.display = 'block';
+}
+
+// 导出对比报告
+async function exportComparison() {
+    const checkboxes = document.querySelectorAll('#compare-plan-list input[type="checkbox"]:checked');
+    const planIds = Array.from(checkboxes).map(cb => cb.value);
+
+    try {
+        const response = await fetch('/api/volunteer/compare/export', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ plan_ids: planIds })
+        });
+
+
+
+        const result = await response.json();
+        if (result.success) {
+            alert(`导出成功！\n文件位置：${result.filepath}`);
+        } else {
+            alert(result.message);
+        }
+    } catch (error) {
+        alert('导出失败：' + error.message);
+    }
+}
+
+// 更新风险评估
+function updateRiskAssessment() {
+    try {
+        fetch('/api/volunteer/plan/risk-assessment')
+            .then(res => res.json())
+            .then(result => {
+                if (result.success) {
+                    const assessment = result.data;
+
+                    // 更新总体风险等级
+                    const overallRiskBadge = document.getElementById('overall-risk-badge');
+                    overallRiskBadge.textContent = assessment.overall_risk;
+                    overallRiskBadge.className = 'badge';
+                    if (assessment.overall_risk === '低') {
+                        overallRiskBadge.classList.add('bg-success');
+                    } else if (assessment.overall_risk === '中') {
+                        overallRiskBadge.classList.add('bg-warning');
+                    } else {
+                        overallRiskBadge.classList.add('bg-danger');
+                    }
+
+                    // 更新建议
+                    const suggestionsDiv = document.getElementById('risk-suggestions');
+                    if (assessment.suggestions.length === 0) {
+                        suggestionsDiv.innerHTML = '<p class="text-success small"><i class="bi bi-check-circle"></i> 当前方案配置合理，无需特别优化</p>';
+                    } else {
+                        suggestionsDiv.innerHTML = assessment.suggestions.map(s => {
+                            let icon, bgClass;
+                            switch(s.type) {
+                                case 'success':
+                                    icon = 'bi-check-circle';
+                                    bgClass = 'bg-success bg-opacity-10';
+                                    break;
+                                case 'info':
+                                    icon = 'bi-info-circle';
+                                    bgClass = 'bg-info bg-opacity-10';
+                                    break;
+                                case 'warning':
+                                    icon = 'bi-exclamation-triangle';
+                                    bgClass = 'bg-warning bg-opacity-10';
+                                    break;
+                                case 'danger':
+                                    icon = 'bi-x-circle';
+                                    bgClass = 'bg-danger bg-opacity-10';
+                                    break;
+                                default:
+                                    icon = 'bi-circle';
+                                    bgClass = 'bg-light';
+                            }
+                            return `
+                                <div class="alert ${bgClass} mb-2 p-2">
+                                    <i class="bi ${icon}"></i> ${s.message}
+                                </div>
+                            `;
+                        }).join('');
+                    }
+
+                    document.getElementById('risk-assessment-card').style.display = 'block';
+                } else {
+                    // 没有数据时隐藏风险评估卡片
+                    document.getElementById('risk-assessment-card').style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('更新风险评估失败：', error);
+                // 出错时隐藏风险评估卡片
+                document.getElementById('risk-assessment-card').style.display = 'none';
+            });
+
+
+    } catch (error) {
+        console.error('更新风险评估失败：', error);
+        // 出错时隐藏风险评估卡片
+        document.getElementById('risk-assessment-card').style.display = 'none';
+    }
+}
+
+// 学校搜索和自动补全
+const schoolSearchInput = document.getElementById('school-search');
+const schoolSuggestions = document.getElementById('school-suggestions');
+
+let schoolSearchTimeout;
+schoolSearchInput.addEventListener('input', function(e) {
+    clearTimeout(schoolSearchTimeout);
+    const keyword = e.target.value.trim();
+
+    schoolSearchTimeout = setTimeout(async () => {
+        if (keyword.length < 1) {
+            schoolSuggestions.innerHTML = '';
+            schoolSuggestions.classList.remove('show');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/volunteer/search/schools?keyword=${encodeURIComponent(keyword)}`);
+            const result = await response.json();
+
+            if (result.success && result.data.length > 0) {
+                schoolSuggestions.innerHTML = result.data.map(school => `
+                    <a class="dropdown-item" href="#" data-code="${school.code}" data-name="${school.name}">
+                        <strong>${school.name}</strong>
+                        <span class="text-muted small">(${school.code})</span>
+                    </a>
+                `).join('');
+                schoolSuggestions.classList.add('show');
+            } else {
+                schoolSuggestions.innerHTML = '<div class="dropdown-item text-muted">未找到匹配的学校</div>';
+                schoolSuggestions.classList.add('show');
+            }
+        } catch (error) {
+            console.error('搜索学校失败：', error);
+        }
+    }, 300);
+});
+
+
+
+// 选择学校
+schoolSuggestions.addEventListener('click', function(e) {
+    const item = e.target.closest('.dropdown-item');
+    if (item) {
+        const code = item.dataset.code;
+        const name = item.dataset.name;
+
+        schoolSearchInput.value = name;
+        schoolSearchInput.dataset.code = code;
+        selectedSchoolCode = code;
+        selectedSchoolName = name;
+
+        schoolSuggestions.innerHTML = '';
+        schoolSuggestions.classList.remove('show');
+
+        // 启用专业搜索并加载该学校的专业
+        const majorSearchInput = document.getElementById('major-search');
+        majorSearchInput.disabled = false;
+        majorSearchInput.placeholder = '输入专业名称进行搜索';
+        majorSearchInput.value = '';
+        majorSearchInput.focus();
+
+        // 获取该学校的专业
+        loadSchoolMajors(code);
+    }
+});
+
+
+
+// 专业搜索和自动补全
+const majorSearchInput = document.getElementById('major-search');
+const majorSuggestions = document.getElementById('major-suggestions');
+
+let majorSearchTimeout;
+majorSearchInput.addEventListener('input', function(e) {
+    clearTimeout(majorSearchTimeout);
+    const keyword = e.target.value.trim();
+
+    majorSearchTimeout = setTimeout(async () => {
+        if (!selectedSchoolCode) {
+            majorSuggestions.innerHTML = '<div class="dropdown-item text-muted">请先选择学校</div>';
+            majorSuggestions.classList.add('show');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/volunteer/school/${selectedSchoolCode}/majors/search?keyword=${encodeURIComponent(keyword)}`);
+            const result = await response.json();
+
+            if (result.success && result.data.length > 0) {
+                majorSuggestions.innerHTML = result.data.slice(0, 20).map(major => `
+                    <a class="dropdown-item" href="#" data-name="${major}">
+                        ${major}
+                    </a>
+                `).join('');
+                majorSuggestions.classList.add('show');
+            } else {
+                majorSuggestions.innerHTML = '<div class="dropdown-item text-muted">未找到匹配的专业</div>';
+                majorSuggestions.classList.add('show');
+            }
+        } catch (error) {
+            console.error('搜索专业失败：', error);
+        }
+    }, 300);
+});
+
+
+
+// 选择专业
+majorSuggestions.addEventListener('click', function(e) {
+    const item = e.target.closest('.dropdown-item');
+    if (item) {
+        majorSearchInput.value = item.dataset.name;
+        majorSuggestions.innerHTML = '';
+        majorSuggestions.classList.remove('show');
+    }
+});
+
+
+
+// 加载学校专业
+async function loadSchoolMajors(schoolCode) {
+    try {
+        const response = await fetch(`/api/volunteer/school/${schoolCode}/majors`);
+        const result = await response.json();
+        // 专业已加载，等待用户输入
+    } catch (error) {
+        console.error('加载专业失败：', error);
+    }
+}
+
+// 添加志愿
+async function confirmAddVolunteer() {
+    const schoolName = schoolSearchInput.value;
+    const schoolCode = schoolSearchInput.dataset.code;
+    const majorName = majorSearchInput.value;
+
+    if (!schoolName || !majorName) {
+        alert('请选择学校和专业');
+        return;
+    }
+
+    // 检查是否已达到120个志愿上限
+    const progressBadge = document.getElementById('progress-badge').textContent;
+    const currentCount = parseInt(progressBadge.split('/')[0]);
+    if (currentCount >= 120) {
+        alert('志愿数量已达到120个上限，请先删除一些志愿再添加');
+        return;
+    }
+
+    const data = {
+        school_code: schoolCode || '',
+        school_name: schoolName,
+        major_name: majorName,
+        avg_rank: 0
+    };
+
+    try {
+        const response = await fetch('/api/volunteer/volunteers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+
+
+        const result = await response.json();
+        if (result.success) {
+            alert('添加成功！');
+            bootstrap.Modal.getInstance(document.getElementById('addModal')).hide();
+            loadVolunteers();
+            // 清空表单
+            schoolSearchInput.value = '';
+            schoolSearchInput.dataset.code = '';
+            majorSearchInput.value = '';
+            majorSearchInput.disabled = true;
+            majorSearchInput.placeholder = '请先选择学校，然后输入专业名称';
+            selectedSchoolCode = '';
+            selectedSchoolName = '';
+        } else {
+            alert(result.message);
+        }
+    } catch (error) {
+        alert('添加失败：' + error.message);
+    }
+}
+
+// 删除志愿
+async function deleteVolunteer(id) {
+    if (!confirm('确认删除此志愿？')) return;
+
+    try {
+        const response = await fetch(`/api/volunteer/volunteer/${id}`, {
+            method: 'DELETE'
+        });
+
+
+
+        const result = await response.json();
+        if (result.success) {
+            alert('删除成功！');
+            loadVolunteers();
+        } else {
+            alert(result.message);
+        }
+    } catch (error) {
+        alert('删除失败：' + error.message);
+    }
+}
+
+// 清空方案
+async function clearPlan() {
+    if (!confirm('确认清空所有志愿？')) return;
+
+    try {
+        const response = await fetch('/api/volunteer/volunteers/clear', {
+            method: 'POST'
+        });
+
+
+
+        const result = await response.json();
+        if (result.success) {
+            alert('清空成功！');
+            loadVolunteers();
+        } else {
+            alert(result.message);
+        }
+    } catch (error) {
+        alert('清空失败：' + error.message);
+    }
+}
+
+// 导出方案
+async function exportPlan(format = 'excel') {
+    try {
+        const response = await fetch('/api/volunteer/export', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ format })
+        });
+
+
+
+        const result = await response.json();
+        if (result.success) {
+            alert(`导出成功！\n文件位置：${result.filepath}`);
+        } else {
+            alert(result.message);
+        }
+    } catch (error) {
+        alert('导出失败：' + error.message);
+    }
+}
+
+// 打开添加模态框
+function openAddModal() {
+    const modal = new bootstrap.Modal(document.getElementById('addModal'));
+    modal.show();
+}
+
+// 打开批量添加模态框
+function openBatchAddModal() {
+    selectedBatchSchools.clear();
+    const modal = new bootstrap.Modal(document.getElementById('batchAddModal'));
+    modal.show();
+}
+
+// 一键生成120个志愿
+// 辅助函数：获取概率徽章类
+function getProbabilityBadgeClass(probability) {
+    if (!probability) return 'bg-secondary';
+    if (probability >= 80) return 'bg-success';
+    if (probability >= 60) return 'bg-warning';
+    return 'bg-danger';
+}
+
+// 辅助函数：获取风险徽章类
+function getRiskBadgeClass(risk) {
+    if (!risk) return 'bg-secondary';
+    const riskMap = {
+        '极低': 'bg-success',
+        '低': 'bg-success',
+        '中': 'bg-warning',
+        '中高': 'bg-warning',
+        '高': 'bg-danger',
+        '极高': 'bg-danger'
+    };
+    return riskMap[risk] || 'bg-secondary';
+}
+
+// 辅助函数：获取类别徽章类
+function getCategoryBadgeClass(category) {
+    if (!category) return 'bg-secondary';
+    const categoryMap = {
+        '冲': 'bg-danger',
+        '稳': 'bg-warning',
+        '保': 'bg-success'
+    };
+    return categoryMap[category] || 'bg-secondary';
+}
+
+// 打开院校分析页面
+function openUniversityAnalysis(schoolName, majorName = '', rank = '') {
+    // 保存学校信息到sessionStorage，在院校分析页面中使用
+    const schoolInfo = {
+        schoolName: schoolName,
+        majorName: majorName,
+        rank: rank
+    };
+    sessionStorage.setItem('selectedSchoolInfo', JSON.stringify(schoolInfo));
+    // 保存学校名称（向后兼容）
+    sessionStorage.setItem('selectedSchool', schoolName);
+    // 使用新窗口打开院校分析页面
+    window.open('/university', '_blank');
+}
+
+
+// 更新可视化数据
+function updateVisualization() {
+    loadVisualizationData();
+}
+
+// 一键生成120个志愿
+async function generateVolunteers() {
+    try {
+        // 显示加载状态
+        const button = document.querySelector('button[onclick="generateVolunteers()"]');
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="bi bi-spinner bi-spin"></i> 生成中...';
+        button.disabled = true;
+
+        // 检查当前方案是否存在
+        const planResponse = await fetch('/api/volunteer/plan/current');
+        const planResult = await planResponse.json();
+        
+        if (!planResult.success) {
+            alert('请先创建方案，再生成志愿');
+            return;
+        }
+
+        // 收集用户偏好设置
+        const preferences = {
+            locations: [],
+            majors: [],
+            school_types: [],
+            gradient_ratio: {},
+            min_probability: parseInt(document.getElementById('pref-min-prob').value) || 30
+        };
+
+        // 收集地区偏好
+        const selectedLocations = Array.from(document.getElementById('pref-locations').selectedOptions).map(option => option.value);
+        preferences.locations = selectedLocations;
+
+        // 收集专业偏好
+        const selectedMajors = Array.from(document.getElementById('pref-majors').selectedOptions).map(option => option.value);
+        preferences.majors = selectedMajors;
+
+        // 收集学校类型偏好
+        if (document.getElementById('pref-985').checked) preferences.school_types.push('985');
+        if (document.getElementById('pref-211').checked) preferences.school_types.push('211');
+        if (document.getElementById('pref-double-first').checked) preferences.school_types.push('双一流');
+
+        // 收集冲稳保比例
+        preferences.gradient_ratio = {
+            '冲': parseInt(document.getElementById('pref-chong').value) / 120,
+            '稳': parseInt(document.getElementById('pref-wen').value) / 120,
+            '保': parseInt(document.getElementById('pref-bao').value) / 120
+        };
+
+        // 获取算法选择
+        const algorithm = document.getElementById('algorithm-select').value;
+        
+        // 发送请求到后端
+        const response = await fetch('/api/volunteer/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                preferences,
+                algorithm: algorithm  // 添加算法选择
+            })
+        });
+
+
+
+        const result = await response.json();
+
+        if (result.success) {
+            // 显示成功消息
+            alert(result.message);
+            
+            // 刷新志愿列表
+            loadVolunteers();
+            
+            // 刷新风险评估
+            updateRiskAssessment();
+            
+            // 刷新可视化分析
+            updateVisualization();
+        } else {
+            // 显示错误消息
+            alert(result.message);
+        }
+    } catch (error) {
+        console.error('生成志愿失败：', error);
+        alert('生成志愿失败，请稍后重试');
+    } finally {
+        // 恢复按钮状态
+        const button = document.querySelector('button[onclick="generateVolunteers()"]');
+        button.innerHTML = '<i class="bi bi-magic"></i> 一键生成120个志愿';
+        button.disabled = false;
+    }
+}
+</script>
+{% endblock %}

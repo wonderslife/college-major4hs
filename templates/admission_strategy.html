@@ -1,0 +1,751 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2>
+            <i class="bi bi-bookmark-heart"></i> 志愿填报指导
+        </h2>
+        <p class="text-muted">根据您的分数或位次，推荐合适的院校和专业，助您制定合理的志愿方案</p>
+    </div>
+</div>
+
+<!-- 输入区 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card p-4">
+            <h5 class="card-title mb-3">
+                <i class="bi bi-input-cursor"></i> 基本信息输入
+            </h5>
+            <form id="admission-form" class="row g-3">
+                <!-- 分数/位次输入 -->
+                <div class="col-12 col-md-6">
+                    <div class="row g-2">
+                        <div class="col-8">
+                            <label for="input-value" class="form-label">分数/位次</label>
+                            <input type="number" class="form-control" id="input-value" placeholder="请输入分数或位次" required>
+                        </div>
+                        <div class="col-4">
+                            <label for="input-type" class="form-label">类型</label>
+                            <select class="form-select" id="input-type">
+                                <option value="score">分数</option>
+                                <option value="rank">位次</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 城市偏好 -->
+                <div class="col-12 col-md-3">
+                    <label for="city-preference" class="form-label">城市偏好</label>
+                    <select class="form-select" id="city-preference">
+                        <option value="">不限</option>
+                        <option value="北京">北京</option>
+                        <option value="上海">上海</option>
+                        <option value="广州">广州</option>
+                        <option value="深圳">深圳</option>
+                        <option value="杭州">杭州</option>
+                        <option value="成都">成都</option>
+                        <option value="南京">南京</option>
+                        <option value="武汉">武汉</option>
+                        <option value="苏州">苏州</option>
+                        <option value="重庆">重庆</option>
+                        <option value="天津">天津</option>
+                        <option value="西安">西安</option>
+                        <option value="长沙">长沙</option>
+                    </select>
+                </div>
+
+                <!-- 专业偏好 -->
+                <div class="col-12 col-md-3">
+                    <label for="major-preference" class="form-label">专业偏好</label>
+                    <input type="text" class="form-control" id="major-preference" placeholder="例如：计算机、经济学">
+                </div>
+
+                <!-- 院校标签偏好 -->
+                <div class="col-12">
+                    <h6 class="text-muted mb-2">院校类型偏好</h6>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="is-985" value="true">
+                        <label class="form-check-label" for="is-985">985院校</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="is-211" value="true">
+                        <label class="form-check-label" for="is-211">211院校</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="is-double-first-class" value="true">
+                        <label class="form-check-label" for="is-double-first-class">双一流</label>
+                    </div>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-search"></i> 开始推荐
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-lg ms-2" onclick="clearRecommendations()">
+                        <i class="bi bi-trash"></i> 清除推荐
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 推荐结果区 -->
+<div class="row mb-4" id="recommendations-section" style="display: none;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-star"></i> 个性化推荐
+                </h5>
+            </div>
+            <div class="card-body">
+                <!-- 标签页导航 -->
+                <ul class="nav nav-tabs mb-3" id="recommendation-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="risky-tab" data-bs-toggle="tab" data-bs-target="#risky" type="button" role="tab">
+                            <i class="bi bi-arrow-up-right"></i> 冲 <span class="badge bg-danger ms-1" id="risky-count">0</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="stable-tab" data-bs-toggle="tab" data-bs-target="#stable" type="button" role="tab">
+                            <i class="bi bi-arrow-right"></i> 稳 <span class="badge bg-primary ms-1" id="stable-count">0</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="safe-tab" data-bs-toggle="tab" data-bs-target="#safe" type="button" role="tab">
+                            <i class="bi bi-arrow-down-right"></i> 保 <span class="badge bg-success ms-1" id="safe-count">0</span>
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- 标签页内容 -->
+                <div class="tab-content" id="recommendation-tabs-content">
+                    <!-- 冲 -->
+                    <div class="tab-pane fade show active" id="risky" role="tabpanel">
+                        <div class="row g-3" id="risky-recommendations">
+                            <div class="col-12 text-center py-5">
+                                <div class="spinner-border text-danger" role="status">
+                                    <span class="visually-hidden">加载中...</span>
+                                </div>
+                                <p class="mt-3 text-muted">正在加载推荐结果...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 稳 -->
+                    <div class="tab-pane fade" id="stable" role="tabpanel">
+                        <div class="row g-3" id="stable-recommendations">
+                            <div class="col-12 text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">加载中...</span>
+                                </div>
+                                <p class="mt-3 text-muted">正在加载推荐结果...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 保 -->
+                    <div class="tab-pane fade" id="safe" role="tabpanel">
+                        <div class="row g-3" id="safe-recommendations">
+                            <div class="col-12 text-center py-5">
+                                <div class="spinner-border text-success" role="status">
+                                    <span class="visually-hidden">加载中...</span>
+                                </div>
+                                <p class="mt-3 text-muted">正在加载推荐结果...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 模拟填报区 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list-check"></i> 模拟填报
+                    </h5>
+                    <div>
+                        <button type="button" class="btn btn-sm btn-primary" onclick="savePlan()">
+                            <i class="bi bi-save"></i> 保存方案
+                        </button>
+                        <button type="button" class="btn btn-sm btn-secondary ms-2" onclick="loadPlan()">
+                            <i class="bi bi-folder-open"></i> 加载方案
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger ms-2" onclick="clearPlan()">
+                            <i class="bi bi-trash"></i> 清空方案
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-3">
+                        <thead>
+                            <tr>
+                                <th>志愿顺序</th>
+                                <th>院校名称</th>
+                                <th>专业名称</th>
+                                <th>风险等级</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admission-plan">
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">
+                                    <i class="bi bi-info-circle"></i> 从推荐结果中添加志愿到此处
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-end">
+                    <button type="button" class="btn btn-primary" onclick="evaluatePlan()">
+                        <i class="bi bi-bar-chart-line"></i> 评估方案
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 评估结果区 -->
+<div class="row mb-4" id="evaluation-section" style="display: none;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-chart-pie"></i> 方案评估
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- 风险分布图表 -->
+                    <div class="col-12 col-md-6 mb-4">
+                        <canvas id="risk-distribution-chart" width="400" height="300"></canvas>
+                    </div>
+
+                    <!-- 评估详情 -->
+                    <div class="col-12 col-md-6">
+                        <h6 class="text-muted mb-3">评估详情</h6>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h6 class="text-muted">总志愿数</h6>
+                                        <h4 id="total-plan-count">0</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h6 class="text-muted">冲志愿数</h6>
+                                        <h4 id="risky-plan-count">0</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h6 class="text-muted">稳志愿数</h6>
+                                        <h4 id="stable-plan-count">0</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h6 class="text-muted">保志愿数</h6>
+                                        <h4 id="safe-plan-count">0</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 推荐建议 -->
+                        <div class="mt-4">
+                            <h6 class="text-muted mb-2">推荐建议</h6>
+                            <div class="alert alert-info" id="evaluation-recommendation">
+                                <i class="bi bi-info-circle"></i> 请先添加志愿并评估方案
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // 初始化变量
+    let currentRecommendations = {
+        risky: [],
+        stable: [],
+        safe: []
+    };
+    let currentPlan = [];
+    let riskDistributionChart = null;
+
+    // 表单提交事件
+    document.getElementById('admission-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        await loadRecommendations();
+    });
+
+    // 加载推荐结果
+    async function loadRecommendations() {
+        // 显示加载状态
+        showLoadingState();
+        
+        // 获取表单数据
+        const inputValue = document.getElementById('input-value').value;
+        const inputType = document.getElementById('input-type').value;
+        const cityPreference = document.getElementById('city-preference').value;
+        const majorPreference = document.getElementById('major-preference').value;
+        
+        // 获取标签筛选
+        const tags = {
+            is_985: document.getElementById('is-985').checked,
+            is_211: document.getElementById('is-211').checked,
+            is_double_first_class: document.getElementById('is-double-first-class').checked
+        };
+        
+        // 构建查询参数
+        const params = new URLSearchParams();
+        params.append('value', inputValue);
+        params.append('type', inputType);
+        params.append('city', cityPreference);
+        params.append('major', majorPreference);
+        params.append('is_985', tags.is_985);
+        params.append('is_211', tags.is_211);
+        params.append('is_double_first_class', tags.is_double_first_class);
+        
+        try {
+            // 调用API获取推荐结果
+            const response = await fetch(`/api/admission/recommendations?${params.toString()}`);
+            if (!response.ok) {
+                throw new Error('获取推荐结果失败');
+            }
+            
+            const data = await response.json();
+            currentRecommendations = data.recommendations;
+            
+            // 显示推荐结果
+            displayRecommendations();
+            
+            // 显示推荐结果区
+            document.getElementById('recommendations-section').style.display = 'block';
+        } catch (error) {
+            console.error('Error:', error);
+            alert('获取推荐结果失败，请稍后重试');
+        }
+    }
+
+    // 显示加载状态
+    function showLoadingState() {
+        const recommendationSections = ['risky', 'stable', 'safe'];
+        recommendationSections.forEach(section => {
+            const container = document.getElementById(`${section}-recommendations`);
+            container.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border" style="color: ${section === 'risky' ? '#dc3545' : section === 'stable' ? '#0d6efd' : '#198754'}" role="status">
+                        <span class="visually-hidden">加载中...</span>
+                    </div>
+                    <p class="mt-3 text-muted">正在加载${section === 'risky' ? '冲' : section === 'stable' ? '稳' : '保'}的推荐结果...</p>
+                </div>
+            `;
+        });
+    }
+
+    // 显示推荐结果
+    function displayRecommendations() {
+        // 更新标签数量
+        document.getElementById('risky-count').textContent = currentRecommendations.risky.length;
+        document.getElementById('stable-count').textContent = currentRecommendations.stable.length;
+        document.getElementById('safe-count').textContent = currentRecommendations.safe.length;
+        
+        // 显示各风险等级的推荐
+        displayRiskyRecommendations();
+        displayStableRecommendations();
+        displaySafeRecommendations();
+    }
+
+    // 显示冲的推荐
+    function displayRiskyRecommendations() {
+        const container = document.getElementById('risky-recommendations');
+        renderRecommendations(container, currentRecommendations.risky, 'risky');
+    }
+
+    // 显示稳的推荐
+    function displayStableRecommendations() {
+        const container = document.getElementById('stable-recommendations');
+        renderRecommendations(container, currentRecommendations.stable, 'stable');
+    }
+
+    // 显示保的推荐
+    function displaySafeRecommendations() {
+        const container = document.getElementById('safe-recommendations');
+        renderRecommendations(container, currentRecommendations.safe, 'safe');
+    }
+
+    // 渲染推荐结果
+    function renderRecommendations(container, recommendations, riskLevel) {
+        if (recommendations.length === 0) {
+            container.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-info-circle" style="font-size: 3rem; color: #6c757d;"></i>
+                    <p class="mt-3 text-muted">暂无推荐结果</p>
+                </div>
+            `;
+            return;
+        }
+        
+        // 生成卡片HTML
+        const cardsHtml = recommendations.map(item => `
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-header bg-${riskLevel === 'risky' ? 'danger' : riskLevel === 'stable' ? 'primary' : 'success'} text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">${riskLevel === 'risky' ? '冲' : riskLevel === 'stable' ? '稳' : '保'}</h6>
+                            <span class="badge bg-light text-${riskLevel === 'risky' ? 'danger' : riskLevel === 'stable' ? 'primary' : 'success'}">${item.tags.is_985 ? '985 ' : ''}${item.tags.is_211 ? '211 ' : ''}${item.tags.is_double_first_class ? '双一流' : ''}</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">${item.university}</h5>
+                        <h6 class="card-subtitle text-muted mb-3">${item.city} | ${item.department || '未知主管部门'}</h6>
+                        <div class="mb-3">
+                            <h6 class="text-muted">推荐专业：</h6>
+                            <p>${item.major}</p>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <div class="bg-light rounded p-2 text-center">
+                                    <small class="text-muted">投档最低分</small>
+                                    <div class="fw-bold">${item.score}</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="bg-light rounded p-2 text-center">
+                                    <small class="text-muted">位次</small>
+                                    <div class="fw-bold">${item.rank.toLocaleString()}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-muted">学科评估：</small>
+                            <div class="mt-1">
+                                ${item.evaluations.length > 0 ? item.evaluations.map(eva => `<span class="badge bg-${getEvaluationBadgeColor(eva.评估结果)} me-1">${eva.评估结果}</span>`).join('') : '<span class="text-muted small">无评估数据</span>'}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-muted">保研率：</small>
+                            <div class="mt-1">
+                                ${item.postgraduate_info && item.postgraduate_info.rate !== null ? `<span class="badge bg-${getPostgraduateBadgeColor(item.postgraduate_info.rate)}">${item.postgraduate_info.rate.toFixed(2)}%</span>` : '<span class="text-muted">-</span>'}
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-primary w-100" onclick="addVolunteer('${item.university}', '${item.major}', '${riskLevel}')">
+                            <i class="bi bi-plus"></i> 添加到志愿
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        
+        container.innerHTML = cardsHtml;
+    }
+
+    // 添加志愿
+    function addVolunteer(university, major, riskLevel) {
+        // 添加到志愿列表
+        currentPlan.push({
+            university: university,
+            major: major,
+            riskLevel: riskLevel
+        });
+        
+        // 更新志愿列表显示
+        updatePlanDisplay();
+        
+        // 隐藏初始提示
+        const planBody = document.getElementById('admission-plan');
+        if (planBody.children.length === 1 && planBody.children[0].querySelector('.text-muted')) {
+            planBody.innerHTML = '';
+        }
+        
+        // 显示志愿添加成功提示
+        alert('志愿添加成功！');
+    }
+
+    // 更新志愿列表显示
+    function updatePlanDisplay() {
+        const planBody = document.getElementById('admission-plan');
+        
+        // 清空现有列表
+        planBody.innerHTML = '';
+        
+        // 添加志愿列表项
+        currentPlan.forEach((volunteer, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${volunteer.university}</td>
+                <td>${volunteer.major}</td>
+                <td>
+                    <span class="badge bg-${volunteer.riskLevel === 'risky' ? 'danger' : volunteer.riskLevel === 'stable' ? 'primary' : 'success'}">
+                        ${volunteer.riskLevel === 'risky' ? '冲' : volunteer.riskLevel === 'stable' ? '稳' : '保'}
+                    </span>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="removeVolunteer(${index})">
+                        <i class="bi bi-trash"></i> 删除
+                    </button>
+                </td>
+            `;
+            planBody.appendChild(row);
+        });
+        
+        // 如果列表为空，显示提示
+        if (currentPlan.length === 0) {
+            planBody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center text-muted">
+                        <i class="bi bi-info-circle"></i> 从推荐结果中添加志愿到此处
+                    </td>
+                </tr>
+            `;
+        }
+    }
+
+    // 删除志愿
+    function removeVolunteer(index) {
+        // 从列表中删除
+        currentPlan.splice(index, 1);
+        
+        // 更新显示
+        updatePlanDisplay();
+    }
+
+    // 清空推荐结果
+    function clearRecommendations() {
+        // 隐藏推荐结果区
+        document.getElementById('recommendations-section').style.display = 'none';
+        
+        // 清空当前推荐
+        currentRecommendations = {
+            risky: [],
+            stable: [],
+            safe: []
+        };
+        
+        // 重置表单
+        document.getElementById('admission-form').reset();
+    }
+
+    // 显示加载状态
+    function showLoadingState() {
+        const sections = ['risky', 'stable', 'safe'];
+        sections.forEach(section => {
+            const container = document.getElementById(`${section}-recommendations`);
+            container.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border" style="color: ${section === 'risky' ? '#dc3545' : section === 'stable' ? '#0d6efd' : '#198754'}" role="status">
+                        <span class="visually-hidden">加载中...</span>
+                    </div>
+                    <p class="mt-3 text-muted">正在加载${section === 'risky' ? '冲' : section === 'stable' ? '稳' : '保'}的推荐结果...</p>
+                </div>
+            `;
+        });
+    }
+
+    // 评估志愿方案
+    async function evaluatePlan() {
+        if (currentPlan.length === 0) {
+            alert('请先添加志愿方案');
+            return;
+        }
+        
+        // 调用API评估方案
+        const response = await fetchAPI('/api/admission/evaluate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                plan: currentPlan
+            })
+        });
+        
+        if (response) {
+            // 显示评估结果
+            displayEvaluationResults(response);
+        }
+    }
+
+    // 显示评估结果
+    function displayEvaluationResults(evaluation) {
+        // 更新统计数据
+        document.getElementById('total-plan-count').textContent = evaluation.total_count;
+        document.getElementById('risky-plan-count').textContent = evaluation.risk_distribution.risky;
+        document.getElementById('stable-plan-count').textContent = evaluation.risk_distribution.stable;
+        document.getElementById('safe-plan-count').textContent = evaluation.risk_distribution.safe;
+        
+        // 更新推荐建议
+        document.getElementById('evaluation-recommendation').innerHTML = `
+            <i class="bi bi-lightbulb"></i> ${evaluation.recommendation}
+        `;
+        
+        // 绘制风险分布图表
+        drawRiskDistributionChart(evaluation.risk_distribution);
+        
+        // 显示评估结果区
+        document.getElementById('evaluation-section').style.display = 'block';
+    }
+
+    // 绘制风险分布图表
+    function drawRiskDistributionChart(distribution) {
+        const ctx = document.getElementById('risk-distribution-chart').getContext('2d');
+        
+        // 销毁现有图表
+        if (riskDistributionChart) {
+            riskDistributionChart.destroy();
+        }
+        
+        // 创建新图表
+        riskDistributionChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['冲', '稳', '保'],
+                datasets: [{
+                    label: '风险分布',
+                    data: [distribution.risky, distribution.stable, distribution.safe],
+                    backgroundColor: [
+                        '#dc3545',
+                        '#0d6efd',
+                        '#198754'
+                    ],
+                    borderColor: [
+                        '#ffffff',
+                        '#ffffff',
+                        '#ffffff'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // 保存志愿方案
+    function savePlan() {
+        if (currentPlan.length === 0) {
+            alert('请先添加志愿方案');
+            return;
+        }
+        
+        const planName = prompt('请输入方案名称：');
+        if (!planName) return;
+        
+        // 保存到本地存储
+        const savedPlans = JSON.parse(localStorage.getItem('admissionPlans') || '[]');
+        savedPlans.push({
+            name: planName,
+            plan: currentPlan,
+            timestamp: new Date().toISOString()
+        });
+        localStorage.setItem('admissionPlans', JSON.stringify(savedPlans));
+        
+        alert('方案保存成功！');
+    }
+
+    // 加载志愿方案
+    function loadPlan() {
+        const savedPlans = JSON.parse(localStorage.getItem('admissionPlans') || '[]');
+        if (savedPlans.length === 0) {
+            alert('暂无保存的方案');
+            return;
+        }
+        
+        const planNames = savedPlans.map(plan => plan.name);
+        const selectedPlanName = prompt('请选择要加载的方案：\n' + planNames.join('\n'));
+        if (!selectedPlanName) return;
+        
+        const selectedPlan = savedPlans.find(plan => plan.name === selectedPlanName);
+        if (selectedPlan) {
+            currentPlan = selectedPlan.plan;
+            updatePlanDisplay();
+            alert('方案加载成功！');
+        } else {
+            alert('未找到该方案');
+        }
+    }
+
+    // 清空志愿方案
+    function clearPlan() {
+        if (confirm('确定要清空当前志愿方案吗？')) {
+            currentPlan = [];
+            updatePlanDisplay();
+            
+            // 隐藏评估结果区
+            document.getElementById('evaluation-section').style.display = 'none';
+        }
+    }
+
+    // 学科评估颜色映射
+    function getEvaluationBadgeColor(result) {
+        const colorMap = {
+            'A+': 'danger',
+            'A': 'danger',
+            'A-': 'danger',
+            'B+': 'warning text-dark',
+            'B': 'warning text-dark',
+            'B-': 'warning text-dark',
+            'C+': 'info text-dark',
+            'C': 'info text-dark',
+            'C-': 'info text-dark'
+        };
+        return colorMap[result] || 'secondary';
+    }
+
+    // 保研率颜色映射
+    function getPostgraduateBadgeColor(rate) {
+        if (rate >= 50) {
+            return 'success';
+        } else if (rate < 20) {
+            return 'warning text-dark';
+        }
+        return 'primary';
+    }
+</script>
+{% endblock %}

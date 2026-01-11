@@ -1,0 +1,460 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <a href="/history" class="btn btn-outline-secondary mb-3">
+            <i class="bi bi-arrow-left"></i> 返回历史分析
+        </a>
+        <h2 id="school-name">
+            <i class="bi bi-building"></i> 加载中...
+        </h2>
+    </div>
+</div>
+
+<!-- 趋势概览 -->
+<div class="row g-4 mb-4" id="trend-overview">
+    <div class="col-6 col-md-3">
+        <div class="card stat-card text-center py-3">
+            <h6 class="text-muted mb-2">分数趋势</h6>
+            <h4 id="score-trend-text">-</h4>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card text-center py-3" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <h6 class="text-muted mb-2">分数变化</h6>
+            <h4 id="score-change-text">-</h4>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card text-center py-3" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <h6 class="text-muted mb-2">位次趋势</h6>
+            <h4 id="rank-trend-text">-</h4>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card text-center py-3" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+            <h6 class="text-muted mb-2">位次变化</h6>
+            <h4 id="rank-change-text">-</h4>
+        </div>
+    </div>
+</div>
+
+<!-- 位次趋势图 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-graph-up"></i> 三年位次趋势
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="rankTrendChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 年度数据对比 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-calendar3"></i> 年度数据对比
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>年份</th>
+                                <th>最低分</th>
+                                <th>最高分</th>
+                                <th>平均分</th>
+                                <th>专业数量</th>
+                            </tr>
+                        </thead>
+                        <tbody id="yearly-data-tbody">
+                            <tr>
+                                <td colspan="5" class="text-center">加载中...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 热门专业排行 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs" id="rankingTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="score-tab" data-bs-toggle="tab" data-bs-target="#score-panel" type="button">
+                            <i class="bi bi-star"></i> 按分数排行
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="rank-tab" data-bs-toggle="tab" data-bs-target="#rank-panel" type="button">
+                            <i class="bi bi-graph-up"></i> 按位次排行
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content" id="rankingTabContent">
+                    <!-- 按分数排行 -->
+                    <div class="tab-pane fade show active" id="score-panel" role="tabpanel">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>排名</th>
+                                        <th>专业编号</th>
+                                        <th>专业名称</th>
+                                        <th>2023</th>
+                                        <th>2024</th>
+                                        <th>2025</th>
+                                        <th>趋势</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="score-ranking-tbody">
+                                    <tr>
+                                        <td colspan="7" class="text-center">加载中...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 按位次排行 -->
+                    <div class="tab-pane fade" id="rank-panel" role="tabpanel">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>排名</th>
+                                        <th>专业编号</th>
+                                        <th>专业名称</th>
+                                        <th>2023位次</th>
+                                        <th>2024位次</th>
+                                        <th>2025位次</th>
+                                        <th>趋势</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rank-ranking-tbody">
+                                    <tr>
+                                        <td colspan="7" class="text-center">加载中...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const schoolCode = '{{ school_code }}';
+let schoolData = null;
+let trendChart = null;
+
+// 加载学校数据
+async function loadSchoolData() {
+    try {
+        const response = await fetch(`/api/history/school/${schoolCode}`);
+        const data = await response.json();
+
+        if (data.error) {
+            alert(data.error);
+            window.location.href = '/history';
+            return;
+        }
+
+        schoolData = data;
+        document.getElementById('school-name').innerHTML = `
+            <i class="bi bi-building"></i> ${data.school.name}
+            <span class="badge bg-primary ms-2">${data.school.code}</span>
+        `;
+
+        // 更新趋势概览
+        if (data.trend) {
+            updateTrendOverview(data.trend);
+        }
+
+        // 加载图表
+        if (data.trend) {
+            updateRankChart(data.trend);
+        }
+
+        // 加载年度数据
+        updateYearlyData(data.years);
+
+        // 加载专业排行
+        updateScoreRanking(data.years);
+        updateRankRanking(data.years);
+
+    } catch (error) {
+        console.error('加载学校数据失败:', error);
+        alert('加载数据失败');
+    }
+}
+
+// 更新趋势概览
+function updateTrendOverview(trend) {
+    // 分数趋势
+    const scoreTrendClass = {
+        '上升': 'text-success',
+        '下降': 'text-danger',
+        '稳定': 'text-primary',
+        '波动': 'text-warning'
+    }[trend.trend] || '';
+
+    document.getElementById('score-trend-text').textContent = trend.trend;
+    document.getElementById('score-trend-text').className = scoreTrendClass;
+
+    const scoreChangeText = trend.score_change > 0 ? `+${trend.score_change}` : trend.score_change;
+    const scoreChangeClass = trend.score_change > 0 ? 'text-success' : trend.score_change < 0 ? 'text-danger' : '';
+    document.getElementById('score-change-text').textContent = scoreChangeText;
+    document.getElementById('score-change-text').className = scoreChangeClass;
+
+    // 位次趋势
+    let rankTrend = '稳定';
+    if (trend.rank_change < 0) {
+        rankTrend = '上升'; // 位次降低表示排名上升
+    } else if (trend.rank_change > 0) {
+        rankTrend = '下降'; // 位次升高表示排名下降
+    }
+    const rankTrendClass = {
+        '上升': 'text-success',
+        '下降': 'text-danger',
+        '稳定': 'text-primary'
+    }[rankTrend] || '';
+
+    document.getElementById('rank-trend-text').textContent = rankTrend;
+    document.getElementById('rank-trend-text').className = rankTrendClass;
+
+    // 位次变化(正数表示位次升高=排名下降,负数表示位次降低=排名上升)
+    const rankChangeText = trend.rank_change < 0 ? `${trend.rank_change}` : `+${trend.rank_change}`;
+    const rankChangeClass = trend.rank_change < 0 ? 'text-success' : trend.rank_change > 0 ? 'text-danger' : '';
+    document.getElementById('rank-change-text').textContent = rankChangeText;
+    document.getElementById('rank-change-text').className = rankChangeClass;
+}
+
+// 更新位次趋势图
+function updateRankChart(trend) {
+    const ctx = document.getElementById('rankTrendChart').getContext('2d');
+
+    if (trendChart) {
+        trendChart.destroy();
+    }
+
+    trendChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['2023年', '2024年', '2025年'],
+            datasets: [{
+                label: '平均位次',
+                data: trend.rank_trend,
+                borderColor: 'rgb(245, 87, 108)',
+                backgroundColor: 'rgba(245, 87, 108, 0.1)',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 6,
+                pointHoverRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `平均位次: ${Math.round(context.parsed.y)}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    reverse: true, // 位次越小越靠前，所以Y轴反转
+                    title: {
+                        display: true,
+                        text: '位次'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// 更新年度数据
+function updateYearlyData(years) {
+    const tbody = document.getElementById('yearly-data-tbody');
+    tbody.innerHTML = '';
+
+    const yearOrder = ['2023', '2024', '2025'];
+
+    yearOrder.forEach(year => {
+        if (years[year]) {
+            const data = years[year];
+            const row = `
+                <tr>
+                    <td><strong>${year}年</strong></td>
+                    <td class="text-danger">${data.min_score}</td>
+                    <td class="text-success">${data.max_score}</td>
+                    <td class="text-primary">${data.avg_score.toFixed(1)}</td>
+                    <td>${data.total_majors}</td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        }
+    });
+}
+
+// 更新分数排行
+function updateScoreRanking(years) {
+    const tbody = document.getElementById('score-ranking-tbody');
+    tbody.innerHTML = '';
+
+    // 收集所有专业数据
+    const majorMap = new Map();
+
+    Object.keys(years).forEach(year => {
+        const yearData = years[year];
+        Object.values(yearData.majors).forEach(major => {
+            if (!majorMap.has(major.major_code)) {
+                majorMap.set(major.major_code, {
+                    code: major.major_code,
+                    name: major.major_name,
+                    scores: {}
+                });
+            }
+            majorMap.get(major.major_code).scores[year] = major.score;
+        });
+    });
+
+    // 转换为数组并按2025年分数排序
+    const majors = Array.from(majorMap.values())
+        .filter(m => m.scores['2025'])
+        .sort((a, b) => b.scores['2025'] - a.scores['2025'])
+        .slice(0, 20);
+
+    majors.forEach((major, index) => {
+        const score23 = major.scores['2023'] || '-';
+        const score24 = major.scores['2024'] || '-';
+        const score25 = major.scores['2025'];
+
+        // 计算趋势
+        let trend = '稳定';
+        let trendClass = 'text-primary';
+        if (score23 !== '-' && score24 !== '-' && score25 !== '-') {
+            const diff = score25 - score23;
+            if (diff > 5) {
+                trend = '上升';
+                trendClass = 'text-success';
+            } else if (diff < -5) {
+                trend = '下降';
+                trendClass = 'text-danger';
+            }
+        }
+
+        const row = `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${major.code}</td>
+                <td>${major.name}</td>
+                <td>${score23}</td>
+                <td>${score24}</td>
+                <td><strong>${score25}</strong></td>
+                <td class="${trendClass}">${trend}</td>
+            </tr>
+        `;
+        tbody.innerHTML += row;
+    });
+}
+
+// 更新位次排行
+function updateRankRanking(years) {
+    const tbody = document.getElementById('rank-ranking-tbody');
+    tbody.innerHTML = '';
+
+    // 收集所有专业数据
+    const majorMap = new Map();
+
+    Object.keys(years).forEach(year => {
+        const yearData = years[year];
+        Object.values(yearData.majors).forEach(major => {
+            if (!majorMap.has(major.major_code)) {
+                majorMap.set(major.major_code, {
+                    code: major.major_code,
+                    name: major.major_name,
+                    ranks: {}
+                });
+            }
+            if (major.rank > 0) {
+                majorMap.get(major.major_code).ranks[year] = major.rank;
+            }
+        });
+    });
+
+    // 转换为数组并按2025年位次排序(位次越小越靠前)
+    const majors = Array.from(majorMap.values())
+        .filter(m => m.ranks['2025'])
+        .sort((a, b) => a.ranks['2025'] - b.ranks['2025'])
+        .slice(0, 20);
+
+    majors.forEach((major, index) => {
+        const rank23 = major.ranks['2023'] || '-';
+        const rank24 = major.ranks['2024'] || '-';
+        const rank25 = major.ranks['2025'];
+
+        // 计算趋势(位次变小=上升,位次变大=下降)
+        let trend = '稳定';
+        let trendClass = 'text-primary';
+        if (rank23 !== '-' && rank24 !== '-' && rank25 !== '-') {
+            const diff = rank25 - rank23; // 正数表示位次下降(分数降低),负数表示位次上升(分数提高)
+            if (diff < -50) {
+                trend = '上升'; // 位次显著上升
+                trendClass = 'text-success';
+            } else if (diff > 50) {
+                trend = '下降'; // 位次显著下降
+                trendClass = 'text-danger';
+            }
+        }
+
+        const row = `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${major.code}</td>
+                <td>${major.name}</td>
+                <td>${rank23}</td>
+                <td>${rank24}</td>
+                <td><strong>${rank25}</strong></td>
+                <td class="${trendClass}">${trend}</td>
+            </tr>
+        `;
+        tbody.innerHTML += row;
+    });
+}
+
+// 页面加载
+document.addEventListener('DOMContentLoaded', loadSchoolData);
+</script>
+{% endblock %}

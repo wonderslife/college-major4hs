@@ -1,0 +1,588 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2>
+            <i class="bi bi-calculator"></i> 录取概率分析
+        </h2>
+        <p class="text-muted">根据您的分数或位次，计算目标院校专业的录取概率，分析您的竞争力水平</p>
+    </div>
+</div>
+
+<!-- 输入区 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card p-4">
+            <h5 class="card-title mb-3">
+                <i class="bi bi-input-cursor"></i> 基本信息输入
+            </h5>
+            <form id="probability-form" class="row g-3">
+                <!-- 分数/位次输入 -->
+                <div class="col-12 col-md-4">
+                    <div class="row g-2">
+                        <div class="col-8">
+                            <label for="input-value" class="form-label">分数/位次</label>
+                            <input type="number" class="form-control" id="input-value" placeholder="请输入分数或位次" required>
+                        </div>
+                        <div class="col-4">
+                            <label for="input-type" class="form-label">类型</label>
+                            <select class="form-select" id="input-type">
+                                <option value="score">分数</option>
+                                <option value="rank">位次</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 院校选择 -->
+                <div class="col-12 col-md-4">
+                    <label for="university-name" class="form-label">目标院校</label>
+                    <input type="text" class="form-control" id="university-name" placeholder="例如：北京大学">
+                </div>
+
+                <!-- 专业选择 -->
+                <div class="col-12 col-md-4">
+                    <label for="major-name" class="form-label">目标专业</label>
+                    <input type="text" class="form-control" id="major-name" placeholder="例如：计算机科学与技术">
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-search"></i> 计算概率
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-lg ms-2" onclick="clearResults()">
+                        <i class="bi bi-trash"></i> 清除结果
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 概率计算结果区 -->
+<div class="row mb-4" id="probability-result-section" style="display: none;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-bar-chart-line"></i> 录取概率计算结果
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- 概率概览 -->
+                    <div class="col-12 col-md-4 mb-4">
+                        <div class="card bg-gradient-primary text-white h-100">
+                            <div class="card-body text-center">
+                                <h6 class="card-subtitle mb-2">录取概率</h6>
+                                <h1 class="display-4 fw-bold" id="probability-value">0.00</h1>
+                                <h6 class="card-subtitle mb-3" id="risk-level">风险等级：安全</h6>
+                                <div class="alert alert-light text-dark" role="alert" id="probability-analysis">
+                                    请先计算概率
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 详细统计 -->
+                    <div class="col-12 col-md-8">
+                        <div class="row g-3">
+                            <div class="col-6 col-md-3">
+                                <div class="card bg-light text-center h-100">
+                                    <div class="card-body">
+                                        <small class="text-muted">平均分/位次</small>
+                                        <h4 class="fw-bold mt-1" id="avg-value">0</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="card bg-light text-center h-100">
+                                    <div class="card-body">
+                                        <small class="text-muted">分数/位次差</small>
+                                        <h4 class="fw-bold mt-1" id="value-diff">0</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="card bg-light text-center h-100">
+                                    <div class="card-body">
+                                        <small class="text-muted">最高值</small>
+                                        <h4 class="fw-bold mt-1" id="max-value">0</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="card bg-light text-center h-100">
+                                    <div class="card-body">
+                                        <small class="text-muted">最低值</small>
+                                        <h4 class="fw-bold mt-1" id="min-value">0</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 数据记录信息 -->
+                        <div class="mt-3">
+                            <p class="text-muted">
+                                <i class="bi bi-database"></i> 基于 <span id="total-records">0</span> 条数据记录计算
+                                <br>
+                                <i class="bi bi-award"></i> 排名百分比：<span id="rank-percentile">0.00</span>%
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 竞争力分析区 -->
+<div class="row mb-4" id="competitive-analysis-section" style="display: none;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-trophy"></i> 竞争力分析
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- 竞争力概览 -->
+                    <div class="col-12 col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-subtitle text-muted mb-3">竞争力等级</h6>
+                                <div class="alert alert-info" role="alert" id="competitive-level">
+                                    请先进行竞争力分析
+                                </div>
+                                <div class="mt-3">
+                                    <h6 class="card-subtitle text-muted mb-2">详细信息</h6>
+                                    <ul class="list-group">
+                                        <li class="list-group-item">
+                                            <strong>排名:</strong> <span id="competitive-rank">0</span> / <span id="total-records-competitive">0</span>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>百分比:</strong> <span id="competitive-percentile">0.00</span>%
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 可报考选项 -->
+                    <div class="col-12 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-subtitle text-muted mb-3">可报考选项</h6>
+                                <div class="row g-3">
+                                    <div class="col-6">
+                                        <div class="card bg-light text-center h-100">
+                                            <div class="card-body">
+                                                <small class="text-muted">可报院校数</small>
+                                                <h4 class="fw-bold mt-1" id="eligible-universities">0</h4>
+                                                <small class="text-muted">(占总数 <span id="university-ratio">0.00</span>%)</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="card bg-light text-center h-100">
+                                            <div class="card-body">
+                                                <small class="text-muted">可报专业数</small>
+                                                <h4 class="fw-bold mt-1" id="eligible-majors">0</h4>
+                                                <small class="text-muted">(占总数 <span id="major-ratio">0.00</span>%)</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <h6 class="card-subtitle text-muted mb-2">总数统计</h6>
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <div class="bg-light rounded p-2">
+                                                <small class="text-muted">院校总数</small>
+                                                <div class="fw-bold" id="total-universities">0</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="bg-light rounded p-2">
+                                                <small class="text-muted">专业总数</small>
+                                                <div class="fw-bold" id="total-majors">0</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 概率分布图表区 -->
+<div class="row mb-4" id="chart-section" style="display: none;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-chart-area"></i> 概率分布可视化
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- 概率分布柱状图 -->
+                    <div class="col-12">
+                        <canvas id="probability-chart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 院校专业详情区 -->
+<div class="row mb-4" id="detail-section" style="display: none;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-info-circle"></i> 院校专业详情
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- 院校信息 -->
+                    <div class="col-12 col-md-6">
+                        <h6 class="card-subtitle text-muted mb-3">院校信息</h6>
+                        <div class="card bg-light mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title" id="university-detail-name">未选择院校</h5>
+                                <p class="card-text mb-1">
+                                    <i class="bi bi-geo-alt"></i> <span id="university-detail-city">-</span>
+                                </p>
+                                <p class="card-text mb-1">
+                                    <i class="bi bi-building"></i> <span id="university-detail-department">-</span>
+                                </p>
+                                <div class="mt-3">
+                                    <small class="text-muted">院校标签：</small>
+                                    <div id="university-detail-tags">
+                                        <span class="badge bg-secondary">暂无标签</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 专业信息 -->
+                    <div class="col-12 col-md-6">
+                        <h6 class="card-subtitle text-muted mb-3">专业信息</h6>
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h5 class="card-title" id="major-detail-name">未选择专业</h5>
+                                <div class="mt-3">
+                                    <small class="text-muted">学科评估：</small>
+                                    <div id="major-detail-evaluations">
+                                        <span class="text-muted">暂无评估数据</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // 初始化变量
+    let probabilityChart = null;
+
+    // 表单提交事件
+    document.getElementById('probability-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        await calculateProbability();
+    });
+
+    // 计算录取概率
+    async function calculateProbability() {
+        // 获取表单数据
+        const inputValue = document.getElementById('input-value').value;
+        const inputType = document.getElementById('input-type').value;
+        const universityName = document.getElementById('university-name').value;
+        const majorName = document.getElementById('major-name').value;
+        
+        try {
+            // 显示加载状态
+            showLoadingState();
+            
+            // 调用API计算概率
+            const probabilityUrl = `/api/probability/calculate?value=${inputValue}&type=${inputType}&university=${encodeURIComponent(universityName)}&major=${encodeURIComponent(majorName)}`;
+            const probabilityResponse = await fetch(probabilityUrl);
+            const probabilityData = await probabilityResponse.json();
+            
+            // 调用API获取竞争力分析
+            const competitiveUrl = `/api/probability/competitive?value=${inputValue}&type=${inputType}`;
+            const competitiveResponse = await fetch(competitiveUrl);
+            const competitiveData = await competitiveResponse.json();
+            
+            // 显示结果
+            displayProbabilityResults(probabilityData);
+            displayCompetitiveAnalysis(competitiveData);
+            displayCharts(probabilityData, competitiveData);
+            displayDetails(probabilityData);
+        } catch (error) {
+            console.error('计算失败:', error);
+            alert('计算失败，请稍后重试');
+        }
+    }
+
+    // 显示加载状态
+    function showLoadingState() {
+        // 显示各结果区域
+        document.getElementById('probability-result-section').style.display = 'block';
+        document.getElementById('competitive-analysis-section').style.display = 'block';
+        document.getElementById('chart-section').style.display = 'block';
+        document.getElementById('detail-section').style.display = 'block';
+        
+        // 显示加载状态
+        document.getElementById('probability-value').textContent = '加载中...';
+        document.getElementById('competitive-level').innerHTML = '<i class="bi bi-hourglass-split"></i> 正在分析竞争力...';
+    }
+
+    // 显示概率计算结果
+    function displayProbabilityResults(data) {
+        // 显示概率值
+        document.getElementById('probability-value').textContent = data.probability.toFixed(2);
+        
+        // 设置风险等级
+        const riskLevelText = {
+            'very_risky': '极高风险',
+            'risky': '风险',
+            'stable': '稳定',
+            'safe': '安全'
+        };
+        document.getElementById('risk-level').textContent = `风险等级：${riskLevelText[data.risk_level] || '未知'}`;
+        
+        // 设置风险等级颜色
+        const riskLevelColor = {
+            'very_risky': '#dc3545',
+            'risky': '#fd7e14',
+            'stable': '#0d6efd',
+            'safe': '#198754'
+        };
+        const probabilityCard = document.querySelector('#probability-result-section .card.bg-gradient-primary');
+        probabilityCard.style.backgroundColor = riskLevelColor[data.risk_level] || '#0d6efd';
+        probabilityCard.style.backgroundImage = 'linear-gradient(135deg, rgba(255,255,255,.15) 0%, rgba(255,255,255,0) 100%)';
+        
+        // 显示分析结果
+        document.getElementById('probability-analysis').textContent = data.analysis;
+        
+        // 显示统计数据
+        document.getElementById('avg-value').textContent = data.statistics.avg_value;
+        document.getElementById('value-diff').textContent = data.statistics.value_diff;
+        document.getElementById('max-value').textContent = data.statistics.max_value;
+        document.getElementById('min-value').textContent = data.statistics.min_value;
+        document.getElementById('total-records').textContent = data.statistics.total_records;
+        document.getElementById('rank-percentile').textContent = data.rank_percentile;
+    }
+
+    // 显示竞争力分析结果
+    function displayCompetitiveAnalysis(data) {
+        // 设置竞争力等级
+        const competitiveLevelText = {
+            'excellent': '优秀',
+            'very_good': '非常好',
+            'good': '良好',
+            'average': '中等',
+            'below_average': '偏低'
+        };
+        
+        // 设置竞争力等级颜色
+        const competitiveLevelColor = {
+            'excellent': 'success',
+            'very_good': 'primary',
+            'good': 'info',
+            'average': 'warning',
+            'below_average': 'danger'
+        };
+        
+        // 显示竞争力等级
+        const competitiveLevelElement = document.getElementById('competitive-level');
+        competitiveLevelElement.className = `alert alert-${competitiveLevelColor[data.competitive_level] || 'info'}`;
+        competitiveLevelElement.innerHTML = `<i class="bi bi-trophy"></i> ${data.level_description}`;
+        
+        // 显示详细信息
+        document.getElementById('competitive-rank').textContent = data.rank;
+        document.getElementById('total-records-competitive').textContent = data.total_records;
+        document.getElementById('competitive-percentile').textContent = data.percentile;
+        
+        // 显示可报考选项
+        document.getElementById('eligible-universities').textContent = data.eligible_options.universities;
+        document.getElementById('eligible-majors').textContent = data.eligible_options.majors;
+        document.getElementById('total-universities').textContent = data.eligible_options.total_universities;
+        document.getElementById('total-majors').textContent = data.eligible_options.total_majors;
+        document.getElementById('university-ratio').textContent = data.eligible_options.university_ratio;
+        document.getElementById('major-ratio').textContent = data.eligible_options.major_ratio;
+    }
+
+    // 显示图表
+    function displayCharts(probabilityData, competitiveData) {
+        // 绘制概率分布图表
+        drawProbabilityChart(probabilityData, competitiveData);
+    }
+
+    // 绘制概率分布图表
+    function drawProbabilityChart(probabilityData, competitiveData) {
+        const ctx = document.getElementById('probability-chart').getContext('2d');
+        
+        // 销毁现有图表
+        if (probabilityChart) {
+            probabilityChart.destroy();
+        }
+        
+        // 创建新图表
+        probabilityChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['安全区', '稳定区', '风险区', '极高风险区'],
+                datasets: [{
+                    label: '概率区间分布',
+                    data: [
+                        probabilityData.probability >= 80 ? probabilityData.probability : 0,
+                        probabilityData.probability >= 50 && probabilityData.probability < 80 ? probabilityData.probability : 0,
+                        probabilityData.probability >= 20 && probabilityData.probability < 50 ? probabilityData.probability : 0,
+                        probabilityData.probability < 20 ? probabilityData.probability : 0
+                    ],
+                    backgroundColor: [
+                        'rgba(25, 135, 84, 0.7)',
+                        'rgba(13, 110, 253, 0.7)',
+                        'rgba(253, 126, 20, 0.7)',
+                        'rgba(220, 53, 69, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(25, 135, 84, 1)',
+                        'rgba(13, 110, 253, 1)',
+                        'rgba(253, 126, 20, 1)',
+                        'rgba(220, 53, 69, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${context.raw.toFixed(2)}%`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // 显示详情
+    function displayDetails(probabilityData) {
+        const universityInfo = probabilityData.target_data.university;
+        const majorInfo = probabilityData.target_data.major;
+        
+        // 显示院校信息
+        if (universityInfo.name) {
+            document.getElementById('university-detail-name').textContent = universityInfo.name;
+            document.getElementById('university-detail-city').textContent = universityInfo.city || '未知';
+            document.getElementById('university-detail-department').textContent = universityInfo.department || '未知';
+            
+            // 显示院校标签
+            const tagsElement = document.getElementById('university-detail-tags');
+            const tags = universityInfo.tags;
+            let tagsHtml = '';
+            if (tags.is_985) tagsHtml += '<span class="badge bg-danger me-1">985</span>';
+            if (tags.is_211) tagsHtml += '<span class="badge bg-primary me-1">211</span>';
+            if (tags.is_double_first_class) tagsHtml += '<span class="badge bg-success me-1">双一流</span>';
+            if (tags.is_private) tagsHtml += '<span class="badge bg-warning text-dark me-1">民办</span>';
+            if (tags.is_independent) tagsHtml += '<span class="badge bg-info text-dark me-1">独立学院</span>';
+            tagsElement.innerHTML = tagsHtml || '<span class="badge bg-secondary">暂无标签</span>';
+        } else {
+            // 重置院校信息
+            document.getElementById('university-detail-name').textContent = '未选择院校';
+            document.getElementById('university-detail-city').textContent = '-';
+            document.getElementById('university-detail-department').textContent = '-';
+            document.getElementById('university-detail-tags').innerHTML = '<span class="badge bg-secondary">暂无标签</span>';
+        }
+        
+        // 显示专业信息
+        if (majorInfo.name) {
+            document.getElementById('major-detail-name').textContent = majorInfo.name;
+            
+            // 显示学科评估
+            const evaluationsElement = document.getElementById('major-detail-evaluations');
+            const evaluations = majorInfo.evaluations;
+            if (evaluations.length > 0) {
+                const evaluationsHtml = evaluations.map(eva => 
+                    `<span class="badge bg-${getEvaluationBadgeColor(eva.评估结果)} me-1">${eva.学科名称}: ${eva.评估结果}</span>`
+                ).join('');
+                evaluationsElement.innerHTML = evaluationsHtml;
+            } else {
+                evaluationsElement.innerHTML = '<span class="text-muted">暂无评估数据</span>';
+            }
+        } else {
+            // 重置专业信息
+            document.getElementById('major-detail-name').textContent = '未选择专业';
+            document.getElementById('major-detail-evaluations').innerHTML = '<span class="text-muted">暂无评估数据</span>';
+        }
+    }
+
+    // 清除结果
+    function clearResults() {
+        // 隐藏结果区域
+        document.getElementById('probability-result-section').style.display = 'none';
+        document.getElementById('competitive-analysis-section').style.display = 'none';
+        document.getElementById('chart-section').style.display = 'none';
+        document.getElementById('detail-section').style.display = 'none';
+        
+        // 重置表单
+        document.getElementById('probability-form').reset();
+    }
+
+    // 学科评估颜色映射
+    function getEvaluationBadgeColor(result) {
+        const colorMap = {
+            'A+': 'danger',
+            'A': 'danger',
+            'A-': 'danger',
+            'B+': 'warning text-dark',
+            'B': 'warning text-dark',
+            'B-': 'warning text-dark',
+            'C+': 'info text-dark',
+            'C': 'info text-dark',
+            'C-': 'info text-dark'
+        };
+        return colorMap[result] || 'secondary';
+    }
+</script>
+{% endblock %}
