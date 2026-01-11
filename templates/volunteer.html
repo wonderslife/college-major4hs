@@ -477,7 +477,7 @@ function displayVolunteers(volunteers) {
         }
         
         // 生成院校链接
-        const schoolLink = `<a href="/university" target="_blank" onclick="openUniversityAnalysis('${v.school_name}', '${v.major_name}', '${v.avg_rank_2025 || ''}')">${v.school_name}</a>`;
+        const schoolLink = `<a href="javascript:void(0)" onclick="openUniversityAnalysis('${v.school_name}', '${v.major_name}', '${v.avg_rank_2025 || ''}')">${v.school_name}</a>`;
         
         return `
         <tr draggable="true" data-volunteer-id="${v.id}" class="volunteer-row">
