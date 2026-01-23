@@ -2,7 +2,6 @@
 招生数据模型
 定义系统使用的数据结构
 """
-
 from pydantic import BaseModel, Field, validator
 from typing import Optional, List, Dict, Any
 from datetime import datetime
